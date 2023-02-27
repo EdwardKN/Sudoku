@@ -29,7 +29,7 @@ function init(){
                 tmpSelect.appendChild(tmpOption);
 
             }
-            tmpGrid.push({td:tmpTd,select:tmpSelect});
+            tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[]});
             tmpTd.appendChild(tmpSelect)
             tmpTr.appendChild(tmpTd);
         }
