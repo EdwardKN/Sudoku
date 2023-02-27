@@ -12,23 +12,13 @@ function init(){
         let tmpGrid = [];
         for(let x = 0; x < 9; x++){
             let tmpTd = document.createElement("td");
-            let tmpSelect = document.createElement("select");
+            let tmpSelect = document.createElement("input");
+            tmpSelect.type = "text";
+            tmpSelect.maxLength = 1;
+            tmpSelect.setAttribute("onkeypress","return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))")
+        
             tmpSelect.setAttribute("onchange","updateChanged("+y+","+x+")");
 
-            for(let n = 0; n < 10; n++){
-                let tmpOption = document.createElement("option");
-                if(n !== 0){
-                    tmpOption.value = n;
-                    tmpOption.text = n;
-                }else{
-                    tmpOption.value = n;
-                    tmpOption.text = "";
-                }
-
-
-                tmpSelect.appendChild(tmpOption);
-
-            }
             tmpGrid.push({td:tmpTd,select:tmpSelect});
             tmpTd.appendChild(tmpSelect)
             tmpTr.appendChild(tmpTd);
@@ -49,6 +39,9 @@ function updateTable(){
 }
 
 function updateChanged(x,y){
+    if(JSON.parse(grid[x][y].select.value) < 1 || JSON.parse(grid[x][y].select.value) > 9){
+        grid[x][y].select.value = ""
+    }
     grid[x][y].value = JSON.parse(grid[x][y].select.value);
 }
 
