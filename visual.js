@@ -15,7 +15,7 @@ function init(){
             let tmpSelect = document.createElement("input");
             tmpSelect.type = "text";
             tmpSelect.maxLength = 1;
-            tmpSelect.setAttribute("onkeypress","return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))")
+            tmpSelect.setAttribute("onkeypress","return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57))")
         
             tmpSelect.setAttribute("onchange","updateChanged("+y+","+x+")");
 
@@ -33,17 +33,19 @@ function updateTable(){
         for(let x = 0; x < 9; x++){
             if(grid[y][x].value !== undefined){
                 grid[y][x].select.value = grid[y][x].value;
-            }
-        }
-    }
-}
+            }else{
+                grid[y][x].select.value = "";
+            };
+        };
+    };
+};
 
 function updateChanged(x,y){
     if(JSON.parse(grid[x][y].select.value) < 1 || JSON.parse(grid[x][y].select.value) > 9){
-        grid[x][y].select.value = ""
-    }
+        grid[x][y].select.value = "";
+    };
     grid[x][y].value = JSON.parse(grid[x][y].select.value);
-}
+};
 
 init();
 
@@ -344,11 +346,11 @@ function setTestValues(){
     
             }
         ]
-    ]
+    ];
     for(let y = 0; y < 9; y++){
         for(let x = 0; x < 9; x++){
-            grid[y][x].value = tmpGrid[y][x].value
-        }
-    }
-    updateTable()
-}
+            grid[y][x].value = tmpGrid[y][x].value;
+        };
+    };
+    updateTable();
+};
