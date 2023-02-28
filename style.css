@@ -31,7 +31,12 @@ input{
     font-size: 3vw;
     text-align: center;
 }
-
+input{
+    -webkit-user-select: none;  
+    -moz-user-select: none;    
+    -ms-user-select: none;      
+    user-select: none;
+}
 table tr:not(:last-child):nth-of-type(3n) td {
     border-bottom: 0.4vw solid black;
 }
