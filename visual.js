@@ -73,7 +73,7 @@ async function solveSolve(grid){
 }
 
 
-function setTestValues(){
+function setTestValues(difficulty){
     let tmpGrid = [
         [
             {
@@ -370,10 +370,896 @@ function setTestValues(){
         ]
     ];
 
+    let grids = [
+        [
+            [
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 1
+                },
+                {
+                    "value": 9
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 3
+                }
+            ],
+            [
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 8
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 1
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 5
+                },
+                {
+                    "value": 0
+                }
+            ],
+            [
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 6
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 4
+                }
+            ],
+            [
+                {
+        
+                    "value": 8
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 6
+                },
+                {
+        
+                    "value": 2
+                },
+                {
+        
+                    "value": 5
+                },
+                {
+        
+                    "value": 7
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 1
+                }
+            ],
+            [
+                {
+        
+                    "value": 3
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 7
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 8
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+    
+                }
+            ],
+            [
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 2
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 1
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 3
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 9
+                }
+            ],
+            [
+                {
+        
+                    "value": 2
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 6
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 3
+                },
+                {
+        
+                    "value": 5
+                }
+            ],
+            [
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 3
+                },
+                {
+        
+                    "value": 8
+                },
+                {
+        
+                    "value": 2
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 4
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 6
+                }
+            ],
+            [
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 7
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 3
+                },
+                {
+        
+                    "value": 4
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                }
+            ]
+        ],
+        [
+            [
+                {
+                    "value": 3
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 1
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 7
+                }
+            ],
+            [
+                {
+                    "value": 7
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 9
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 0
+                }
+            ],
+            [
+                {
+                    "value": 0
+                },
+                {
+                    "value": 6
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 3
+                }
+            ],
+            [
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 7
+                },
+                {
+        
+                    "value": 2
+                },
+                {
+                    "value": 8
+                },
+                {
+                    "value": 4
+                },
+                {
+                    "value": 0
+    
+                }
+            ],
+            [
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 2
+    
+                }
+            ],
+            [
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 6
+                },
+                {
+        
+                    "value": 5
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 4
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 3
+                },
+                {
+        
+                    "value": 0
+                }
+            ],
+            [
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 8
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                }
+            ],
+            [
+                {
+                    "value": 0
+                },
+                {
+                    "value": 7
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+        
+                    "value": 3
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 2
+                },
+                {
+        
+                    "value": 9
+                }
+            ],
+            [
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 9
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+        
+                    "value": 6
+                },
+                {
+                    "value": 1
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 5
+                }
+            ]
+        ],
+        [
+            [
+                {
+                    "value": 2
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 7
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 3
+                }
+            ],
+            [
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 1
+                },
+                {
+                    "value": 6
+                },
+                {
+        
+                    "value": 8
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 9
+                },
+                {
+                    "value": 0
+                }
+            ],
+            [
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 1
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                }
+            ],
+            [
+                {
+        
+                    "value": 5
+                },
+                {
+                    "value": 3
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+        
+                    "value": 4
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                }
+            ],
+            [
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 9
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 1
+                },
+                {
+                    "value": 6
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 7
+                },
+                {
+                    "value": 0
+    
+                }
+            ],
+            [
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 6
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 2
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 4
+                },
+                {
+        
+                    "value": 0
+                }
+            ],
+            [
+                {
+        
+                    "value": 1
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 4
+                },
+                {
+                    "value": 8
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 3
+                },
+                {
+        
+                    "value": 0
+                }
+            ],
+            [
+                {
+                    "value": 0
+                },
+                {
+                    "value": 2
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 9
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                }
+            ],
+            [
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 4
+                },
+                {
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+        
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                },
+                {
+                    "value": 0
+                }
+            ]
+        ]
+    ]
+
     for(let y = 0; y < 9; y++){
         for(let x = 0; x < 9; x++){
             
-            grid[y][x].value = tmpGrid[y][x].value;
+            grid[y][x].value = grids[difficulty][y][x].value;
 
         };
     };
