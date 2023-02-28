@@ -17,10 +17,10 @@ function init(){
             tmpSelect.maxLength = 1;
             tmpSelect.setAttribute("onkeypress","return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57))")
             tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);")
-            tmpSelect.setAttribute("oninput","updateChanged("+y+","+x+")");
+            tmpSelect.setAttribute("oninput","updateChanged("+y+","+x+");updateTable()");
             
             
-            tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[1, 2, 3, 4, 5, 6, 7, 8, 9]});
+            tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[1,2,3,4,5,6,7,8,9],locked:false,value:0});
             tmpTd.appendChild(tmpSelect)
             tmpTr.appendChild(tmpTd);
 
@@ -30,15 +30,29 @@ function init(){
     }
 }
 
+
+
 function updateTable(){
     for(let y = 0; y < 9; y++){
         for(let x = 0; x < 9; x++){
+            grid[y][x].select.disabled = grid[y][x].locked;
             if(grid[y][x].value !== undefined && grid[y][x].value !== 0){
                 grid[y][x].select.value = grid[y][x].value;
             }else{
                 grid[y][x].select.value = "";
-                setBackground(x,y)
             };
+            let temp = isPossibleMove(grid,x,y,grid[x][y].value);
+            if(temp === true || grid[x][y].value == 0){
+                grid[x][y].select.style.backgroundColor = 'white';
+                grid[x][y].td.style.backgroundColor = 'white';
+            }
+            if(temp !== true && grid[x][y].value !== 0){
+                grid[x][y].select.style.backgroundColor = 'red';
+                grid[x][y].td.style.backgroundColor = 'red';
+                grid[temp.y][temp.x].select.style.backgroundColor = 'red'
+                grid[temp.y][temp.x].td.style.backgroundColor = 'red'
+                lastTemp = temp;
+            }
         };
     };
 };
@@ -52,17 +66,10 @@ function updateChanged(x,y){
     }else{
         grid[x][y].value = 0;
     }
-    setBackground(x,y)
     
 };
-function setBackground(x,y){
-    let temp = isPossibleMove(grid,x,y,grid[x][y].value);
-    if(temp !== true && grid[x][y].value !== 0){
-        grid[x][y].select.style.backgroundColor = 'red';
-    }else{
-        grid[x][y].select.style.backgroundColor = 'white';
-    }
-}
+
+let lastTemp = {x:0,y:0}
 
 init();
 
@@ -74,301 +81,6 @@ async function solveSolve(grid){
 
 
 function setTestValues(difficulty){
-    let tmpGrid = [
-        [
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 1
-            },
-            {
-                "value": 9
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 3
-            }
-        ],
-        [
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 8
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 1
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 5
-            },
-            {
-                "value": 0
-            }
-        ],
-        [
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 6
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 4
-            }
-        ],
-        [
-            {
-    
-                "value": 8
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 6
-            },
-            {
-    
-                "value": 2
-            },
-            {
-    
-                "value": 5
-            },
-            {
-    
-                "value": 7
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 1
-            }
-        ],
-        [
-            {
-    
-                "value": 3
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 7
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 8
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-
-            }
-        ],
-        [
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 2
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 1
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 3
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 9
-            }
-        ],
-        [
-            {
-    
-                "value": 2
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 6
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 3
-            },
-            {
-    
-                "value": 5
-            }
-        ],
-        [
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 3
-            },
-            {
-    
-                "value": 8
-            },
-            {
-    
-                "value": 2
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 4
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 6
-            }
-        ],
-        [
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 7
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 3
-            },
-            {
-    
-                "value": 4
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            }
-        ]
-    ];
 
     let grids = [
         [
@@ -1260,11 +972,25 @@ function setTestValues(difficulty){
         for(let x = 0; x < 9; x++){
             
             grid[y][x].value = grids[difficulty][y][x].value;
+            if(grids[difficulty][y][x].value === 0){
+                grid[y][x].locked = false
+            }else{
+                grid[y][x].locked = true
+            }
 
         };
     };
     updateTable();
 };
+
+function clearThisShit(){
+    for(let y = 0; y < 9; y++){
+        for(let x = 0; x < 9; x++){
+            grid[y][x].value = 0;
+        }
+    }
+    updateTable();
+}
 
 function moveCursorToEnd(el) {
     if (typeof el.selectionStart == "number") {
