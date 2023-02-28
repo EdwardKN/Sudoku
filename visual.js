@@ -19,7 +19,8 @@ function init(){
             tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);")
             tmpSelect.setAttribute("onchange","updateChanged("+y+","+x+")");
 
-            tmpGrid.push({td:tmpTd,select:tmpSelect});
+            
+            tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[]});
             tmpTd.appendChild(tmpSelect)
             tmpTr.appendChild(tmpTd);
 
@@ -372,3 +373,4 @@ function moveCursorToEnd(el) {
         range.select();
     }
 }
+
