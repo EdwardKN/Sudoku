@@ -19,8 +19,7 @@ function init(){
             tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);")
             tmpSelect.setAttribute("oninput","updateChanged("+y+","+x+");updateTable()");
             
-            
-            tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[]});
+            tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[],locked:false});
             tmpTd.appendChild(tmpSelect)
             tmpTr.appendChild(tmpTd);
 
@@ -35,6 +34,7 @@ function init(){
 function updateTable(){
     for(let y = 0; y < 9; y++){
         for(let x = 0; x < 9; x++){
+            grid[y][x].select.disabled = grid[y][x].locked;
             if(grid[y][x].value !== undefined && grid[y][x].value !== 0){
                 grid[y][x].select.value = grid[y][x].value;
             }else{
@@ -43,10 +43,13 @@ function updateTable(){
             let temp = isPossibleMove(grid,x,y,grid[x][y].value);
             if(temp === true || grid[x][y].value == 0){
                 grid[x][y].select.style.backgroundColor = 'white';
+                grid[x][y].td.style.backgroundColor = 'white';
             }
             if(temp !== true && grid[x][y].value !== 0){
                 grid[x][y].select.style.backgroundColor = 'red';
+                grid[x][y].td.style.backgroundColor = 'red';
                 grid[temp.y][temp.x].select.style.backgroundColor = 'red'
+                grid[temp.y][temp.x].td.style.backgroundColor = 'red'
                 lastTemp = temp;
             }
         };
@@ -77,301 +80,6 @@ async function solveSolve(grid){
 
 
 function setTestValues(difficulty){
-    let tmpGrid = [
-        [
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 1
-            },
-            {
-                "value": 9
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 3
-            }
-        ],
-        [
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 8
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 1
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 5
-            },
-            {
-                "value": 0
-            }
-        ],
-        [
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 6
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 4
-            }
-        ],
-        [
-            {
-    
-                "value": 8
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 6
-            },
-            {
-    
-                "value": 2
-            },
-            {
-    
-                "value": 5
-            },
-            {
-    
-                "value": 7
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 1
-            }
-        ],
-        [
-            {
-    
-                "value": 3
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 7
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 8
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-
-            }
-        ],
-        [
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 2
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 1
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 3
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 9
-            }
-        ],
-        [
-            {
-    
-                "value": 2
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 6
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 3
-            },
-            {
-    
-                "value": 5
-            }
-        ],
-        [
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 3
-            },
-            {
-    
-                "value": 8
-            },
-            {
-    
-                "value": 2
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 4
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 6
-            }
-        ],
-        [
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 7
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-    
-                "value": 3
-            },
-            {
-    
-                "value": 4
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            },
-            {
-                "value": 0
-            }
-        ]
-    ];
 
     let grids = [
         [
@@ -1263,6 +971,11 @@ function setTestValues(difficulty){
         for(let x = 0; x < 9; x++){
             
             grid[y][x].value = grids[difficulty][y][x].value;
+            if(grids[difficulty][y][x].value === 0){
+                grid[y][x].locked = false
+            }else{
+                grid[y][x].locked = true
+            }
 
         };
     };
