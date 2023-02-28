@@ -17,8 +17,8 @@ function init(){
             tmpSelect.maxLength = 1;
             tmpSelect.setAttribute("onkeypress","return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57))")
             tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);")
-            tmpSelect.setAttribute("onchange","updateChanged("+y+","+x+")");
-
+            tmpSelect.setAttribute("oninput","updateChanged("+y+","+x+")");
+            
             
             tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[]});
             tmpTd.appendChild(tmpSelect)
@@ -37,6 +37,7 @@ function updateTable(){
                 grid[y][x].select.value = grid[y][x].value;
             }else{
                 grid[y][x].select.value = "";
+                setBackground(x,y)
             };
         };
     };
@@ -51,10 +52,25 @@ function updateChanged(x,y){
     }else{
         grid[x][y].value = 0;
     }
+    setBackground(x,y)
     
 };
+function setBackground(x,y){
+    let temp = isPossibleMove(grid,x,y,grid[x][y].value);
+    if(temp !== true && grid[x][y].value !== 0){
+        grid[x][y].select.style.backgroundColor = 'red';
+    }else{
+        grid[x][y].select.style.backgroundColor = 'white';
+    }
+}
 
 init();
+
+async function solveSolve(grid){
+    grid = await solve(grid).then(e =>{
+        updateTable()
+    });
+}
 
 
 function setTestValues(){
@@ -374,4 +390,5 @@ function moveCursorToEnd(el) {
         range.select();
     }
 }
+
 
