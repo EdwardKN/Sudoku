@@ -30,6 +30,8 @@ function init(){
     }
 }
 
+
+
 function updateTable(){
     for(let y = 0; y < 9; y++){
         for(let x = 0; x < 9; x++){
@@ -1266,6 +1268,15 @@ function setTestValues(difficulty){
     };
     updateTable();
 };
+
+function clearThisShit(){
+    for(let y = 0; y < 9; y++){
+        for(let x = 0; x < 9; x++){
+            grid[y][x].value = 0;
+        }
+    }
+    updateTable();
+}
 
 function moveCursorToEnd(el) {
     if (typeof el.selectionStart == "number") {
