@@ -36,9 +36,9 @@ async function solve(grid) {
 
         for (let y = 0; y < grid.length; y++) {
             for (let x = 0; x < grid[y].length; x++) {
-                if (![undefined, 0].includes(grid[y][x].value)) { continue }
+                if (grid[y][x].value) { continue }
                 // Get Valid Numbers
-                for (let n = 1; n <= 9; n++) {
+                for (let n of grid[y][x].possibleValues) {
                     if (!(isPossibleMove(grid, y, x, n) === true)) {
                         grid[y][x].possibleValues.splice(grid[y][x].possibleValues.indexOf(n), 1)
                     }
@@ -46,7 +46,10 @@ async function solve(grid) {
                 if (grid[y][x].possibleValues.length == 1) {
                     grid[y][x].value = grid[y][x].possibleValues[0]
                 }
-                grid[y][x].possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                // Check Box for singular 
+                
+
+
             }
         }
         iteration++
