@@ -32,7 +32,7 @@ async function solve(grid) {
     let start = performance.now()
     
     while (grid.some(row => row.some(e => !e.value))) {
-        if (performance.now() - start >= 3000) { return grid }
+        if (performance.now() - start >= 100) { return grid }
 
         for (let y = 0; y < grid.length; y++) {
             for (let x = 0; x < grid[y].length; x++) {
