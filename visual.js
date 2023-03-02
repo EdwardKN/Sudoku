@@ -1,5 +1,9 @@
 var table;
 
+var gridHistory = [];
+
+var historyIndex = 0;
+
 var grid = [];
 
 function init(){
@@ -28,6 +32,9 @@ function init(){
         grid.push(tmpGrid)
         table.appendChild(tmpTr);
     }
+    if(gridHistory[historyIndex] != grid){
+        gridHistory.push(JSON.parse(JSON.stringify(grid)));
+    }
 }
 
 
@@ -55,9 +62,11 @@ function updateTable(){
             }
         };
     };
+    
 };
 
 function updateChanged(x,y){
+
     if(grid[x][y].select.value !== ""){
         if(JSON.parse(grid[x][y].select.value) < 1 || JSON.parse(grid[x][y].select.value) > 9){
             grid[x][y].select.value = "";
@@ -67,11 +76,45 @@ function updateChanged(x,y){
         grid[x][y].value = 0;
     }
     
+    if(gridHistory[historyIndex] != grid){
+        if(historyIndex < gridHistory.length-1){
+            gridHistory = gridHistory.splice(0, historyIndex+1);
+        }
+        gridHistory.push(JSON.parse(JSON.stringify(grid)));
+        historyIndex++;
+        
+    }
+    
 };
 
 let lastTemp = {x:0,y:0}
 
 init();
+
+function undo(){
+    if(historyIndex > 0){
+        historyIndex--;
+        for(let y = 0; y < 9; y++){
+            for(let x = 0; x < 9; x++){
+                grid[y][x].value = JSON.parse(JSON.stringify(gridHistory[historyIndex]))[y][x].value;
+                grid[y][x].locked = JSON.parse(JSON.stringify(gridHistory[historyIndex]))[y][x].locked;
+            }
+        }
+        updateTable();
+    }
+}
+function redo(){
+    if(historyIndex < gridHistory.length-1){
+        historyIndex++;
+        for(let y = 0; y < 9; y++){
+            for(let x = 0; x < 9; x++){
+                grid[y][x].value = JSON.parse(JSON.stringify(gridHistory[historyIndex]))[y][x].value;
+                grid[y][x].locked = JSON.parse(JSON.stringify(gridHistory[historyIndex]))[y][x].locked;
+            }
+        }
+        updateTable();
+    }
+}
 
 async function solveSolve(grid){
     grid = await solve(grid).then(e =>{
@@ -981,6 +1024,8 @@ function setTestValues(difficulty){
         };
     };
     updateTable();
+    gridHistory = []
+    gridHistory.push(JSON.parse(JSON.stringify(grid)));
 };
 
 function clearThisShit(){
@@ -991,6 +1036,10 @@ function clearThisShit(){
         }
     }
     updateTable();
+    gridHistory = []
+    
+    gridHistory.push(JSON.parse(JSON.stringify(grid)));
+
 }
 
 function moveCursorToEnd(el) {
