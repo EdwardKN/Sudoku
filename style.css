@@ -10,7 +10,7 @@ button{
     font-size: 3vw;
     margin-bottom: 1vh;
 }
-table {
+table.board {
     table-layout: fixed;
     width: 33vw;
     border-collapse: collapse;
@@ -18,7 +18,28 @@ table {
     align-items: center;
     justify-content: center;
     margin: 0 auto;
+}
 
+table.note{
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 0;
+    border-collapse: collapse;
+    text-align:center
+}
+td.note{
+    cursor:default;
+    width: 3.5vw;
+    text-align: center;
+    font-size: 0.85vw;
+    padding: 0;
+    height: 0.785vw;
+}
+table.selected{
+    background-color: lightgray;
 }
 
 tr
@@ -26,12 +47,12 @@ tr
  overflow:hidden;
 }
 
-td{
+td.board{
     border: 0.2vw solid black;
     text-align: center;
 }
 
-input{
+input, textarea{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
 
     all:unset;
@@ -41,17 +62,23 @@ input{
     font-family: inherit;
     font-size: 3vw;
     text-align: center;
-}
-input{
     -webkit-user-select: none;  
     -moz-user-select: none;    
     -ms-user-select: none;      
     user-select: none;
 }
-table tr:not(:last-child):nth-of-type(3n) td {
+
+textarea {
+    font-size: 1vw;
+    padding: 0;
+    resize: none;
+    overflow:hidden
+}
+
+table.board tr.board:not(:last-child):nth-of-type(3n) td.board {
     border-bottom: 0.4vw solid black;
 }
 
-table tr td:not(:last-child):nth-of-type(3n) {
+table.board tr.board td.board:not(:last-child):nth-of-type(3n) {
     border-right: 0.4vw solid black;
 }

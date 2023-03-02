@@ -4,18 +4,44 @@ var gridHistory = [];
 
 var historyIndex = 0;
 
+var noteMode = false;
+
 var grid = [];
+
+window.addEventListener("keypress",function(e){
+    if(e.charCode >= 49 && e.charCode <= 57){
+        for(let y = 0; y < 9; y++){
+            for(let x = 0; x < 9; x++){
+                if(grid[y][x].noteSelect === true){
+                    if(grid[y][x].possibleNotes.includes(e.key)){
+                        grid[y][x].possibleNotes.splice(grid[y][x].possibleNotes.indexOf(e.key),1)
+                        grid[y][x].noteElm.children[Math.floor((e.key-1)/3)].children[(e.key-1)%3].innerText = " "
+
+                    }else{
+                        grid[y][x].possibleNotes.push(e.key)
+                        grid[y][x].noteElm.children[Math.floor((e.key-1)/3)].children[(e.key-1)%3].innerText = e.key
+
+                    }
+                }
+            }
+        }
+    }
+})
 
 function init(){
     table = document.createElement("table");
+    table.className = "board"
 
     document.body.appendChild(table);
 
     for(let y = 0; y < 9; y++){
         let tmpTr = document.createElement("tr");
+        tmpTr.className = "board"
+
         let tmpGrid = [];
         for(let x = 0; x < 9; x++){
             let tmpTd = document.createElement("td");
+            tmpTd.className = "board"
             let tmpSelect = document.createElement("input");
             tmpSelect.type = "text";
             tmpSelect.maxLength = 1;
@@ -23,9 +49,28 @@ function init(){
             tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);")
             tmpSelect.setAttribute("oninput","updateChanged("+y+","+x+");updateTable()");
             
+            let tmpNote = document.createElement("table");
+            for(let y = 0; y < 3; y++){
+                let tmpNoteTr = document.createElement("tr");
+                for(let x = 0; x < 3; x++){
+                    let tmpNoteTd = document.createElement("td");
+                    tmpNoteTd.innerText = " "
+                    tmpNoteTd.className = "note"
+                    tmpNoteTr.appendChild(tmpNoteTd)
+                }
+                tmpNote.appendChild(tmpNoteTr)
+            }
             
-            tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[],locked:false,value:0});
+            tmpNote.setAttribute("onclick","for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note'}};grid["+y+"]["+x+"].noteSelect = true;this.className = 'selected';");
+
+            
+
+        
+            tmpNote.style.display = "none";
+            
+            tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[],locked:false,value:0,noteElm:tmpNote,noteSelect:false,possibleNotes:[]});
             tmpTd.appendChild(tmpSelect)
+            tmpTd.appendChild(tmpNote)
             tmpTr.appendChild(tmpTd);
 
         }
@@ -34,6 +79,37 @@ function init(){
     }
     if(gridHistory[historyIndex] != grid){
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
+    }
+}
+
+function changeNote(elm){
+    if(noteMode === false){
+        noteMode = true;
+        elm.innerText = "Anteckningar(På)"
+
+        for(let y = 0; y < 9; y++){
+            for(let x = 0; x < 9; x++){
+                if(grid[y][x].value === 0){
+                    grid[y][x].select.style.display = "none";
+                    grid[y][x].noteElm.style.display = "block";
+                }
+            }
+        }
+        return;
+    }else{
+        for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note'}}
+        noteMode = false;
+        elm.innerText = "Anteckningar(Av)"
+
+        for(let y = 0; y < 9; y++){
+            for(let x = 0; x < 9; x++){
+                if(grid[y][x].value === 0){
+                    grid[y][x].select.style.display = "block";
+                    grid[y][x].noteElm.style.display = "none";
+                }
+            }
+        }
+        return;
     }
 }
 
@@ -92,6 +168,9 @@ let lastTemp = {x:0,y:0}
 init();
 
 function undo(){
+    if( noteMode == true){
+        changeNote(document.getElementById("changeNote"))
+    }
     if(historyIndex > 0){
         historyIndex--;
         for(let y = 0; y < 9; y++){
@@ -104,6 +183,9 @@ function undo(){
     }
 }
 function redo(){
+    if( noteMode == true){
+        changeNote(document.getElementById("changeNote"))
+    }
     if(historyIndex < gridHistory.length-1){
         historyIndex++;
         for(let y = 0; y < 9; y++){
@@ -117,6 +199,9 @@ function redo(){
 }
 
 async function solveSolve(grid){
+    if( noteMode == true){
+        changeNote(document.getElementById("changeNote"))
+    }
     grid = await solve(grid).then(e =>{
         updateTable()
     });
@@ -1306,6 +1391,9 @@ function setTestValues(difficulty){
         ]
     ]
 
+    if( noteMode == true){
+        changeNote(document.getElementById("changeNote"))
+    }
     for(let y = 0; y < 9; y++){
         for(let x = 0; x < 9; x++){
             
@@ -1324,6 +1412,9 @@ function setTestValues(difficulty){
 };
 
 function clearThisShit(){
+    if( noteMode == true){
+        changeNote(document.getElementById("changeNote"))
+    }
     for(let y = 0; y < 9; y++){
         for(let x = 0; x < 9; x++){
             grid[y][x].value = 0;
