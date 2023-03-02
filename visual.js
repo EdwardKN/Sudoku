@@ -24,7 +24,7 @@ function init(){
             tmpSelect.setAttribute("oninput","updateChanged("+y+","+x+");updateTable()");
             
             
-            tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[1,2,3,4,5,6,7,8,9],locked:false,value:0});
+            tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[],locked:false,value:0});
             tmpTd.appendChild(tmpSelect)
             tmpTr.appendChild(tmpTd);
 
