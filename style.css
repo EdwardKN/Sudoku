@@ -1,6 +1,15 @@
 html, body {margin: 0; height: 100%; overflow: hidden}
 
+div{
+    width: 100%;
+    text-align:center
+}
 
+button{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size: 3vw;
+    margin-bottom: 1vh;
+}
 table {
     table-layout: fixed;
     width: 33vw;
@@ -23,6 +32,8 @@ td{
 }
 
 input{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+
     all:unset;
     border: 0;
     width: 90%;
