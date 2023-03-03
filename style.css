@@ -54,7 +54,7 @@ td.board{
 
 input, textarea{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
-
+    text-align: center;
     all:unset;
     border: 0;
     width: 90%;

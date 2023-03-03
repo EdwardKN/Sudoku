@@ -61,7 +61,7 @@ function init(){
                 tmpNote.appendChild(tmpNoteTr)
             }
             
-            tmpNote.setAttribute("onclick","for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note'}};grid["+y+"]["+x+"].noteSelect = true;this.className = 'selected';");
+            tmpNote.setAttribute("onclick","if(this.className === 'selected'){for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = 'white'}};return;}for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = 'white'}};grid["+y+"]["+x+"].noteSelect = true;grid["+y+"]["+x+"].td.style.backgroundColor = 'lightgray';this.className = 'selected';");
 
             
 
@@ -97,7 +97,7 @@ function changeNote(elm){
         }
         return;
     }else{
-        for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note'}}
+        for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = 'white'}}
         noteMode = false;
         elm.innerText = "Anteckningar(Av)"
 
