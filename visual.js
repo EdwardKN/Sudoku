@@ -22,28 +22,36 @@ window.addEventListener("keydown",function(e){
             }
         }
     }
+    if(e.keyCode === 16 && noteMode === false){
+        changeNote(document.getElementById("changeNote"))
+    }
 });
-
-window.addEventListener("keypress",function(e){
-
-    if(e.charCode >= 49 && e.charCode <= 57){
+window.addEventListener("keyup",function(e){
+    if(e.keyCode === 16){
+        changeNote(document.getElementById("changeNote"))
+    }
+    if(e.keyCode >= 49 && e.keyCode <= 57){
+        console.log(e.code.split("Digit")[1])
+        console.log(e)
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
                 if(grid[y][x].noteSelect === true){
-                    if(grid[y][x].possibleNotes.includes(e.key)){
-                        grid[y][x].possibleNotes.splice(grid[y][x].possibleNotes.indexOf(e.key),1)
-                        grid[y][x].noteElm.children[Math.floor((e.key-1)/3)].children[(e.key-1)%3].innerText = " "
+                    if(grid[y][x].possibleNotes.includes(e.code.split("Digit")[1])){
+                        grid[y][x].possibleNotes.splice(grid[y][x].possibleNotes.indexOf(e.code.split("Digit")[1]),1)
+                        grid[y][x].noteElm.children[Math.floor((e.code.split("Digit")[1]-1)/3)].children[(e.code.split("Digit")[1]-1)%3].innerText = " "
 
                     }else{
-                        grid[y][x].possibleNotes.push(e.key)
-                        grid[y][x].noteElm.children[Math.floor((e.key-1)/3)].children[(e.key-1)%3].innerText = e.key
+                        grid[y][x].possibleNotes.push(e.code.split("Digit")[1])
+                        grid[y][x].noteElm.children[Math.floor((e.code.split("Digit")[1]-1)/3)].children[(e.code.split("Digit")[1]-1)%3].innerText = e.code.split("Digit")[1]
 
                     }
                 }
             }
         }
     }
-})
+});
+
+
 
 function init(){
     table = document.createElement("table");
