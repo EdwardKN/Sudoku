@@ -65,7 +65,9 @@ function init(){
             tmpSelect.setAttribute("onkeypress","return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57))")
             tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);")
             tmpSelect.setAttribute("oninput","updateChanged("+y+","+x+");updateTable()");
-            
+            tmpSelect.style.background = "transparent";
+            tmpSelect.style.display = "block";
+
             let tmpNote = document.createElement("table");
             for(let y = 0; y < 3; y++){
                 let tmpNoteTr = document.createElement("tr");
@@ -77,10 +79,9 @@ function init(){
                 }
                 tmpNote.appendChild(tmpNoteTr)
             }
-            
-            tmpNote.setAttribute("onclick","if(noteMode === true){if(this.className === 'selected'){for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = 'white'}};return;}for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = 'white'}};grid["+y+"]["+x+"].noteSelect = true;grid["+y+"]["+x+"].td.style.backgroundColor = 'lightgray';this.className = 'selected';}");
+            tmpNote.className = "note"
 
-            tmpNote.style.display = "none";
+            tmpNote.setAttribute("onclick","if(noteMode === true){if(this.className === 'selected'){for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = 'white'}};return;}for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = 'white'}};grid["+y+"]["+x+"].noteSelect = true;grid["+y+"]["+x+"].td.style.backgroundColor = 'lightgray';this.className = 'selected';}");
             
             tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[],locked:false,value:0,noteElm:tmpNote,noteSelect:false,possibleNotes:[]});
             tmpTd.appendChild(tmpSelect)
@@ -104,8 +105,8 @@ function changeNote(elm){
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
                 if(grid[y][x].value === 0){
-                    grid[y][x].select.style.display = "none";
-                    grid[y][x].noteElm.style.display = "block";
+                    grid[y][x].select.style.zIndex = "0";
+                    grid[y][x].select.disabled = true;
                 }
             }
         }
@@ -118,7 +119,8 @@ function changeNote(elm){
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
                 if(grid[y][x].value === 0){
-                    grid[y][x].select.style.display = "block";
+                    grid[y][x].select.style.zIndex = "100";
+                    grid[y][x].select.disabled = false;
                 }
             }
         }
@@ -139,13 +141,10 @@ function updateTable(){
             };
             let temp = isPossibleMove(grid,x,y,grid[x][y].value);
             if(temp === true || grid[x][y].value == 0){
-                grid[x][y].select.style.backgroundColor = 'white';
                 grid[x][y].td.style.backgroundColor = 'white';
             }
             if(temp !== true && grid[x][y].value !== 0){
-                grid[x][y].select.style.backgroundColor = 'red';
                 grid[x][y].td.style.backgroundColor = 'red';
-                grid[temp.y][temp.x].select.style.backgroundColor = 'red'
                 grid[temp.y][temp.x].td.style.backgroundColor = 'red'
                 lastTemp = temp;
             }

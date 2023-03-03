@@ -81,11 +81,13 @@ table.board {
 }
 
 table.note{
+    z-index: 1;
+    position:relative;
+    margin-top: -3.66vw;
+    height: 3.66vw;
     width: 100%;
-    height: 100%;
     align-items: center;
     justify-content: center;
-    margin: 0 auto;
     padding: 0;
     border-collapse: collapse;
     text-align:center
@@ -100,6 +102,8 @@ td.note{
 }
 table.selected{
     background-color: lightgray;
+    margin-top: -3.66vw;
+    height: 3.66vw;
 }
 
 tr
@@ -112,11 +116,11 @@ td.board{
     text-align: center;
 }
 
-input, textarea{
+input{
+    position:  relative;
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
     text-align: center;
     font-weight: 700;
-
     all:unset;
     border: 0;
     width: 90%;
@@ -128,7 +132,13 @@ input, textarea{
     -moz-user-select: none;    
     -ms-user-select: none;      
     user-select: none;
+    z-index: 100;
+
 }
+.board .board input[type=text]{
+    position:relative;
+   }
+   
 
 textarea {
     font-size: 1vw;
