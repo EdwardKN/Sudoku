@@ -242,6 +242,15 @@ async function solveSolve(grid){
     if( noteMode == true){
         changeNote(document.getElementById("changeNote"))
     }
+    for(let y = 0; y < 9; y++){
+        for(let x = 0; x < 9; x++){
+            for(let x2 = 0; x2 < 3; x2++){
+                for(let y2 = 0; y2 < 3; y2++){
+                    grid[y][x].noteElm.children[x2].children[y2].innerText = " "
+                }
+            }
+        }
+    }
     grid = await solve(grid).then(e =>{
         updateTable()
     });
