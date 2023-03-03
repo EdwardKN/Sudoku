@@ -64,7 +64,7 @@ function init(){
             tmpSelect.maxLength = 1;
             tmpSelect.setAttribute("onkeypress","return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57))")
             tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);")
-            tmpSelect.setAttribute("oninput","updateChanged("+y+","+x+");updateTable()");
+            tmpSelect.setAttribute("oninput","updateChanged("+y+","+x+");updateTable();grid["+y+"]["+x+"].possibleNotes = [];            for(let y = 0; y < 3; y++){for(let x = 0; x < 3; x++){grid["+y+"]["+x+"].noteElm.children[x].children[y].innerText = ' '}}");
             tmpSelect.style.background = "transparent";
             tmpSelect.style.display = "block";
 
