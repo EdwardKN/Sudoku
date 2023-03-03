@@ -128,13 +128,17 @@ input{
     font-family: inherit;
     font-size: 3vw;
     text-align: center;
-    -webkit-user-select: none;  
-    -moz-user-select: none;    
-    -ms-user-select: none;      
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
     user-select: none;
     z-index: 100;
 
 }
+
+::selection { background: transparent;color:inherit; }
+
 .board .board input[type=text]{
     position:relative;
    }
