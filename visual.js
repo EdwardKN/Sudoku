@@ -7,8 +7,25 @@ var historyIndex = 0;
 var noteMode = false;
 
 var grid = [];
+window.addEventListener("keydown",function(e){
+    if(e.keyCode === 8){
+        for(let y = 0; y < 9; y++){
+            for(let x = 0; x < 9; x++){
+                if(grid[y][x].noteSelect === true){
+                    grid[y][x].possibleNotes = [];
+                    for(let x2 = 0; x2 < 3; x2++){
+                        for(let y2 = 0; y2 < 3; y2++){
+                            grid[y][x].noteElm.children[x2].children[y2].innerText = " "
+                        }
+                    }
+                }
+            }
+        }
+    }
+});
 
 window.addEventListener("keypress",function(e){
+
     if(e.charCode >= 49 && e.charCode <= 57){
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
@@ -61,11 +78,8 @@ function init(){
                 tmpNote.appendChild(tmpNoteTr)
             }
             
-            tmpNote.setAttribute("onclick","if(this.className === 'selected'){for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = 'white'}};return;}for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = 'white'}};grid["+y+"]["+x+"].noteSelect = true;grid["+y+"]["+x+"].td.style.backgroundColor = 'lightgray';this.className = 'selected';");
+            tmpNote.setAttribute("onclick","if(noteMode === true){if(this.className === 'selected'){for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = 'white'}};return;}for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = 'white'}};grid["+y+"]["+x+"].noteSelect = true;grid["+y+"]["+x+"].td.style.backgroundColor = 'lightgray';this.className = 'selected';}");
 
-            
-
-        
             tmpNote.style.display = "none";
             
             tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[],locked:false,value:0,noteElm:tmpNote,noteSelect:false,possibleNotes:[]});
@@ -105,7 +119,6 @@ function changeNote(elm){
             for(let x = 0; x < 9; x++){
                 if(grid[y][x].value === 0){
                     grid[y][x].select.style.display = "block";
-                    grid[y][x].noteElm.style.display = "none";
                 }
             }
         }
