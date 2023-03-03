@@ -5,16 +5,76 @@ div{
     text-align:center
 }
 
+
+
+/* CSS */
+.button-19 {
+  appearance: button;
+  background-color:gray;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-weight: 700;
+  letter-spacing: .8px;
+  line-height: 20px;
+  outline: none;
+  overflow: visible;
+  padding: 13px 16px;
+  text-align: center;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  transform: translateZ(0);
+  transition: filter .2s;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.button-19:after {
+  background-clip: padding-box;
+  background-color: gray;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  bottom: -4px;
+  content: "";
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+
+.button-19:main,
+.button-19:focus {
+  user-select: auto;
+}
+
+.button-19:hover:not(:disabled) {
+  filter: brightness(1.1);
+  -webkit-filter: brightness(1.1);
+}
+
+.button-19:disabled {
+  cursor: auto;
+}
+
 button{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
-    font-size: 3vw;
-    margin-bottom: 1vh;
-}
+    font-size: 2vw;
+    margin-bottom: 2vh;
+}   
+
 table.board {
     table-layout: fixed;
     width: 33vw;
     border-collapse: collapse;
-    border: 3px solid black;
+    border: 0.4vw solid black;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
@@ -55,6 +115,8 @@ td.board{
 input, textarea{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
     text-align: center;
+    font-weight: 700;
+
     all:unset;
     border: 0;
     width: 90%;
