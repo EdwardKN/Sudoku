@@ -42,7 +42,7 @@ window.addEventListener("keyup",function(e){
                     }else{
                         grid[y][x].possibleNotes.push(e.code.split("Digit")[1])
                         grid[y][x].noteElm.children[Math.floor((e.code.split("Digit")[1]-1)/3)].children[(e.code.split("Digit")[1]-1)%3].innerText = e.code.split("Digit")[1]
-
+                        updateChanged(x,y)
                     }
                 }
             }
@@ -195,6 +195,17 @@ function undo(){
             for(let x = 0; x < 9; x++){
                 grid[y][x].value = JSON.parse(JSON.stringify(gridHistory[historyIndex]))[y][x].value;
                 grid[y][x].locked = JSON.parse(JSON.stringify(gridHistory[historyIndex]))[y][x].locked;
+                grid[y][x].possibleNotes = JSON.parse(JSON.stringify(gridHistory[historyIndex]))[y][x].possibleNotes;
+
+                for(let x2 = 0; x2 < 3; x2++){
+                    for(let y2 = 0; y2 < 3; y2++){
+                        grid[y][x].noteElm.children[x2].children[y2].innerText = " "
+                    }
+                }
+
+                for(let i = 0; i < grid[y][x].possibleNotes.length; i++){
+                    grid[y][x].noteElm.children[Math.floor((JSON.parse(grid[y][x].possibleNotes[i])-1)/3)].children[(JSON.parse(grid[y][x].possibleNotes[i])-1)%3].innerText = grid[y][x].possibleNotes[i]
+                }
             }
         }
         updateTable();
@@ -210,6 +221,17 @@ function redo(){
             for(let x = 0; x < 9; x++){
                 grid[y][x].value = JSON.parse(JSON.stringify(gridHistory[historyIndex]))[y][x].value;
                 grid[y][x].locked = JSON.parse(JSON.stringify(gridHistory[historyIndex]))[y][x].locked;
+                grid[y][x].possibleNotes = JSON.parse(JSON.stringify(gridHistory[historyIndex]))[y][x].possibleNotes;
+            
+                for(let x2 = 0; x2 < 3; x2++){
+                    for(let y2 = 0; y2 < 3; y2++){
+                        grid[y][x].noteElm.children[x2].children[y2].innerText = " "
+                    }
+                }
+
+                for(let i = 0; i < grid[y][x].possibleNotes.length; i++){
+                    grid[y][x].noteElm.children[Math.floor((JSON.parse(grid[y][x].possibleNotes[i])-1)/3)].children[(JSON.parse(grid[y][x].possibleNotes[i])-1)%3].innerText = grid[y][x].possibleNotes[i]
+                }
             }
         }
         updateTable();
