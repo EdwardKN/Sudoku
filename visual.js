@@ -272,7 +272,7 @@ async function solveSolve(grid){
     grid = await solve3(grid).then(e =>{
         updateTable()
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
-        historyIndex++;
+        historyIndex = gridHistory.length-1
         save()
     });
 }
