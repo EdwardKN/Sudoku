@@ -224,6 +224,7 @@ function undo(){
         }
         updateTable();
     }
+    save();
 }
 function redo(){
     if( noteMode == true){
@@ -250,6 +251,7 @@ function redo(){
         }
         updateTable();
     }
+    save();
 }
 
 async function solveSolve(grid){
