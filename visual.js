@@ -260,13 +260,19 @@ async function solveSolve(grid){
         for(let x = 0; x < 9; x++){
             for(let x2 = 0; x2 < 3; x2++){
                 for(let y2 = 0; y2 < 3; y2++){
+                    grid[y][x].noteSelect = false;
+                    grid[y][x].possibleNotes = [];
                     grid[y][x].noteElm.children[x2].children[y2].innerText = " "
                 }
             }
         }
     }
+    
     grid = await solve(grid).then(e =>{
         updateTable()
+        gridHistory.push(JSON.parse(JSON.stringify(grid)));
+        historyIndex++;
+        save()
     });
 }
 
