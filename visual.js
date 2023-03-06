@@ -50,7 +50,21 @@ window.addEventListener("keyup",function(e){
     }
 });
 
+window.addEventListener("load",function(e){
+    load();
+})
 
+function save(){
+    localStorage.setItem("gridHistory", JSON.stringify(gridHistory));
+    console.log("save")
+};
+
+function load(){
+    gridHistory = JSON.parse(localStorage.getItem("gridHistory"))
+    historyIndex = gridHistory.length;
+    undo();
+    console.log("load")
+};
 
 function init(){
     table = document.createElement("table");
@@ -156,11 +170,11 @@ function updateTable(){
             }
         };
     };
+
     
 };
 
 function updateChanged(x,y){
-
     if(grid[x][y].select.value !== ""){
         if(JSON.parse(grid[x][y].select.value) < 1 || JSON.parse(grid[x][y].select.value) > 9){
             grid[x][y].select.value = "";
@@ -176,9 +190,9 @@ function updateChanged(x,y){
         }
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
         historyIndex++;
-        
+        save()
     }
-    
+
 };
 
 let lastTemp = {x:0,y:0}
@@ -1458,6 +1472,7 @@ function setTestValues(difficulty){
     updateTable();
     gridHistory = []
     gridHistory.push(JSON.parse(JSON.stringify(grid)));
+    save()
 };
 
 function clearThisShit(){
@@ -1474,7 +1489,7 @@ function clearThisShit(){
     gridHistory = []
     
     gridHistory.push(JSON.parse(JSON.stringify(grid)));
-
+    save()
 }
 
 function moveCursorToEnd(el) {
