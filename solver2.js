@@ -76,20 +76,17 @@ function anyPossibleMove(grid) {
 // grid > rows > cell > [value, possibleValues]
 async function solve2(grid) {
     let iteration = 0
-    let history = []
+    let memory = []
     let max_depth = 1
     let depth = 0
 
 
-    while (grid.some(r => r.some(e => e[1].size)) && iteration < 50) {    
+    while (grid.some(r => r.some(e => !e[0])) && iteration < 50) {    
         // Is There Any Tile With No Possible Values
-        if (history.length !== 0 && !anyPossibleMove(grid)) {
+        if (!anyPossibleMove(grid)) {
+            if (memory.length === 0) { throw new Error("Fuck You This Shit Impossible")}
             console.log("Special End")   
-            let [temp, [y, x], value] = history.pop()
-            
-            if (x === 8 && y === 8) {
-                max_depth++
-            }
+            let [temp, [y, x], value] = memory.pop()
             depth--
             grid = structuredClone(temp)
             grid[y][x][1].delete(value)
@@ -162,17 +159,9 @@ async function solve2(grid) {
         }
 
         if (isEqual2(temp, grid)) {
-            if (depth <= max_depth) {
-                
-                let [t, [y, x], val] = history.pop()
-
-
-                if (x === 0 && y === 0) {
-                    max_depth++
-                }
+            if (depth >= max_depth) {
                 depth--
-                grid = structuredClone(t)
-                grid[y][x][1].delete(val)
+                grid = structuredClone(memory[memory.length - 1][0])
                 
             } else {
                 console.log("Special")
@@ -184,7 +173,7 @@ async function solve2(grid) {
                             if (grid[y][x][1].size === n) {
                                 let value = grid[y][x][1].values().next().value
                          
-                                history.push([structuredClone(grid), [y, x], value]) // Store Old Grid
+                                memory.push([structuredClone(grid), [y, x], value]) // Store Old Grid
 
                                 grid[y][x][0] = value // Value To First Possible Value
                                 grid[y][x][1].clear()
