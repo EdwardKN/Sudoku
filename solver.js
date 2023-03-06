@@ -1,5 +1,37 @@
 // Call with: grid = solve(grid)
 
+function isSolved(grid) {
+    return grid.every(row => row.every(cell => cell.td.style.backgroundColor !== 'red' && cell.value))
+}
+
+function isEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length) { return false }
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i].length !== arr2[i].length) { return false }
+        for (let j = 0; j < arr1[i].length; j++) {
+            if (arr1[i][j].length !== arr2[i][j].length) { return false }
+            for (let e = 0; e < arr1[i][j].length; e++) {
+                if (arr1[i][j][e] !== arr2[i][j][e]) { return false }
+            }
+        }
+    }
+    return true
+}
+
+function copyProperty(arr, prop) {
+    let temp = []
+    for (let i = 0; i < arr.length; i++) {
+        temp.push([])
+        for (let j = 0; j < arr[i].length; j++) {
+            if (Array.isArray(arr[i][j][prop])) {
+                temp[i].push([])
+                for (let e of arr[i][j][prop]) { temp[i][j].push(e) }
+            } else { temp[i].push(arr[i][j][prop]) }
+        }
+    }
+    return temp
+}
+
 function isPossibleMove(grid, y, x, number) {
     let check = []
     // Vertical And Horizontal
@@ -30,15 +62,20 @@ async function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)
 function resetValues(grid) { for (let y = 0; y < grid.length; y++) { for (let x = 0; x < grid[y].length; x++) { grid[y][x].possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9] }}}
 
 async function solve(grid) {
+    if (isSolved(grid)) { return grid }
+
     resetValues(grid)
     let iteration = 0
     let start = performance.now()
     
     while (grid.some(row => row.some(e => !e.value))) {
         if (performance.now() - start >= 100) { return grid }
+        let temp = copyProperty(grid, "possibleValues")
 
         for (let y = 0; y < grid.length; y++) {
             for (let x = 0; x < grid[y].length; x++) {
+                if (isSolved(grid)) { return grid }
+
                 if (grid[y][x].locked && (y % 3 !== 0 && x && 3 !== 0)) { grid[y][x].possibleValues = []; continue }
                 // Get Valid Numbers
                 for (let n of grid[y][x].possibleValues) {
@@ -106,6 +143,30 @@ async function solve(grid) {
             }
         }
         iteration++
+        if (isEqual(temp, copyProperty(grid, "possibleValues"))) {
+            while (n < 10) {
+                let n = 2
+                for (let i = 0; i < grid.length; i++) {
+                    for (let j = 0; j < grid[i].length; j++) {
+                        if (grid[i][j].possibleValues.length === n) {
+                            for (let e = 0; e < n; e++) {
+                                let pV = copyProperty(grid, "possibleValues")
+                                let v = copyProperty(grid, "value")
+
+                                grid[i][j].value = grid[i][j].possibleValues[e]
+                                let way = solve(grid)
+                                if (isSolved(way)) { return way } else {
+                                    // Reset Values and PossibleValues
+                                    // grid to pV
+
+                                }
+                            }
+                        }
+                    }
+                }
+                n++
+            }
+        }
     }
     console.log(`It Took ${iteration} Iterations To Solve The Sudoku`)
     console.log(`It took ${performance.now() - start} milliseconds`)
