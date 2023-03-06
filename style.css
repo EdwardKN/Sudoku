@@ -1,15 +1,109 @@
 html, body {margin: 0; height: 100%; overflow: hidden}
 
+div{
+    width: 100%;
+    text-align:center
+}
 
-table {
+
+
+/* CSS */
+.button-19 {
+  appearance: button;
+  background-color:gray;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-weight: 700;
+  letter-spacing: .8px;
+  line-height: 20px;
+  outline: none;
+  overflow: visible;
+  padding: 13px 16px;
+  text-align: center;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  transform: translateZ(0);
+  transition: filter .2s;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.button-19:after {
+  background-clip: padding-box;
+  background-color: gray;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  bottom: -4px;
+  content: "";
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+
+.button-19:main,
+.button-19:focus {
+  user-select: auto;
+}
+
+.button-19:hover:not(:disabled) {
+  filter: brightness(1.1);
+  -webkit-filter: brightness(1.1);
+}
+
+.button-19:disabled {
+  cursor: auto;
+}
+
+button{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size: 2vw;
+    margin-bottom: 2vh;
+}   
+
+table.board {
     table-layout: fixed;
     width: 33vw;
     border-collapse: collapse;
-    border: 3px solid black;
+    border: 0.4vw solid black;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
+}
 
+table.note{
+    z-index: 1;
+    position:relative;
+    margin-top: -3.66vw;
+    height: 3.66vw;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-collapse: collapse;
+    text-align:center
+}
+td.note{
+    cursor:default;
+    width: 3.5vw;
+    text-align: center;
+    font-size: 0.85vw;
+    padding: 0;
+    height: 0.785vw;
+}
+table.selected{
+    background-color: lightgray;
+    margin-top: -3.66vw;
+    height: 3.66vw;
 }
 
 tr
@@ -17,12 +111,16 @@ tr
  overflow:hidden;
 }
 
-td{
+td.board{
     border: 0.2vw solid black;
     text-align: center;
 }
 
 input{
+    position:  relative;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    text-align: center;
+    font-weight: 700;
     all:unset;
     border: 0;
     width: 90%;
@@ -30,17 +128,33 @@ input{
     font-family: inherit;
     font-size: 3vw;
     text-align: center;
-}
-input{
-    -webkit-user-select: none;  
-    -moz-user-select: none;    
-    -ms-user-select: none;      
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
     user-select: none;
+    z-index: 100;
+
 }
-table tr:not(:last-child):nth-of-type(3n) td {
+
+::selection { background: transparent;color:inherit; }
+
+.board .board input[type=text]{
+    position:relative;
+   }
+   
+
+textarea {
+    font-size: 1vw;
+    padding: 0;
+    resize: none;
+    overflow:hidden
+}
+
+table.board tr.board:not(:last-child):nth-of-type(3n) td.board {
     border-bottom: 0.4vw solid black;
 }
 
-table tr td:not(:last-child):nth-of-type(3n) {
+table.board tr.board td.board:not(:last-child):nth-of-type(3n) {
     border-right: 0.4vw solid black;
 }
