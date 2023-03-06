@@ -1,14 +1,13 @@
-async function solveSolve2(grid){
+async function solve3(grid){
     resetValues(grid)
 
     let values = copyProperty(grid, "value")
     let possibleValues = copyProperty(grid, "possibleValues")
     let temp = values.map((row, y) => row.map((val, x) => [val, new Set(possibleValues[y][x])]))
-
     grid = await solve2(temp).then(e =>{
         e.forEach((row, i) => row.forEach((cell, j) => grid[i][j].value = cell[0]))
-        updateTable()
     });
+    return grid
 }
 
 function showPv(grid) {
