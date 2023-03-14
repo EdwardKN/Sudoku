@@ -1,4 +1,4 @@
-async function solve3(grid){
+async function solve(grid){
     resetValues(grid)
 
     let values = copyProperty(grid, "value")
@@ -52,14 +52,6 @@ function isPossibleMove(grid, y, x, number) {
         }
     }
     return true
-}
-
-function showPv(grid) {
-    for (let i = 0; i < 9; i++) { console.log(`Row: ${i + 1}`, grid[i].map(e => Array.from(e[1]).join(' ')))}
-}
-
-function show2(grid) {
-    for (let i = 0; i < 9; i++) { console.log(grid[i].map(e => e[0]).join(' '))}
 }
 
 function possibleMoves(grid, y, x, numbers) {
@@ -123,7 +115,6 @@ async function solve2(grid) {
         // Is There Any Tile With No Possible Values
         if (!anyPossibleMove(grid)) {
             if (memory.length === 0) { throw new Error("Fuck You This Shit Impossible")}
-            console.log("Special End")   
             let temp, value
             [temp, [prevY, prevX], value] = memory.pop()
             depth--
@@ -132,7 +123,6 @@ async function solve2(grid) {
         }
 
         let temp = structuredClone(grid)
-
 
         // Loop through array
         let y = 0
@@ -194,49 +184,6 @@ async function solve2(grid) {
                         }
                     }
                 })
-
-                // Check The Pairs
-                for (let n1 of grid[y][x][1]) {
-                    for (let n2 of grid[y][x][1]) {
-                        if (n1 === n2) { continue }
-
-                        let ah = []
-                        outer: for (let i = 0; i < 3; i++) {
-                            for (let j = 0; j < 3; j++) {
-                                let row = Math.floor(y / 3) * 3 + i
-                                let col = Math.floor(x / 3) * 3 + j
-                                let vals = []
-                                for (let val of grid[row][col][1]) { vals.push(val) }
-                                if (vals.includes(n1) || vals.includes(n2)) {
-                                    ah.push([row, col])
-                                }
-                            }
-                        }
-                        if (ah.length === 0) { throw new Error("") }
-                        if (ah.length !== 1) { continue }
-
-                    }
-                }
-
-                // Check for pairs
-                if (grid[y][x][1].size) {
-                    possiblePairs = []
-                    numbers = {}
-                    for (let n of grid[y][x][1]) { numbers[n] = [] }
-
-                    for (const [i, j] of getAll(y, x)) {
-                        for (let n of grid[y][x][1]) { numbers[n] = [] }
-
-
-                        for (let n of grid[i][j][1]) { if (numbers[n]) { numbers[n].push([i, n]) }}
-
-
-                    }
-
-                }
-                
-                
-
                 x++
             }
             y++
@@ -244,7 +191,6 @@ async function solve2(grid) {
 
 
         if (isEqual2(temp, grid)) {
-            console.log("Special")
 
             if (depth >= max_depth) {
                 depth--
@@ -277,8 +223,6 @@ async function solve2(grid) {
         }
         iteration++
     }
-    console.log(iteration)
-    showPv(grid)
     return grid
 }
 

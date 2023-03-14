@@ -251,7 +251,7 @@ async function solveSolve(grid){
             }
         }
     }
-    grid = await solve3(grid).then(e =>{
+    grid = await solve(grid).then(e =>{
         updateTable()
     });
 }
