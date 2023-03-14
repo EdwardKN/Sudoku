@@ -10,6 +10,7 @@ async function solve(grid){
     });
     return grid
 }
+
 function resetValues(grid) { for (let y = 0; y < grid.length; y++) { for (let x = 0; x < grid[y].length; x++) { grid[y][x].possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9] }}}
 
 function equalSets(set1, set2) { return set1.size === set2.size && [...set1].every((e) => set2.has(e)) }
@@ -61,13 +62,12 @@ function possibleMoves(grid, y, x, numbers) {
     return numbers
 }
 
-function isEqual2(arr1, arr2) {
+function isEqual(arr1, arr2) {
     if (arr1.length !== arr2.length) { return false }
     for (let i = 0; i < arr1.length; i++) {
         if (arr1[i].length !== arr2[i].length) { return false }
         for (let j = 0; j < arr1[i].length; j++) {
             if (arr1[i][j][0] !== arr2[i][j][0] ||
-                arr1[i][j][1].size !== arr2[i][j][1].size ||
                 !equalSets(arr1[i][j][1], arr2[i][j][1]))
                 { return false }
         }
@@ -75,7 +75,7 @@ function isEqual2(arr1, arr2) {
     return true
 }
 
-function anyPossibleMove(grid) {
+function notAnyPossibleMove(grid) {
     for (let y = 0; y < grid.length; y++) {
         for (let x = 0; x < grid[y].length; x++) {
             if (!grid[y][x][0] && !possibleMoves(grid, y, x, grid[y][x][1]).size) {
@@ -104,16 +104,14 @@ function getAll(y, x) {
 
 // grid > rows > cell > [value, possibleValues]
 async function solve2(grid) {
-    let iteration = 0
     let memory = []
     let max_depth = 1
-    let depth = 0
-    let prevX = 0
-    let prevY = 0
+    let iteration = depth = prevX = prevY = 0
 
-    while (grid.some(r => r.some(e => !e[0])) && iteration < 50) {    
+    while (grid.some(r => r.some(e => !e[0]))) {
+        console.log(max_depth, depth)
         // Is There Any Tile With No Possible Values
-        if (!anyPossibleMove(grid)) {
+        if (!notAnyPossibleMove(grid)) {
             if (memory.length === 0) { throw new Error("Fuck You This Shit Impossible")}
             let temp, value
             [temp, [prevY, prevX], value] = memory.pop()
@@ -189,8 +187,8 @@ async function solve2(grid) {
             y++
         }
 
-
-        if (isEqual2(temp, grid)) {
+        if (isEqual(temp, grid)) {
+            if (depth === 0 && prevY === 8 && prevX === 8) { max_depth++ }
 
             if (depth >= max_depth) {
                 depth--
@@ -198,9 +196,9 @@ async function solve2(grid) {
                 [temp, [prevY, prevX], _] = memory.pop()
                 grid = structuredClone(temp)
             }
-            depth++
-            n = 2
 
+            n = 2
+            
             outerloop: while(true) {
                 for (let y = 0; y < grid.length; y++) {
                     for (let x = 0; x < grid[y].length; x++) {
@@ -212,8 +210,9 @@ async function solve2(grid) {
                                 
                             grid[y][x][0] = value // Value To First Possible Value
                             grid[y][x][1].clear()
-                            temp = structuredClone(grid)
+
                             depth++
+
                             break outerloop
                         }
                     }
