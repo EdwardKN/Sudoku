@@ -30,24 +30,23 @@ function copyProperty(arr, prop) {
 }
 
 function isPossibleMove(grid, y, x, number) {
-    let check = []
+    let check = new Set()
     // Vertical And Horizontal
     for (let i = 0; i < grid.length; i++) {
-        if (i !== y) { check.push([i, x]) }
-        if (i !== x) { check.push([y, i])}
+        if (i !== y) { check.add(`${i},${x}`) }
+        if (i !== x) { check.add(`${y},${i}`) }
     }
     // 3x3 Box
     let left = 3 * Math.floor(x / 3)
     let top = 3 * Math.floor(y / 3)
     for (let i = top; i < top + 3; i++) {
         for (let j = left; j < left + 3; j++) {
-            if (grid[i][j].value != 0 && (i !== y && j !== x)) { check.push([i, j]) }
+            if (grid[i][j].value && (i !== y && j !== x)) { check.add(`${i},${j}`) }
         }
     }
-    
+
     for (let cell of check) {
-        let y2 = cell[0]
-        let x2 = cell[1]
+        let [y2, x2] = cell.split(',').map(e => parseInt(e))
         if (grid[y2][x2].value == number) {
             return {x:x2,y:y2}
         }
@@ -102,7 +101,6 @@ function getAll(y, x) {
     return Array.from(t).map(e => e.split(',').map(a => parseInt(a)))
 }
 
-// grid > rows > cell > [value, possibleValues]
 async function solve2(grid) {
     let memory = []
     let max_depth = 1
@@ -225,4 +223,3 @@ async function solve2(grid) {
 
     return grid
 }
-
