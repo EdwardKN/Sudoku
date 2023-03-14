@@ -109,7 +109,6 @@ async function solve2(grid) {
     let iteration = depth = prevX = prevY = 0
 
     while (grid.some(r => r.some(e => !e[0]))) {
-        console.log(max_depth, depth)
         // Is There Any Tile With No Possible Values
         if (!notAnyPossibleMove(grid)) {
             if (memory.length === 0) { throw new Error("Fuck You This Shit Impossible")}
@@ -222,6 +221,8 @@ async function solve2(grid) {
         }
         iteration++
     }
+    console.log(`It Took ${iteration} Iterations To Solve The Sudoku`)
+
     return grid
 }
 
