@@ -146,6 +146,7 @@ function updateTable(){
                 grid[y][x].select.value = "";
             };
             let temp = isPossibleMove(grid,x,y,grid[x][y].value);
+
             if(temp === true || grid[x][y].value == 0){
                 grid[x][y].td.style.backgroundColor = 'white';
             }

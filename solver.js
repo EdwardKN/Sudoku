@@ -1,17 +1,14 @@
 async function solve(grid){
-    resetValues(grid)
-
     let values = copyProperty(grid, "value")
-    let possibleValues = copyProperty(grid, "possibleValues")
-    let temp = values.map((row, y) => row.map((val, x) => [val, new Set(possibleValues[y][x])]))
+
+    let temp = values.map(row => row.map(val =>
+    [val, val ? new Set() : new Set([1, 2, 3, 4, 5, 6, 7, 8, 9])]))
 
     grid = await solve2(temp).then(e =>{
         e.forEach((row, i) => row.forEach((cell, j) => grid[i][j].value = cell[0]))
     });
     return grid
 }
-
-function resetValues(grid) { for (let y = 0; y < grid.length; y++) { for (let x = 0; x < grid[y].length; x++) { grid[y][x].possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9] }}}
 
 function equalSets(set1, set2) { return set1.size === set2.size && [...set1].every((e) => set2.has(e)) }
 
@@ -103,8 +100,7 @@ function getAll(y, x) {
 
 async function solve2(grid) {
     let memory = []
-    let max_depth = 1
-    let iteration = depth = prevX = prevY = 0
+    let iteration = depth = prevX = prevY = 0 // Depth For Difficulty
 
     while (grid.some(r => r.some(e => !e[0]))) {
         // Is There Any Tile With No Possible Values
@@ -170,6 +166,7 @@ async function solve2(grid) {
                                 if (!used.has(i)) { grid[y][i][1].delete(key) }
                             }
                         }
+                        // Check Vertical
                         if (positions.every(e => e[1] === positions[0][1])) { // Same X Value
                             let x = positions[0][1]
                             let used = new Set(positions.map(e => e[0])) // Get Y Values
@@ -185,18 +182,9 @@ async function solve2(grid) {
         }
 
         if (isEqual(temp, grid)) {
-            if (depth === 0 && prevY === 8 && prevX === 8) { max_depth++ }
-
-            if (depth >= max_depth) {
-                depth--
-                let temp, _
-                [temp, [prevY, prevX], _] = memory.pop()
-                grid = structuredClone(temp)
-            }
-
             n = 2
             
-            outerloop: while(true) {
+            outerloop: while(n <= 9) {
                 for (let y = 0; y < grid.length; y++) {
                     for (let x = 0; x < grid[y].length; x++) {
                         if (y < prevY || (y === prevY && x <= prevX)) { continue }
@@ -220,6 +208,6 @@ async function solve2(grid) {
         iteration++
     }
     console.log(`It Took ${iteration} Iterations To Solve The Sudoku`)
-
+    console.log(`It Recuired A Depth Of ${depth} To Solve The Sudoku`)
     return grid
 }
