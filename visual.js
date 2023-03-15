@@ -288,13 +288,18 @@ function changeNote(elm){
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
                 if(grid[y][x].noteSelect === true){
-                    grid[y][x].select.style.zIndex = "100";
-                    grid[y][x].select.disabled = false;
+
                     selectedInput = {x:x,y:y}
-                    if(grid[y][x].select.locked !== true){
+                    if(grid[y][x].locked !== true && grid[y][x].select.disabled == false){
                         grid[y][x].select.focus();
-                    }else{
                     }
+                    if(grid[y][x].locked == true){
+                        grid[y][x].select.disabled = true;
+                    }else{
+                        grid[y][x].select.disabled = false;
+                    }
+                    grid[y][x].select.style.zIndex = "100";
+                    
                 }
             }
         }
@@ -312,7 +317,11 @@ function changeNote(elm){
                 }
                 if(grid[y][x].value === 0){
                     grid[y][x].select.style.zIndex = "100";
-                    grid[y][x].select.disabled = false;
+                    if(grid[y][x].locked !== true){
+                        grid[y][x].select.disabled = false;
+                    }else{
+                        grid[y][x].select.disabled = true;
+                    }
                 }
             }
         }
