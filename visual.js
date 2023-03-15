@@ -73,12 +73,7 @@ window.addEventListener("keyup",function(e){
                 }
             }
         }else{
-            if(selectedInput.x < 8){
-                grid[selectedInput.y][selectedInput.x+1].select.focus();
-                selectedInput.x++;
-                let length = grid[selectedInput.y][selectedInput.x].select.value.length;
-                grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
-            }
+            piltangentGrej(selectedInput.x,selectedInput.y,1,0)
         }
     }
     if(e.keyCode === 37){
@@ -92,12 +87,7 @@ window.addEventListener("keyup",function(e){
                 }
             }
         }else{
-            if(selectedInput.x > 0){
-                grid[selectedInput.y][selectedInput.x-1].select.focus();
-                selectedInput.x--;
-                let length = grid[selectedInput.y][selectedInput.x].select.value.length;
-                grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
-            }
+        piltangentGrej(selectedInput.x,selectedInput.y,-1,0)
         }
     }
     if(e.keyCode === 38){
@@ -111,12 +101,8 @@ window.addEventListener("keyup",function(e){
                 }
             }
         }else{
-            if(selectedInput.y > 0){
-                grid[selectedInput.y-1][selectedInput.x].select.focus();
-                selectedInput.y--;
-                let length = grid[selectedInput.y][selectedInput.x].select.value.length;
-                grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
-            }
+            piltangentGrej(selectedInput.x,selectedInput.y,0,-1)
+
         }
     }
     if(e.keyCode === 40){
@@ -130,15 +116,29 @@ window.addEventListener("keyup",function(e){
                 }
             }
         }else{
-            if(selectedInput.y < 8){
-                grid[selectedInput.y+1][selectedInput.x].select.focus();
-                selectedInput.y++;
-                let length = grid[selectedInput.y][selectedInput.x].select.value.length;
-                grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
-            }
+            piltangentGrej(selectedInput.x,selectedInput.y,0,1)
+
         }
     }
 });
+
+function piltangentGrej(x,y,changeX,changeY){
+    console.log(x,y,changeX,changeY)
+
+    if(x+ changeX < 9 && x + changeX > -1 && y+ changeY < 9 && y + changeY > -1 ){
+        selectedInput = {x:x+changeX,y:y+changeY};
+        if((grid[selectedInput.y][selectedInput.x].locked)){
+            document.activeElement.blur()
+            grid[selectedInput.y][selectedInput.x].td.style.backgroundColor = 'lightgray';
+            grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = 'white';
+        }else{
+            grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = 'white';
+            grid[selectedInput.y][selectedInput.x].select.focus();
+            let length = grid[selectedInput.y][selectedInput.x].select.value.length;
+            grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
+        }
+    }
+}
 function noteBytGrejPil(x,y,changeX,changeY){
     if(x+ changeX < 9 && x + changeX > -1 && y+ changeY < 9 && y + changeY > -1 ){
         if(grid[y][x].noteSelect === true){
@@ -244,7 +244,7 @@ function changeNote(elm){
                         grid[y][x].noteSelect = true;
                         noteBytGrejPil(x,y,0,0)
                     }
-                    grid[y][x].select.style.zIndex = "0";
+                    grid[y][x].select.style.zIndex = "0";   
                     grid[y][x].select.disabled = true;
                 }
             }
