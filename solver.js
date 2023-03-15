@@ -1,67 +1,80 @@
-async function solve3(grid){
+async function solve(grid){
     resetValues(grid)
 
     let values = copyProperty(grid, "value")
     let possibleValues = copyProperty(grid, "possibleValues")
     let temp = values.map((row, y) => row.map((val, x) => [val, new Set(possibleValues[y][x])]))
+
     grid = await solve2(temp).then(e =>{
         e.forEach((row, i) => row.forEach((cell, j) => grid[i][j].value = cell[0]))
     });
     return grid
 }
 
-function showPv(grid) {
-    for (let i = 0; i < 9; i++) { console.log(`Row: ${i + 1}`, grid[i].map(e => Array.from(e[1]).join(' ')))}
+function resetValues(grid) { for (let y = 0; y < grid.length; y++) { for (let x = 0; x < grid[y].length; x++) { grid[y][x].possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9] }}}
+
+function equalSets(set1, set2) { return set1.size === set2.size && [...set1].every((e) => set2.has(e)) }
+
+function copyProperty(arr, prop) {
+    let temp = []
+    for (let i = 0; i < arr.length; i++) {
+        temp.push([])
+        for (let j = 0; j < arr[i].length; j++) {
+            if (Array.isArray(arr[i][j][prop])) {
+                temp[i].push([])
+                for (let e of arr[i][j][prop]) { temp[i][j].push(e) }
+            } else { temp[i].push(arr[i][j][prop]) }
+        }
+    }
+    return temp
 }
 
-function show2(grid) {
-    for (let i = 0; i < 9; i++) { console.log(grid[i].map(e => e[0]).join(' '))}
+function isPossibleMove(grid, y, x, number) {
+    let check = new Set()
+    // Vertical And Horizontal
+    for (let i = 0; i < grid.length; i++) {
+        if (i !== y) { check.add(`${i},${x}`) }
+        if (i !== x) { check.add(`${y},${i}`) }
+    }
+    // 3x3 Box
+    let left = 3 * Math.floor(x / 3)
+    let top = 3 * Math.floor(y / 3)
+    for (let i = top; i < top + 3; i++) {
+        for (let j = left; j < left + 3; j++) {
+            if (grid[i][j].value && (i !== y && j !== x)) { check.add(`${i},${j}`) }
+        }
+    }
+
+    for (let cell of check) {
+        let [y2, x2] = cell.split(',').map(e => parseInt(e))
+        if (grid[y2][x2].value == number) {
+            return {x:x2,y:y2}
+        }
+    }
+    return true
 }
 
 function possibleMoves(grid, y, x, numbers) {
-    // Get all squares
-    let visited = new Set()
-    for (let i = 0; i < 9; i++) {
-        if (!visited.has(`${i},${x}`)) {
-            visited.add(`${i},${x}`)
-        }
-        if (!visited.has(`${y},${i}`)) {
-            visited.add(`${y},${i}`)
-        }
-    }
-    let top = Math.floor(y / 3) * 3
-    let left = Math.floor(x / 3) * 3
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-            if (!visited.has(`${top + i},${left + j}`)) {
-                visited.add(`${top + i},${left + j}`)
-            }
-        }
-    }
-    for (let coords of visited) {
-        coords = coords.split(',')
-        let y = coords[0]
-        let x = coords[1]
-        numbers.delete(grid[y][x][0])
+    for (const [y2, x2] of getAll(y, x)) {
+        numbers.delete(grid[y2][x2][0])
     }
     return numbers
 }
 
-function isEqual2(arr1, arr2) {
+function isEqual(arr1, arr2) {
     if (arr1.length !== arr2.length) { return false }
     for (let i = 0; i < arr1.length; i++) {
         if (arr1[i].length !== arr2[i].length) { return false }
         for (let j = 0; j < arr1[i].length; j++) {
             if (arr1[i][j][0] !== arr2[i][j][0] ||
-                arr1[i][j][1].size !== arr2[i][j][1].size ||
-                ![...arr1[i][j][1]].every((x) => arr2[i][j][1].has(x)))
+                !equalSets(arr1[i][j][1], arr2[i][j][1]))
                 { return false }
         }
     }
     return true
 }
 
-function anyPossibleMove(grid) {
+function notAnyPossibleMove(grid) {
     for (let y = 0; y < grid.length; y++) {
         for (let x = 0; x < grid[y].length; x++) {
             if (!grid[y][x][0] && !possibleMoves(grid, y, x, grid[y][x][1]).size) {
@@ -72,27 +85,39 @@ function anyPossibleMove(grid) {
     return true
 }
 
-// grid > rows > cell > [value, possibleValues]
+function getAll(y, x) {
+    let t = new Set()
+    for (let i = 0; i < 9; i++) { 
+        if (i !== y) { t.add(`${i},${x}`) }
+        if (i !== x) { t.add(`${y},${i}`)}
+    }
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            let row = Math.floor(y / 3) * 3 + i
+            let col = Math.floor(x / 3) * 3 + j
+            if (!(row === y && col === x)) { t.add(`${row},${col}`) }
+        }
+    }
+    return Array.from(t).map(e => e.split(',').map(a => parseInt(a)))
+}
+
 async function solve2(grid) {
-    let iteration = 0
     let memory = []
     let max_depth = 1
-    let depth = 0
+    let iteration = depth = prevX = prevY = 0
 
-
-    while (grid.some(r => r.some(e => !e[0])) && iteration < 50) {    
+    while (grid.some(r => r.some(e => !e[0]))) {
         // Is There Any Tile With No Possible Values
-        if (!anyPossibleMove(grid)) {
+        if (!notAnyPossibleMove(grid)) {
             if (memory.length === 0) { throw new Error("Fuck You This Shit Impossible")}
-            console.log("Special End")   
-            let [temp, [y, x], value] = memory.pop()
+            let temp, value
+            [temp, [prevY, prevX], value] = memory.pop()
             depth--
             grid = structuredClone(temp)
-            grid[y][x][1].delete(value)
+            grid[prevY][prevX][1].delete(value)
         }
 
         let temp = structuredClone(grid)
-
 
         // Loop through array
         let y = 0
@@ -106,11 +131,13 @@ async function solve2(grid) {
                 // Find Possible Moves
                 grid[y][x][1] = possibleMoves(grid, y, x, grid[y][x][1])
 
+                // Lonely
                 if (grid[y][x][1].size === 1) {
                     grid[y][x][0] = grid[y][x][1].values().next().value
                     grid[y][x][1].delete(grid[y][x][0])
                 }
 
+                // Box
                 let posUsed = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: []}
                 for (let i = 0; i < 3; i++) {
                     for (let j = 0; j < 3; j++) {
@@ -125,8 +152,8 @@ async function solve2(grid) {
                 }
 
                 Object.keys(posUsed).forEach(key => {
-                    let positions = posUsed[key]
                     key = parseInt(key)
+                    let positions = posUsed[key]
 
                     if (positions.length === 0) { return }
                     if (positions.length === 1) {
@@ -157,82 +184,42 @@ async function solve2(grid) {
             y++
         }
 
-        if (isEqual2(temp, grid)) {
+        if (isEqual(temp, grid)) {
+            if (depth === 0 && prevY === 8 && prevX === 8) { max_depth++ }
+
             if (depth >= max_depth) {
                 depth--
-                grid = structuredClone(memory[memory.length - 1][0])
-                
-            } else {
-                console.log("Special")
-                depth++
-                n = 2
-                outerloop: while(true) {
-                    for (let y = 0; y < grid.length; y++) {
-                        for (let x = 0; x < grid[y].length; x++) {
-                            if (grid[y][x][1].size === n) {
-                                let value = grid[y][x][1].values().next().value
-                         
-                                memory.push([structuredClone(grid), [y, x], value]) // Store Old Grid
+                let temp, _
+                [temp, [prevY, prevX], _] = memory.pop()
+                grid = structuredClone(temp)
+            }
 
-                                grid[y][x][0] = value // Value To First Possible Value
-                                grid[y][x][1].clear()
+            n = 2
+            
+            outerloop: while(true) {
+                for (let y = 0; y < grid.length; y++) {
+                    for (let x = 0; x < grid[y].length; x++) {
+                        if (y < prevY || (y === prevY && x <= prevX)) { continue }
+                        if (grid[y][x][1].size === n) {
+                            let value = grid[y][x][1].values().next().value
+                     
+                            memory.push([structuredClone(grid), [y, x], value]) // Store Old Grid
+                                
+                            grid[y][x][0] = value // Value To First Possible Value
+                            grid[y][x][1].clear()
 
-                                temp = structuredClone(grid)
+                            depth++
 
-                                depth++
-                                break outerloop
-                            }
+                            break outerloop
                         }
                     }
-                    n++
                 }
+                n++
             }
         }
-
         iteration++
     }
-    console.log(iteration)
-    showPv(grid)
+    console.log(`It Took ${iteration} Iterations To Solve The Sudoku`)
+
     return grid
-}
-function isPossibleMove(grid, y, x, number) {
-    let check = []
-    // Vertical And Horizontal
-    for (let i = 0; i < grid.length; i++) {
-        if (i !== y) { check.push([i, x]) }
-        if (i !== x) { check.push([y, i])}
-    }
-    // 3x3 Box
-    let left = 3 * Math.floor(x / 3)
-    let top = 3 * Math.floor(y / 3)
-    for (let i = top; i < top + 3; i++) {
-        for (let j = left; j < left + 3; j++) {
-            if (grid[i][j].value != 0 && (i !== y && j !== x)) { check.push([i, j]) }
-        }
-    }
-    
-    for (let cell of check) {
-        let y2 = cell[0]
-        let x2 = cell[1]
-        if (grid[y2][x2].value == number) {
-            return {x:x2,y:y2}
-        }
-    }
-    return true
-}
-function resetValues(grid) { for (let y = 0; y < grid.length; y++) { for (let x = 0; x < grid[y].length; x++) { grid[y][x].possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9] }}}
-
-
-function copyProperty(arr, prop) {
-    let temp = []
-    for (let i = 0; i < arr.length; i++) {
-        temp.push([])
-        for (let j = 0; j < arr[i].length; j++) {
-            if (Array.isArray(arr[i][j][prop])) {
-                temp[i].push([])
-                for (let e of arr[i][j][prop]) { temp[i][j].push(e) }
-            } else { temp[i].push(arr[i][j][prop]) }
-        }
-    }
-    return temp
 }
