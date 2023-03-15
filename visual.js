@@ -19,6 +19,7 @@ readTextFile("testpussel.json", function(text){
 
 var grid = [];
 window.addEventListener("keydown",function(e){
+    console.log(e.keyCode)
     if(e.keyCode === 8){
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
@@ -46,52 +47,123 @@ window.addEventListener("keyup",function(e){
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
                 if(grid[y][x].noteSelect === true){
-                    if(grid[y][x].possibleNotes.includes(e.code.split("Digit")[1])){
-                        grid[y][x].possibleNotes.splice(grid[y][x].possibleNotes.indexOf(e.code.split("Digit")[1]),1)
-                        grid[y][x].noteElm.children[Math.floor((e.code.split("Digit")[1]-1)/3)].children[(e.code.split("Digit")[1]-1)%3].innerText = " "
+                    if(grid[y][x].select.value === ""){
+                        if(grid[y][x].possibleNotes.includes(e.code.split("Digit")[1])){
+                            grid[y][x].possibleNotes.splice(grid[y][x].possibleNotes.indexOf(e.code.split("Digit")[1]),1)
+                            grid[y][x].noteElm.children[Math.floor((e.code.split("Digit")[1]-1)/3)].children[(e.code.split("Digit")[1]-1)%3].innerText = " "
 
-                    }else{
-                        grid[y][x].possibleNotes.push(e.code.split("Digit")[1])
-                        grid[y][x].noteElm.children[Math.floor((e.code.split("Digit")[1]-1)/3)].children[(e.code.split("Digit")[1]-1)%3].innerText = e.code.split("Digit")[1]
-                        updateChanged(x,y)
+                        }else{
+                            grid[y][x].possibleNotes.push(e.code.split("Digit")[1])
+                            grid[y][x].noteElm.children[Math.floor((e.code.split("Digit")[1]-1)/3)].children[(e.code.split("Digit")[1]-1)%3].innerText = e.code.split("Digit")[1]
+                            updateChanged(x,y)
+                        }
                     }
                 }
             }
         }
     }
     if(e.keyCode === 39){
-        if(selectedInput.x < 8){
-            grid[selectedInput.y][selectedInput.x+1].select.focus();
-            selectedInput.x++;
-            let length = grid[selectedInput.y][selectedInput.x].select.value.length;
-            grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
+        if(noteMode === true){
+            for(let y = 0; y < 9; y++){
+                for(let x = 0; x < 9; x++){
+                    if(grid[y][x].noteSelect === true){
+                        noteBytGrejPil(x,y,1,0)
+                        return;
+                    }           
+                }
+            }
+        }else{
+            if(selectedInput.x < 8){
+                grid[selectedInput.y][selectedInput.x+1].select.focus();
+                selectedInput.x++;
+                let length = grid[selectedInput.y][selectedInput.x].select.value.length;
+                grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
+            }
         }
     }
     if(e.keyCode === 37){
-        if(selectedInput.x > 0){
-            grid[selectedInput.y][selectedInput.x-1].select.focus();
-            selectedInput.x--;
-            let length = grid[selectedInput.y][selectedInput.x].select.value.length;
-            grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
+        if(noteMode === true){
+            for(let y = 0; y < 9; y++){
+                for(let x = 0; x < 9; x++){
+                    if(grid[y][x].noteSelect === true){
+                        noteBytGrejPil(x,y,-1,0)
+                        return;
+                    }
+                }
+            }
+        }else{
+            if(selectedInput.x > 0){
+                grid[selectedInput.y][selectedInput.x-1].select.focus();
+                selectedInput.x--;
+                let length = grid[selectedInput.y][selectedInput.x].select.value.length;
+                grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
+            }
         }
     }
     if(e.keyCode === 38){
-        if(selectedInput.y > 0){
-            grid[selectedInput.y-1][selectedInput.x].select.focus();
-            selectedInput.y--;
-            let length = grid[selectedInput.y][selectedInput.x].select.value.length;
-            grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
+        if(noteMode === true){
+            for(let y = 0; y < 9; y++){
+                for(let x = 0; x < 9; x++){
+                    if(grid[y][x].noteSelect === true){
+                        noteBytGrejPil(x,y,0,-1)
+                        return;
+                    }
+                }
+            }
+        }else{
+            if(selectedInput.y > 0){
+                grid[selectedInput.y-1][selectedInput.x].select.focus();
+                selectedInput.y--;
+                let length = grid[selectedInput.y][selectedInput.x].select.value.length;
+                grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
+            }
         }
     }
     if(e.keyCode === 40){
-        if(selectedInput.y < 8){
-            grid[selectedInput.y+1][selectedInput.x].select.focus();
-            selectedInput.y++;
-            let length = grid[selectedInput.y][selectedInput.x].select.value.length;
-            grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
+        if(noteMode === true){
+            for(let y = 0; y < 9; y++){
+                for(let x = 0; x < 9; x++){
+                    if(grid[y][x].noteSelect === true){
+                        noteBytGrejPil(x,y,0,1)
+                        return;
+                    }
+                }
+            }
+        }else{
+            if(selectedInput.y < 8){
+                grid[selectedInput.y+1][selectedInput.x].select.focus();
+                selectedInput.y++;
+                let length = grid[selectedInput.y][selectedInput.x].select.value.length;
+                grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
+            }
         }
     }
 });
+function noteBytGrejPil(x,y,changeX,changeY){
+    if(x+ changeX < 9 && x + changeX > -1 && y+ changeY < 9 && y + changeY > -1 ){
+        if(grid[y][x].noteSelect === true){
+            grid[y][x].noteSelect = false;
+                if(grid[y][x+changeX].noteSelect.className === 'selected'){
+                    for(let y2 = 0; y2 < 9; y2++){
+                        for(let x2 = 0; x2 < 9; x2++){
+                            grid[y2][x2].noteSelect = false;
+                            grid[y2][x2].noteElm.className = 'note';
+                            grid[y2][x2].td.style.backgroundColor = 'white'
+                        }
+                        };
+                    }for(let y2 = 0; y2 < 9; y2++){
+                        for(let x2 = 0; x2 < 9; x2++){
+                            grid[y2][x2].noteSelect = false;
+                            grid[y2][x2].noteElm.className = 'note';
+                            grid[y2][x2].td.style.backgroundColor = 'white'}};
+                            grid[y+changeY][x+changeX].noteSelect = true;
+                            grid[y+changeY][x+changeX].td.style.backgroundColor = 'lightgray';
+                            grid[y+changeY][x+changeX].noteSelect.className = 'selected';
+                        
+            grid[y+changeY][x+changeX].noteSelect = true
+        }
+    }
+}
 
 window.addEventListener("load",function(e){
     load();
@@ -168,6 +240,10 @@ function changeNote(elm){
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
                 if(grid[y][x].value === 0){
+                    if(grid[y][x].select === document.activeElement){
+                        grid[y][x].noteSelect = true;
+                        noteBytGrejPil(x,y,0,0)
+                    }
                     grid[y][x].select.style.zIndex = "0";
                     grid[y][x].select.disabled = true;
                 }
@@ -175,6 +251,15 @@ function changeNote(elm){
         }
         return;
     }else{
+        for(let y = 0; y < 9; y++){
+            for(let x = 0; x < 9; x++){
+                if(grid[y][x].noteSelect === true){
+                    grid[y][x].select.style.zIndex = "100";
+                    grid[y][x].select.disabled = false;
+                    grid[y][x].select.focus();
+                }
+            }
+        }
         for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = 'white'}}
         noteMode = false;
         elm.innerText = "Anteckningar(Av)"
