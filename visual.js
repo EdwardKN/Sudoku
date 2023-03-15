@@ -8,6 +8,11 @@ var noteMode = false;
 
 var grids;
 
+var selectedInput = {
+    x:undefined,
+    y:undefined
+}
+
 readTextFile("testpussel.json", function(text){
     grids = JSON.parse(text);
 });
@@ -54,6 +59,38 @@ window.addEventListener("keyup",function(e){
             }
         }
     }
+    if(e.keyCode === 39){
+        if(selectedInput.x < 8){
+            grid[selectedInput.y][selectedInput.x+1].select.focus();
+            selectedInput.x++;
+            let length = grid[selectedInput.y][selectedInput.x].select.value.length;
+            grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
+        }
+    }
+    if(e.keyCode === 37){
+        if(selectedInput.x > 0){
+            grid[selectedInput.y][selectedInput.x-1].select.focus();
+            selectedInput.x--;
+            let length = grid[selectedInput.y][selectedInput.x].select.value.length;
+            grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
+        }
+    }
+    if(e.keyCode === 38){
+        if(selectedInput.y > 0){
+            grid[selectedInput.y-1][selectedInput.x].select.focus();
+            selectedInput.y--;
+            let length = grid[selectedInput.y][selectedInput.x].select.value.length;
+            grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
+        }
+    }
+    if(e.keyCode === 40){
+        if(selectedInput.y < 8){
+            grid[selectedInput.y+1][selectedInput.x].select.focus();
+            selectedInput.y++;
+            let length = grid[selectedInput.y][selectedInput.x].select.value.length;
+            grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
+        }
+    }
 });
 
 window.addEventListener("load",function(e){
@@ -89,7 +126,7 @@ function init(){
             let tmpSelect = document.createElement("input");
             tmpSelect.type = "text";
             tmpSelect.setAttribute("onkeypress","return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57))")
-            tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);")
+            tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);selectedInput = {x:"+x+",y:"+y+"}")
             tmpSelect.setAttribute("oninput","if(this.value.length > 1){this.value = this.value.split('')[this.value.split('').length-1]};grid["+y+"]["+x+"].possibleNotes = [];for(let y = 0; y < 3; y++){for(let x = 0; x < 3; x++){grid["+y+"]["+x+"].noteElm.children[x].children[y].innerText = ' '}};updateChanged("+y+","+x+");updateTable();");
             tmpSelect.style.background = "transparent";
             tmpSelect.style.display = "block";
