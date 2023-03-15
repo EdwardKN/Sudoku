@@ -26,7 +26,6 @@ readTextFile("testpussel.json", function(text){
 
 var grid = [];
 window.addEventListener("keydown",function(e){
-    console.log(e.keyCode)
     if(e.keyCode === 8){
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
@@ -197,14 +196,12 @@ window.addEventListener("load",function(e){
 
 function save(){
     localStorage.setItem("gridHistory", JSON.stringify(gridHistory));
-    console.log("save")
 };
 
 function load(){
     gridHistory = JSON.parse(localStorage.getItem("gridHistory"))
     historyIndex = gridHistory.length;
     undo();
-    console.log("load")
 };
 
 function init(){
