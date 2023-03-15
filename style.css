@@ -71,6 +71,8 @@ button{
 }   
 
 table.board {
+    cursor:text;
+
     table-layout: fixed;
     width: 33vw;
     border-collapse: collapse;
@@ -93,7 +95,7 @@ table.note{
     text-align:center
 }
 td.note{
-    cursor:default;
+    cursor:text;
     width: 3.5vw;
     text-align: center;
     font-size: 0.85vw;
@@ -101,6 +103,7 @@ td.note{
     height: 0.785vw;
 }
 table.selected{
+    cursor:text;
     background-color: lightgray;
     margin-top: -3.66vw;
     height: 3.66vw;
