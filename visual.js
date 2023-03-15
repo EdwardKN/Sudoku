@@ -123,7 +123,6 @@ window.addEventListener("keyup",function(e){
 });
 
 function piltangentGrej(x,y,changeX,changeY){
-    console.log(x,y,changeX,changeY)
 
     if(x+ changeX < 9 && x + changeX > -1 && y+ changeY < 9 && y + changeY > -1 ){
         selectedInput = {x:x+changeX,y:y+changeY};
@@ -256,16 +255,22 @@ function changeNote(elm){
                 if(grid[y][x].noteSelect === true){
                     grid[y][x].select.style.zIndex = "100";
                     grid[y][x].select.disabled = false;
-                    grid[y][x].select.focus();
+                    if(grid[y][x].select.locked === false){
+                        grid[y][x].select.focus();
+                    }else{
+                        selectedInput = {x:x,y:y}
+                    }
                 }
             }
         }
         for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = 'white'}}
         noteMode = false;
         elm.innerText = "Anteckningar(Av)"
+        grid[selectedInput.y][selectedInput.x].td.style.backgroundColor = 'lightgray';
 
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
+                grid[y][x].td.style.backgroundColor = 'white';
                 if(grid[y][x].value === 0){
                     grid[y][x].select.style.zIndex = "100";
                     grid[y][x].select.disabled = false;
