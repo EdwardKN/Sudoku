@@ -134,11 +134,19 @@ function piltangentGrej(x,y,changeX,changeY){
         selectedInput = {x:x+changeX,y:y+changeY};
         if((grid[selectedInput.y][selectedInput.x].locked)){
             document.activeElement.blur()
-            grid[selectedInput.y][selectedInput.x].td.style.backgroundColor = colors.marked;
+            if(grid[selectedInput.y][selectedInput.x].td.style.backgroundColor !== colors.notCorrect){
+                grid[selectedInput.y][selectedInput.x].td.style.backgroundColor = colors.marked;
+            }else{
+                grid[selectedInput.y][selectedInput.x].td.style.backgroundColor = colors.notCorrectMarked;
+            }
+            
             if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor !== colors.notCorrect){
                 grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.background;
             }
         }else{
+            if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor === colors.notCorrectMarked){
+                grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.notCorrect
+            }
             if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor !== colors.notCorrect){
                 grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.background;
             }
