@@ -140,6 +140,9 @@ function piltangentGrej(x,y,changeX,changeY){
                 grid[selectedInput.y][selectedInput.x].td.style.backgroundColor = colors.notCorrectMarked;
             }
             
+            if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor === colors.notCorrectMarked){
+                grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.notCorrect
+            }
             if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor !== colors.notCorrect){
                 grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.background;
             }
