@@ -276,11 +276,13 @@ async function solveSolve(grid){
             }
         }
     }
+    let s = performance.now()
     grid = await solve(grid).then(e =>{
         updateTable()
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
         historyIndex = gridHistory.length-1
         save()
+        console.log(`It Took ${performance.now() - s} Milliseconds To Solve The Sudoku`)
     });
 }
 
