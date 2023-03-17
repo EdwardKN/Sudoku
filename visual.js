@@ -563,6 +563,12 @@ function clearThisShit(){
         for(let x = 0; x < 9; x++){
             grid[y][x].value = 0;
             grid[y][x].locked = false;
+            grid[y][x].possibleNotes = [];
+            for(let x2 = 0; x2 < 3; x2++){
+                for(let y2 = 0; y2 < 3; y2++){
+                    grid[y][x].noteElm.children[x2].children[y2].innerText = " "
+                }
+            }
         }
     }
     updateTable();
