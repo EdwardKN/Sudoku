@@ -2,86 +2,39 @@ html, body {margin: 0; height: 100%; overflow: hidden}
 
 
 
-
-/* CSS */
-.button-19 {
-width: 100%;
-  appearance: button;
-  background-color:gray;
-  border: solid transparent;
-  border-width: 0 0 4px;
-  box-sizing: border-box;
-  color: #FFFFFF;
-  cursor: pointer;
-  display: inline-block;
-  font-weight: 700;
-  letter-spacing: .8px;
-  line-height: 20px;
-  outline: none;
-  overflow: visible;
-  padding: 1.5vw 16px;
-  text-align: center;
-  text-transform: uppercase;
-  touch-action: manipulation;
-  transform: translateZ(0);
-  transition: filter .2s;
-  user-select: none;
-  -webkit-user-select: none;
-  vertical-align: middle;
-  white-space: nowrap;
-}
-
-.button-19:after {
-  background-clip: padding-box;
-  background-color: gray;
-  border: solid transparent;
-  border-radius: 16px;
-  border-width: 0 0 4px;
-  bottom: -4px;
-  content: "";
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: -1;
-}
-
-.button-19:main,
-.button-19:focus {
-  user-select: auto;
-}
-
-.button-19:hover:not(:disabled) {
-  filter: brightness(1.1);
-  -webkit-filter: brightness(1.1);
-}
-
-.button-19:disabled {
-  cursor: auto;
-}
-
 button{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
-    font-size: 1vw;
+    font-size: 4vh;
+    width: 100%;
+    height: 100%;
+    border: 0px solid black;
+    padding: 0;
+    position:static;
+    align-items:center;
+    display: block;
+    box-sizing: border-box
 }   
 
 table.board {
+    left: calc((100vw - calc(100vh + 100vh/9*3)) / 2);
     cursor:text;
-
     table-layout: fixed;
-    width: 54vw;
+    width: calc(100vh + 100vh/9*3);
     border-collapse: collapse;
-    border: 0.4vw solid black;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
+    border: 1vh solid black;
+    position:relative;
+}
+
+button:hover{
+    background-color: lightgray;
+    cursor: pointer;
 }
 
 table.note{
     z-index: 1;
     position:relative;
-    margin-top: -6vw;
-    height: 6vw;
+    margin-top: -6vh;
+    height: 6vh;
     width: 100%;
     align-items: center;
     justify-content: center;
@@ -91,17 +44,16 @@ table.note{
 }
 td.note{
     cursor:text;
-    width: 3.5vw;
+    width: 3.5vh;
     text-align: center;
-    font-size: 0.85vw;
+    font-size: 0.85vh;
     padding: 0;
-    height: 0.785vw;
+    height: 0.785vh;
 }
 table.selected{
     cursor:text;
     background-color: lightgray;
-    margin-top: -3.66vw;
-    height: 3.66vw;
+    height: 3.66vh;
 }
 
 tr
@@ -110,8 +62,15 @@ tr
 }
 
 td.board{
-    border: 0.2vw solid black;
+    border: 0.5vh solid black;
     text-align: center;
+
+}
+td{
+    height: calc(calc(100vh/9) - calc(100vh/135));
+    display:table-cell;
+    column-fill:auto;
+    padding: 0 ;
 }
 
 input{
@@ -121,10 +80,10 @@ input{
     font-weight: 700;
     all:unset;
     border: 0;
-    width: 90%;
-    height: 90%;
+    width: 95%;
+    height: 100%;
     font-family: inherit;
-    font-size: 4vw;
+    font-size: 8vh;
     text-align: center;
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
@@ -132,8 +91,11 @@ input{
     -ms-user-select: none;
     user-select: none;
     z-index: 100;
+    text-align: center;
+    
 
 }
+
 
 ::selection { background: transparent;color:inherit; }
 
@@ -142,17 +104,12 @@ input{
    }
    
 
-textarea {
-    font-size: 1vw;
-    padding: 0;
-    resize: none;
-    overflow:hidden
-}
+
 
 table.board tr.board:not(:last-child):nth-of-type(3n) td.board {
-    border-bottom: 0.4vw solid black;
+    border-bottom: 1vh solid black;
 }
 
 table.board tr.board td.board:not(:last-child):nth-of-type(3n) {
-    border-right: 0.4vw solid black;
+    border-right: 1vh solid black;
 }
