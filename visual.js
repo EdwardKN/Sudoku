@@ -53,11 +53,11 @@ var buttons = [
         onClick:"clearThisShit()"
     },
     {
-        name:"Undo",
+        name:"Ångra",
         onClick:"undo()"
     },
     {
-        name:"Redo",
+        name:"Gör om",
         onClick:"redo()"
     }
 ]
