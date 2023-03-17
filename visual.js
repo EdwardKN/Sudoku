@@ -20,6 +20,48 @@ var colors = {
     background:'white'
 }
 
+var buttons = [
+    {
+        name:"Lätt",
+        onClick:"setTestValues(0)"
+    },
+    {
+        name:"Medel",
+        onClick:"setTestValues(1)"
+    },
+    {
+        name:"Svår",
+        onClick:"setTestValues(2)"
+    },
+    {
+        name:"Expert",
+        onClick:"setTestValues(3)"
+    },
+    {
+        name:"Lös",
+        onClick:"solveSolve(grid)"
+    },
+    {
+        name:"Rensa",
+        onClick:"clearThisShit()"
+    },
+    {
+        name:"Anteckningar",
+        onClick:"changeNote(this)",
+        id:"changeNote",
+        changeOff:"(Av)",
+        changeOn:("(På)")
+    },
+    {
+        name:"Undo",
+        onClick:"undo()"
+    },
+    {
+        name:"Redo",
+        onClick:"redo()"
+    }
+]
+
 readTextFile("testpussel.json", function(text){
     grids = JSON.parse(text);
 });
@@ -226,37 +268,61 @@ function init(){
         tmpTr.className = "board"
 
         let tmpGrid = [];
-        for(let x = 0; x < 9; x++){
-            let tmpTd = document.createElement("td");
-            tmpTd.className = "board"
-            let tmpSelect = document.createElement("input");
-            tmpSelect.type = "text";
-            tmpSelect.setAttribute("onkeypress","return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57))")
-            tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);selectedInput = {x:"+x+",y:"+y+"}")
-            tmpSelect.setAttribute("oninput","if(this.value.length > 1){this.value = this.value.split('')[this.value.split('').length-1]};grid["+y+"]["+x+"].possibleNotes = [];for(let y = 0; y < 3; y++){for(let x = 0; x < 3; x++){grid["+y+"]["+x+"].noteElm.children[x].children[y].innerText = ' '}};updateChanged("+y+","+x+");updateTable();");
-            tmpSelect.style.background = "transparent";
-            tmpSelect.style.display = "block";
+        for(let x = 0; x < 10; x++){
+            if(x < 9){
 
-            let tmpNote = document.createElement("table");
-            for(let y = 0; y < 3; y++){
-                let tmpNoteTr = document.createElement("tr");
-                for(let x = 0; x < 3; x++){
-                    let tmpNoteTd = document.createElement("td");
-                    tmpNoteTd.innerText = " "
-                    tmpNoteTd.className = "note"
-                    tmpNoteTr.appendChild(tmpNoteTd)
-                }
-                tmpNote.appendChild(tmpNoteTr)
-            }
-            tmpNote.className = "note"
-
-            tmpNote.setAttribute("onclick","if(noteMode === true){if(this.className === 'selected'){for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = colors.background}};return;}for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = colors.background}};grid["+y+"]["+x+"].noteSelect = true;grid["+y+"]["+x+"].td.style.backgroundColor = colors.marked;this.className = 'selected';}");
             
-            tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[],locked:false,value:0,noteElm:tmpNote,noteSelect:false,possibleNotes:[]});
-            tmpTd.appendChild(tmpSelect)
-            tmpTd.appendChild(tmpNote)
-            tmpTr.appendChild(tmpTd);
+                let tmpTd = document.createElement("td");
+                tmpTd.className = "board"
+                let tmpSelect = document.createElement("input");
+                tmpSelect.type = "text";
+                tmpSelect.setAttribute("onkeypress","return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57))")
+                tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);selectedInput = {x:"+x+",y:"+y+"}")
+                tmpSelect.setAttribute("oninput","if(this.value.length > 1){this.value = this.value.split('')[this.value.split('').length-1]};grid["+y+"]["+x+"].possibleNotes = [];for(let y = 0; y < 3; y++){for(let x = 0; x < 3; x++){grid["+y+"]["+x+"].noteElm.children[x].children[y].innerText = ' '}};updateChanged("+y+","+x+");updateTable();");
+                tmpSelect.style.background = "transparent";
+                tmpSelect.style.display = "block";
 
+                let tmpNote = document.createElement("table");
+                for(let y = 0; y < 3; y++){
+                    let tmpNoteTr = document.createElement("tr");
+                    for(let x = 0; x < 3; x++){
+                        let tmpNoteTd = document.createElement("td");
+                        tmpNoteTd.innerText = " "
+                        tmpNoteTd.className = "note"
+                        tmpNoteTr.appendChild(tmpNoteTd)
+                    }
+                    tmpNote.appendChild(tmpNoteTr)
+                }
+                tmpNote.className = "note"
+
+                tmpNote.setAttribute("onclick","if(noteMode === true){if(this.className === 'selected'){for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = colors.background}};return;}for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = colors.background}};grid["+y+"]["+x+"].noteSelect = true;grid["+y+"]["+x+"].td.style.backgroundColor = colors.marked;this.className = 'selected';}");
+                
+                tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[],locked:false,value:0,noteElm:tmpNote,noteSelect:false,possibleNotes:[]});
+                tmpTd.appendChild(tmpSelect)
+                tmpTd.appendChild(tmpNote)
+                tmpTr.appendChild(tmpTd);
+            }else{
+                let tmpTd = document.createElement("td");
+                tmpTd.colSpan = 3;
+                tmpTd.className = "board"
+
+
+                if(buttons.length>y){
+                    let tmpButton = document.createElement("button");
+                    tmpButton.setAttribute("onclick",buttons[y].onClick);
+                    tmpButton.innerText = buttons[y].name 
+                    if(buttons[y].changeOff !== undefined){
+                        tmpButton.innerText += buttons[y].changeOff;
+                    }
+                    tmpButton.className = "button-19"
+                    tmpButton.id = buttons[y].id
+                    tmpTd.appendChild(tmpButton);
+                }
+
+
+                tmpTr.appendChild(tmpTd);
+
+            }
         }
         grid.push(tmpGrid)
         table.appendChild(tmpTr);
@@ -293,29 +359,30 @@ function changeNote(elm){
                 if(grid[y][x].noteSelect === true){
 
                     selectedInput = {x:x,y:y}
-                    if(grid[y][x].locked !== true && grid[y][x].select.disabled == false){
-                        grid[y][x].select.focus();
-                    }
+
                     if(grid[y][x].locked == true){
                         grid[y][x].select.disabled = true;
                     }else{
                         grid[y][x].select.disabled = false;
+                    }
+                    if(grid[y][x].locked !== true && grid[y][x].select.disabled == false){
+                        grid[y][x].select.focus();
                     }
                     grid[y][x].select.style.zIndex = "100";
                     
                 }
             }
         }
-        for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';if(grid[y][x].td.style.backgroundColor !== colors.notCorrect){grid[y][x].td.style.backgroundColor = colors.background}}}
+        for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';}}
         noteMode = false;
         elm.innerText = "Anteckningar(Av)"
-        if(selectedInput.x !== undefined && selectedInput.y !== undefined){
-            grid[selectedInput.y][selectedInput.x].td.style.backgroundColor = colors.marked;
-        }
 
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
-                if(grid[y][x].td.style.backgroundColor !== colors.notCorrect){
+                if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked  && grid[y][x].locked === false){
+                    grid[y][x].td.style.backgroundColor = colors.notCorrect;
+                }
+                if(grid[y][x].td.style.backgroundColor !== colors.notCorrect && grid[y][x].locked === false){
                     grid[y][x].td.style.backgroundColor = colors.background;
                 }
                 if(grid[y][x].value === 0){
