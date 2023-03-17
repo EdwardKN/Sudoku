@@ -189,22 +189,27 @@ function piltangentGrej(x,y,changeX,changeY){
         selectedInput = {x:x+changeX,y:y+changeY};
         if((grid[selectedInput.y][selectedInput.x].locked)){
             document.activeElement.blur()
-            if(grid[selectedInput.y][selectedInput.x].td.style.backgroundColor !== colors.notCorrect){
+            if(grid[selectedInput.y][selectedInput.x].td.style.backgroundColor !== colors.notCorrect && grid[selectedInput.y][selectedInput.x].td.style.backgroundColor !== colors.notCorrectMarked){
                 grid[selectedInput.y][selectedInput.x].td.style.backgroundColor = colors.marked;
-            }else{
-                grid[selectedInput.y][selectedInput.x].td.style.backgroundColor = colors.notCorrectMarked;
+            }
+            if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor === colors.notCorrectMarked){
+                grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.notCorrect
+            }
+            if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor !== colors.notCorrect){
+                grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.background;
             }
         }else{
+            if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor === colors.notCorrectMarked){
+                grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.notCorrect
+            }
+            if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor !== colors.notCorrect){
+                grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.background;
+            }
             grid[selectedInput.y][selectedInput.x].select.focus();
             let length = grid[selectedInput.y][selectedInput.x].select.value.length;
             grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
         }
-        if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor === colors.notCorrectMarked){
-            grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.notCorrect
-        }
-        if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor !== colors.notCorrect){
-            grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.background;
-        }
+
     }
     fixVisualizer()
 }
@@ -361,7 +366,7 @@ function init(){
                 tmpSelect.setAttribute("onkeypress","return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57))")
                 tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);selectedInput = {x:"+x+",y:"+y+"};for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){grid[y][x].td.style.backgroundColor = colors.notCorrect;}}};fixVisualizer();")
                 
-                tmpTd.setAttribute("onmousedown","for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){if(grid[y][x].td.style.backgroundColor === colors.marked){grid[y][x].td.style.backgroundColor = colors.background;grid[y][x].noteSelect = false;};if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){grid[y][x].td.style.backgroundColor = colors.notCorrect;}}};selectedInput = {x:"+x+",y:"+y+"};if(grid["+y+"]["+x+"].td.style.backgroundColor === colors.notCorrect && grid["+y+"]["+x+"].locked === true){grid["+y+"]["+x+"].td.style.backgroundColor = colors.notCorrectMarked;fixVisualizer();return;};if(grid["+y+"]["+x+"].td.style.backgroundColor === colors.background && grid["+y+"]["+x+"].locked === true){grid["+y+"]["+x+"].td.style.backgroundColor = colors.marked;fixVisualizer();return;};")
+                tmpTd.setAttribute("onmousedown","if(noteMode == true){grid["+y+"]["+x+"].noteSelect = true}for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){if(grid[y][x].td.style.backgroundColor === colors.marked){grid[y][x].td.style.backgroundColor = colors.background;};if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){grid[y][x].td.style.backgroundColor = colors.notCorrect;}}};selectedInput = {x:"+x+",y:"+y+"};if(grid["+y+"]["+x+"].td.style.backgroundColor === colors.notCorrect && grid["+y+"]["+x+"].locked === true){grid["+y+"]["+x+"].td.style.backgroundColor = colors.notCorrectMarked;fixVisualizer();return;};if(grid["+y+"]["+x+"].td.style.backgroundColor === colors.background && grid["+y+"]["+x+"].locked === true){grid["+y+"]["+x+"].td.style.backgroundColor = colors.marked;fixVisualizer();return;};")
 
                 tmpSelect.setAttribute("oninput","if(this.value.length > 1){this.value = this.value.split('')[this.value.split('').length-1]};grid["+y+"]["+x+"].possibleNotes = [];for(let y = 0; y < 3; y++){for(let x = 0; x < 3; x++){grid["+y+"]["+x+"].noteElm.children[x].children[y].innerText = ' '}};updateChanged("+y+","+x+");updateTable();fixVisualizer();checkRemoveNote("+x+","+y+");");
                 tmpSelect.style.background = "transparent";
