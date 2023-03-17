@@ -8,6 +8,10 @@ var noteMode = false;
 
 var grids;
 
+var shower = false;
+
+var noteRemover = false;
+
 var selectedInput = {
     x:undefined,
     y:undefined
@@ -38,15 +42,23 @@ var buttons = [
         onClick:"changeNote(this)",
         id:"changeNote",
         changeOff:"(Av)",
-        changeOn:("(På)")
+        changeOn:"(På)"
     },
     {
-        name:"",
-        onClick:""
+        name:"Markera klickade",
+        onClick:"switchClick(this);fixVisualizer();",
+        id:"markCLicked",
+        changeOff:"(Av)",
+        changeOn:"(På)",
+        variable:"shower"
     },
     {
-        name:"",
-        onClick:""
+        name:"Ta bort anteckningar",
+        onClick:"switchAnteckning(this)",
+        id:"Removeanteckningar",
+        changeOff:"(Av)",
+        changeOn:"(På)",
+        variable:"noteRemover"
     },
     {
         name:"Rensa",
@@ -200,6 +212,41 @@ function piltangentGrej(x,y,changeX,changeY){
             grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
         }
     }
+    fixVisualizer()
+}
+
+function switchClick(elm){
+    let buttonNumber;
+    for (let i = 0; i < buttons.length; i++) {
+        if(elm.id == buttons[i].id){
+            buttonNumber = i;
+        }
+    }
+    if(shower === true){
+        shower = false;
+        elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOff
+    }else{
+        shower = true;
+        elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOn
+    }
+    save();
+}
+
+function switchAnteckning(elm){
+    let buttonNumber;
+    for (let i = 0; i < buttons.length; i++) {
+        if(elm.id == buttons[i].id){
+            buttonNumber = i;
+        }
+    }
+    if(noteRemover === true){
+        noteRemover = false;
+        elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOff
+    }else{
+        noteRemover = true;
+        elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOn
+    }
+    save();
 }
 function noteBytGrejPil(x,y,changeX,changeY){
     if(x+ changeX < 9 && x + changeX > -1 && y+ changeY < 9 && y + changeY > -1 ){
@@ -238,6 +285,41 @@ function noteBytGrejPil(x,y,changeX,changeY){
                             }
                         
             grid[y+changeY][x+changeX].noteSelect = true
+            selectedInput.x = x+changeX;
+            selectedInput.y = y+changeY;
+            fixVisualizer();
+        }
+    }
+}
+
+function fixVisualizer(){
+    for(let y = 0; y < 9; y++){
+        for(let x = 0; x < 9; x++){
+            if(x == selectedInput.x && y == selectedInput.y){
+            }else{
+                if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){
+                    grid[y][x].td.style.backgroundColor = colors.notCorrect;
+                }
+                if(grid[y][x].td.style.backgroundColor === colors.marked){
+                    grid[y][x].td.style.backgroundColor = colors.background;
+                    grid[y][x].noteSelect = false;
+                };
+            }
+        }
+    }
+    if(shower == true){
+        for(let y = 0; y < 9; y++){
+            for(let x = 0; x < 9; x++){
+                if(selectedInput.x !== undefined && selectedInput.y !== undefined){
+                    if(grid[y][x].select.value == grid[selectedInput.y][selectedInput.x].select.value &&grid[selectedInput.y][selectedInput.x].select.value !== "" ){
+                        if(grid[y][x].td.style.backgroundColor === colors.notCorrect ||grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){
+                            grid[y][x].td.style.backgroundColor = colors.notCorrectMarked;
+                        }else{
+                            grid[y][x].td.style.backgroundColor = colors.marked;
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -247,10 +329,14 @@ window.addEventListener("load",function(e){
 })
 
 function save(){
+    localStorage.setItem("noteRemover",JSON.stringify(noteRemover));
+    localStorage.setItem("shower",JSON.stringify(shower));
     localStorage.setItem("gridHistory", JSON.stringify(gridHistory));
 };
 
 function load(){
+    noteRemover = JSON.parse(localStorage.getItem("noteRemover"))
+    shower = JSON.parse(localStorage.getItem("shower"))
     gridHistory = JSON.parse(localStorage.getItem("gridHistory"))
     historyIndex = gridHistory.length;
     undo();
@@ -275,9 +361,13 @@ function init(){
                 tmpTd.className = "board"
                 let tmpSelect = document.createElement("input");
                 tmpSelect.type = "text";
+                
                 tmpSelect.setAttribute("onkeypress","return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57))")
-                tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);selectedInput = {x:"+x+",y:"+y+"};for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){grid[y][x].td.style.backgroundColor = colors.notCorrect;}}};")
-                tmpSelect.setAttribute("oninput","if(this.value.length > 1){this.value = this.value.split('')[this.value.split('').length-1]};grid["+y+"]["+x+"].possibleNotes = [];for(let y = 0; y < 3; y++){for(let x = 0; x < 3; x++){grid["+y+"]["+x+"].noteElm.children[x].children[y].innerText = ' '}};updateChanged("+y+","+x+");updateTable();");
+                tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);selectedInput = {x:"+x+",y:"+y+"};for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){grid[y][x].td.style.backgroundColor = colors.notCorrect;}}};fixVisualizer();")
+                
+                tmpTd.setAttribute("onmousedown","for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){if(grid[y][x].td.style.backgroundColor === colors.marked){grid[y][x].td.style.backgroundColor = colors.background;grid[y][x].noteSelect = false;};if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){grid[y][x].td.style.backgroundColor = colors.notCorrect;}}};selectedInput = {x:"+x+",y:"+y+"};if(grid["+y+"]["+x+"].td.style.backgroundColor === colors.notCorrect && grid["+y+"]["+x+"].locked === true){grid["+y+"]["+x+"].td.style.backgroundColor = colors.notCorrectMarked;fixVisualizer();return;};if(grid["+y+"]["+x+"].td.style.backgroundColor === colors.background && grid["+y+"]["+x+"].locked === true){grid["+y+"]["+x+"].td.style.backgroundColor = colors.marked;fixVisualizer();return;};")
+
+                tmpSelect.setAttribute("oninput","if(this.value.length > 1){this.value = this.value.split('')[this.value.split('').length-1]};grid["+y+"]["+x+"].possibleNotes = [];for(let y = 0; y < 3; y++){for(let x = 0; x < 3; x++){grid["+y+"]["+x+"].noteElm.children[x].children[y].innerText = ' '}};updateChanged("+y+","+x+");updateTable();fixVisualizer()");
                 tmpSelect.style.background = "transparent";
                 tmpSelect.style.display = "block";
 
@@ -309,9 +399,16 @@ function init(){
                 if(buttons.length>y){
                     let tmpButton = document.createElement("button");
                     tmpButton.setAttribute("onclick",buttons[y].onClick);
-                    tmpButton.innerText = buttons[y].name 
-                    if(buttons[y].changeOff !== undefined){
-                        tmpButton.innerText += buttons[y].changeOff;
+                    tmpButton.innerText = buttons[y].name;
+                    if(buttons[y].changeOff !== undefined && buttons[y].changeOn !== undefined && buttons[y].variable !== undefined){
+                        setTimeout(() => {
+                            if(eval(buttons[y].variable) === true){
+                                tmpButton.innerText += buttons[y].changeOn;
+                            }else{
+                                tmpButton.innerText += buttons[y].changeOff;
+                            }                 
+                        }, 1);
+
                     }
                     tmpButton.className = "button-19"
                     tmpButton.id = buttons[y].id
@@ -332,9 +429,15 @@ function init(){
 }
 
 function changeNote(elm){
+    let buttonNumber;
+    for (let i = 0; i < buttons.length; i++) {
+        if(elm.id == buttons[i].id){
+            buttonNumber = i;
+        }
+    }
     if(noteMode === false){
         noteMode = true;
-        elm.innerText = "Anteckningar(På)"
+        elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOn
 
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
@@ -374,7 +477,7 @@ function changeNote(elm){
         }
         for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';}}
         noteMode = false;
-        elm.innerText = "Anteckningar(Av)"
+        elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOff;
 
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
@@ -382,7 +485,9 @@ function changeNote(elm){
                     grid[y][x].td.style.backgroundColor = colors.notCorrect;
                 }
                 if(grid[y][x].td.style.backgroundColor !== colors.notCorrect && grid[y][x].locked === false){
-                    grid[y][x].td.style.backgroundColor = colors.background;
+                    if(shower == false || grid[y][x].select.value === ''){
+                        grid[y][x].td.style.backgroundColor = colors.background;
+                    }
                 }
                 if(grid[y][x].value === 0){
                     grid[y][x].select.style.zIndex = "100";
