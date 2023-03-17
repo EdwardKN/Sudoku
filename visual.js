@@ -42,7 +42,8 @@ var buttons = [
         onClick:"changeNote(this)",
         id:"changeNote",
         changeOff:"(Av)",
-        changeOn:"(På)"
+        changeOn:"(På)",
+        variable:"noteMode"
     },
     {
         name:"Markera siffror",
