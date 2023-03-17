@@ -33,8 +33,8 @@ button:hover{
 table.note{
     z-index: 1;
     position:relative;
-    margin-top: -6vh;
-    height: 6vh;
+    margin-top: calc(calc(-100vh/9) + calc(100vh/135));
+    height: calc(calc(100vh/9) - calc(100vh/135));
     width: 100%;
     align-items: center;
     justify-content: center;
@@ -46,14 +46,15 @@ td.note{
     cursor:text;
     width: 3.5vh;
     text-align: center;
-    font-size: 0.85vh;
+    font-size: 2vh;
     padding: 0;
-    height: 0.785vh;
+    height: calc(calc(calc(100vh/9) - calc(100vh/135))/3);
 }
 table.selected{
     cursor:text;
     background-color: lightgray;
-    height: 3.66vh;
+    height: calc(calc(calc(100vh/9) - calc(100vh/135))/3);
+    padding: 0;
 }
 
 tr

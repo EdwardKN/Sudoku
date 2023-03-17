@@ -23,27 +23,15 @@ var colors = {
 var buttons = [
     {
         name:"Lätt",
-        onClick:"setTestValues(0)"
-    },
-    {
-        name:"Medel",
         onClick:"setTestValues(1)"
     },
     {
-        name:"Svår",
+        name:"Medel",
         onClick:"setTestValues(2)"
     },
     {
-        name:"Expert",
+        name:"Svår",
         onClick:"setTestValues(3)"
-    },
-    {
-        name:"Lös",
-        onClick:"solveSolve(grid)"
-    },
-    {
-        name:"Rensa",
-        onClick:"clearThisShit()"
     },
     {
         name:"Anteckningar",
@@ -51,6 +39,18 @@ var buttons = [
         id:"changeNote",
         changeOff:"(Av)",
         changeOn:("(På)")
+    },
+    {
+        name:"",
+        onClick:""
+    },
+    {
+        name:"",
+        onClick:""
+    },
+    {
+        name:"Rensa",
+        onClick:"clearThisShit()"
     },
     {
         name:"Undo",
@@ -236,7 +236,6 @@ function noteBytGrejPil(x,y,changeX,changeY){
                             }else{
                                 grid[y+changeY][x+changeX].td.style.backgroundColor = colors.marked;
                             }
-                            grid[y+changeY][x+changeX].noteSelect.className = 'selected';
                         
             grid[y+changeY][x+changeX].noteSelect = true
         }
@@ -295,7 +294,7 @@ function init(){
                 }
                 tmpNote.className = "note"
 
-                tmpNote.setAttribute("onclick","if(noteMode === true){if(this.className === 'selected'){for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){grid[y][x].td.style.backgroundColor = colors.notCorrect;}else{grid[y][x].td.style.backgroundColor = colors.background;}}};return;}for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){grid[y][x].td.style.backgroundColor = colors.notCorrect;};if(grid[y][x].td.style.backgroundColor === colors.marked){grid[y][x].td.style.backgroundColor = colors.background;}}};grid["+y+"]["+x+"].noteSelect = true;grid["+y+"]["+x+"].td.style.backgroundColor = colors.marked;this.className = 'selected';}");
+                tmpNote.setAttribute("onclick","if(noteMode === true){if(this.className === 'selected'){for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){grid[y][x].td.style.backgroundColor = colors.notCorrect;}else{grid[y][x].td.style.backgroundColor = colors.background;}}};return;}for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){grid[y][x].td.style.backgroundColor = colors.notCorrect;};if(grid[y][x].td.style.backgroundColor === colors.marked){grid[y][x].td.style.backgroundColor = colors.background;}}};grid["+y+"]["+x+"].noteSelect = true;grid["+y+"]["+x+"].td.style.backgroundColor = colors.marked;}");
 
                 tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[],locked:false,value:0,noteElm:tmpNote,noteSelect:false,possibleNotes:[]});
                 tmpTd.appendChild(tmpSelect)
