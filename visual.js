@@ -277,7 +277,7 @@ function init(){
                 let tmpSelect = document.createElement("input");
                 tmpSelect.type = "text";
                 tmpSelect.setAttribute("onkeypress","return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57))")
-                tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);selectedInput = {x:"+x+",y:"+y+"}")
+                tmpSelect.setAttribute("onclick","this.focus();let length = this.value.length;this.setSelectionRange(length, length);selectedInput = {x:"+x+",y:"+y+"};for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){grid[y][x].td.style.backgroundColor = colors.notCorrect;}}};")
                 tmpSelect.setAttribute("oninput","if(this.value.length > 1){this.value = this.value.split('')[this.value.split('').length-1]};grid["+y+"]["+x+"].possibleNotes = [];for(let y = 0; y < 3; y++){for(let x = 0; x < 3; x++){grid["+y+"]["+x+"].noteElm.children[x].children[y].innerText = ' '}};updateChanged("+y+","+x+");updateTable();");
                 tmpSelect.style.background = "transparent";
                 tmpSelect.style.display = "block";
@@ -295,8 +295,8 @@ function init(){
                 }
                 tmpNote.className = "note"
 
-                tmpNote.setAttribute("onclick","if(noteMode === true){if(this.className === 'selected'){for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = colors.background}};return;}for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';grid[y][x].td.style.backgroundColor = colors.background}};grid["+y+"]["+x+"].noteSelect = true;grid["+y+"]["+x+"].td.style.backgroundColor = colors.marked;this.className = 'selected';}");
-                
+                tmpNote.setAttribute("onclick","if(noteMode === true){if(this.className === 'selected'){for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){grid[y][x].td.style.backgroundColor = colors.notCorrect;}else{grid[y][x].td.style.backgroundColor = colors.background;}}};return;}for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){grid[y][x].td.style.backgroundColor = colors.notCorrect;};if(grid[y][x].td.style.backgroundColor === colors.marked){grid[y][x].td.style.backgroundColor = colors.background;}}};grid["+y+"]["+x+"].noteSelect = true;grid["+y+"]["+x+"].td.style.backgroundColor = colors.marked;this.className = 'selected';}");
+
                 tmpGrid.push({td:tmpTd,select:tmpSelect,possibleValues:[],locked:false,value:0,noteElm:tmpNote,noteSelect:false,possibleNotes:[]});
                 tmpTd.appendChild(tmpSelect)
                 tmpTd.appendChild(tmpNote)
