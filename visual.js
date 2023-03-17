@@ -672,6 +672,7 @@ async function solveSolve(grid){
 
 
 function setTestValues(difficulty){
+    clearThisShit();
 
 
     if( noteMode == true){
