@@ -45,7 +45,7 @@ var buttons = [
         changeOn:"(På)"
     },
     {
-        name:"Markera klickade",
+        name:"Markera siffror",
         onClick:"switchClick(this);fixVisualizer();",
         id:"markCLicked",
         changeOff:"(Av)",
@@ -193,23 +193,16 @@ function piltangentGrej(x,y,changeX,changeY){
             }else{
                 grid[selectedInput.y][selectedInput.x].td.style.backgroundColor = colors.notCorrectMarked;
             }
-            
-            if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor === colors.notCorrectMarked){
-                grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.notCorrect
-            }
-            if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor !== colors.notCorrect){
-                grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.background;
-            }
         }else{
-            if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor === colors.notCorrectMarked){
-                grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.notCorrect
-            }
-            if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor !== colors.notCorrect){
-                grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.background;
-            }
             grid[selectedInput.y][selectedInput.x].select.focus();
             let length = grid[selectedInput.y][selectedInput.x].select.value.length;
             grid[selectedInput.y][selectedInput.x].select.setSelectionRange(length, length)
+        }
+        if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor === colors.notCorrectMarked){
+            grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.notCorrect
+        }
+        if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor !== colors.notCorrect){
+            grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.background;
         }
     }
     fixVisualizer()
@@ -222,12 +215,13 @@ function switchClick(elm){
             buttonNumber = i;
         }
     }
+    elm.innerText = buttons[buttonNumber].name
     if(shower === true){
         shower = false;
-        elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOff
+        elm.innerText += buttons[buttonNumber].changeOff
     }else{
         shower = true;
-        elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOn
+        elm.innerText += buttons[buttonNumber].changeOn
     }
     save();
 }
@@ -239,12 +233,13 @@ function switchAnteckning(elm){
             buttonNumber = i;
         }
     }
+    elm.innerText = buttons[buttonNumber].name
     if(noteRemover === true){
         noteRemover = false;
-        elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOff
+        elm.innerText += buttons[buttonNumber].changeOff
     }else{
         noteRemover = true;
-        elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOn
+        elm.innerText += buttons[buttonNumber].changeOn
     }
     save();
 }
@@ -407,7 +402,7 @@ function init(){
                             }else{
                                 tmpButton.innerText += buttons[y].changeOff;
                             }                 
-                        }, 1);
+                        }, 15);
 
                     }
                     tmpButton.className = "button-19"
