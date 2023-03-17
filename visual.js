@@ -367,7 +367,7 @@ function init(){
                 
                 tmpTd.setAttribute("onmousedown","for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){if(grid[y][x].td.style.backgroundColor === colors.marked){grid[y][x].td.style.backgroundColor = colors.background;grid[y][x].noteSelect = false;};if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked){grid[y][x].td.style.backgroundColor = colors.notCorrect;}}};selectedInput = {x:"+x+",y:"+y+"};if(grid["+y+"]["+x+"].td.style.backgroundColor === colors.notCorrect && grid["+y+"]["+x+"].locked === true){grid["+y+"]["+x+"].td.style.backgroundColor = colors.notCorrectMarked;fixVisualizer();return;};if(grid["+y+"]["+x+"].td.style.backgroundColor === colors.background && grid["+y+"]["+x+"].locked === true){grid["+y+"]["+x+"].td.style.backgroundColor = colors.marked;fixVisualizer();return;};")
 
-                tmpSelect.setAttribute("oninput","if(this.value.length > 1){this.value = this.value.split('')[this.value.split('').length-1]};grid["+y+"]["+x+"].possibleNotes = [];for(let y = 0; y < 3; y++){for(let x = 0; x < 3; x++){grid["+y+"]["+x+"].noteElm.children[x].children[y].innerText = ' '}};updateChanged("+y+","+x+");updateTable();fixVisualizer()");
+                tmpSelect.setAttribute("oninput","if(this.value.length > 1){this.value = this.value.split('')[this.value.split('').length-1]};grid["+y+"]["+x+"].possibleNotes = [];for(let y = 0; y < 3; y++){for(let x = 0; x < 3; x++){grid["+y+"]["+x+"].noteElm.children[x].children[y].innerText = ' '}};updateChanged("+y+","+x+");updateTable();fixVisualizer();checkRemoveNote("+x+","+y+");");
                 tmpSelect.style.background = "transparent";
                 tmpSelect.style.display = "block";
 
@@ -504,7 +504,43 @@ function changeNote(elm){
     }
 }
 
+function checkRemoveNote(x2,y2){
+    if(noteRemover === true){
+        let value = grid[y2][x2].value;
+        if(value !== 0){
+            let newGrid = [];
+            for(let y = 0; y < 9; y++){
+                let tmp = [];
+                for(let x = 0; x < 9; x++){
+                    let tmp2 = {value:''};
+                    grid[y][x].possibleNotes.forEach(x =>{
+                        if(x == value){
+                            tmp2.value = x
+                        }
+                    })
+                    tmp.push(tmp2)
+                }
+                newGrid.push(tmp)
+            }
+            newGrid[y2][x2].value = value
+            let temp = isPossibleMove(newGrid,y2,x2,value)
+            if(temp !== true){
+                let index = grid[temp.y][temp.x].possibleNotes.indexOf(JSON.stringify(value));
+                grid[temp.y][temp.x].possibleNotes.splice(index,1)
+                grid[temp.y][temp.x].noteElm.children[Math.floor((value-1)/3)].children[(value-1)%3].innerText = " "
+                checkRemoveNote(x2,y2)
 
+            }
+            for(let y = 0; y < 9; y++){
+                for(let x = 0; x < 9; x++){
+                    if(newGrid[y][x] !== ''){
+                    }
+                }
+            }
+    
+        }
+    }
+}
 
 function updateTable(){
     for(let y = 0; y < 9; y++){
