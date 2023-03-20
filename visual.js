@@ -12,6 +12,8 @@ var shower = false;
 
 var noteRemover = false;
 
+var settingOn = false;
+
 var selectedInput = {
     x:undefined,
     y:undefined
@@ -46,20 +48,13 @@ var buttons = [
         variable:"noteMode"
     },
     {
-        name:"Markera siffror",
-        onClick:"switchClick(this);fixVisualizer();",
-        id:"markCLicked",
-        changeOff:"(Av)",
-        changeOn:"(På)",
-        variable:"shower"
+        name:"Ledtråd",
+        onClick:"hint()",
     },
     {
-        name:"Ta bort anteckningar",
-        onClick:"switchAnteckning(this)",
-        id:"Removeanteckningar",
-        changeOff:"(Av)",
-        changeOn:"(På)",
-        variable:"noteRemover"
+        name:"Inställningar",
+        onClick:"switchSettings()",
+        variable:"settingOn"
     },
     {
         name:"Rensa",
@@ -75,6 +70,87 @@ var buttons = [
     }
 ]
 
+var settingsButtons = [
+        {
+            name:"Tillbaka",
+            onClick:"switchSettings()",
+            variable:"settingOn"
+        },
+        {
+            name:"",
+        },
+        {
+            name:"",
+        },
+        {
+            name:"Markera siffror",
+            onClick:"switchClick(this);fixVisualizer();",
+            id:"markCLicked",
+            changeOff:"(Av)",
+            changeOn:"(På)",
+            variable:"shower"
+        },
+        {
+            name:"Ta bort anteckningar",
+            onClick:"switchAnteckning(this)",
+            id:"Removeanteckningar",
+            changeOff:"(Av)",
+            changeOn:"(På)",
+            variable:"noteRemover"
+        }
+    ]
+
+
+function switchSettings()
+{   
+    if(settingOn === false){
+        settingOn = true;
+        for(let i = 0; i < 9; i++){
+            if(settingsButtons[i] !== undefined){
+                buttons[i].button.setAttribute("onclick",settingsButtons[i].onClick);
+                buttons[i].button.innerText = settingsButtons[i].name;
+                if(settingsButtons[i].changeOff !== undefined && settingsButtons[i].changeOn !== undefined && settingsButtons[i].variable !== undefined){
+                    setTimeout(() => {
+                        if(eval(settingsButtons[i].variable) === true){
+                            buttons[i].button.innerText += settingsButtons[i].changeOn;
+                        }else{
+                            buttons[i].button.innerText += settingsButtons[i].changeOff;
+                        }                 
+                    }, 15);
+    
+                }
+                buttons[i].button.id = settingsButtons[i].id
+            }else{
+                buttons[i].button.innerText = "";
+                buttons[i].button.setAttribute("onclick","");
+            }
+        }
+        return;
+    }else{
+        settingOn = false;
+        for(let i = 0; i < 9; i++){
+            if(buttons[i] !== undefined){
+                buttons[i].button.setAttribute("onclick",buttons[i].onClick);
+                buttons[i].button.innerText = buttons[i].name;
+                if(buttons[i].changeOff !== undefined && buttons[i].changeOn !== undefined && settingsButtons[i].variable !== undefined){
+                    setTimeout(() => {
+                        if(eval(buttons[i].variable) === true){
+                            buttons[i].button.innerText += buttons[i].changeOn;
+                        }else{
+                            buttons[i].button.innerText += buttons[i].changeOff;
+                        }                 
+                    }, 15);
+    
+                }
+                buttons[i].button.id = buttons[i].id
+            }else{
+                buttons[i].button.innerText = "";
+                buttons[i].button.setAttribute("onclick","");
+            }
+        }
+        return;    
+    }
+}
 readTextFile("testpussel.json", function(text){
     grids = JSON.parse(text);
 });
@@ -217,20 +293,20 @@ function piltangentGrej(x,y,changeX,changeY){
 
 function switchClick(elm){
     let buttonNumber;
-    for (let i = 0; i < buttons.length; i++) {
-        if(elm.id == buttons[i].id){
+    for (let i = 0; i < settingsButtons.length; i++) {
+        if(elm.id == settingsButtons[i].id){
             buttonNumber = i;
         }
     }
-    elm.innerText = buttons[buttonNumber].name
+    elm.innerText = settingsButtons[buttonNumber].name
     if(shower === true){
         shower = false;
-        elm.innerText += buttons[buttonNumber].changeOff
+        elm.innerText += settingsButtons[buttonNumber].changeOff
     }else{
         shower = true;
-        elm.innerText += buttons[buttonNumber].changeOn
+        elm.innerText += settingsButtons[buttonNumber].changeOn
     }
-    if(noteMode ===false){
+    if(noteMode ===false && selectedInput.x !== undefined && selectedInput.y !== undefined){
         grid[selectedInput.y][selectedInput.x].select.focus();
     }
     save();
@@ -238,20 +314,21 @@ function switchClick(elm){
 
 function switchAnteckning(elm){
     let buttonNumber;
-    for (let i = 0; i < buttons.length; i++) {
-        if(elm.id == buttons[i].id){
+    for (let i = 0; i < settingsButtons.length; i++) {
+        if(elm.id == settingsButtons[i].id){
             buttonNumber = i;
         }
     }
-    elm.innerText = buttons[buttonNumber].name
+    console.log(elm)
+    elm.innerText = settingsButtons[buttonNumber].name
     if(noteRemover === true){
         noteRemover = false;
-        elm.innerText += buttons[buttonNumber].changeOff
+        elm.innerText += settingsButtons[buttonNumber].changeOff
     }else{
         noteRemover = true;
-        elm.innerText += buttons[buttonNumber].changeOn
+        elm.innerText += settingsButtons[buttonNumber].changeOn
     }
-    if(noteMode ===false){
+    if(noteMode ===false && selectedInput.x !== undefined && selectedInput.y !== undefined){
         grid[selectedInput.y][selectedInput.x].select.focus();
     }
     save();
@@ -420,6 +497,7 @@ function init(){
                     }
                     tmpButton.className = "button-19"
                     tmpButton.id = buttons[y].id
+                    buttons[y].button = tmpButton;
                     tmpTd.appendChild(tmpButton);
                 }
 
@@ -438,14 +516,18 @@ function init(){
 
 function changeNote(elm){
     let buttonNumber;
-    for (let i = 0; i < buttons.length; i++) {
-        if(elm.id == buttons[i].id){
-            buttonNumber = i;
+    if(settingOn === false){
+        for (let i = 0; i < buttons.length; i++) {
+            if(elm.id == buttons[i].id){
+                buttonNumber = i;
+            }
         }
     }
     if(noteMode === false){
         noteMode = true;
-        elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOn
+        if(settingOn === false){
+            elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOn
+        }
 
         grid[selectedInput.y][selectedInput.x].noteSelect = true;
         noteBytGrejPil(selectedInput.x,selectedInput.y,0,0)
@@ -486,8 +568,9 @@ function changeNote(elm){
         }
         for(let y = 0; y < 9; y++){for(let x = 0; x < 9; x++){grid[y][x].noteSelect = false;grid[y][x].noteElm.className = 'note';}}
         noteMode = false;
-        elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOff;
-
+        if(settingOn === false){
+            elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOff;
+        }
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
                 if(grid[y][x].td.style.backgroundColor === colors.notCorrectMarked  && grid[y][x].locked === false){
