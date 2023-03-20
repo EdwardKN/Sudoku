@@ -1,4 +1,5 @@
 // 305 Milliseconds For Empty And 100 Milliseconds For Expert
+// 120 Milliseconds For Empty And 24 Milliseconds For Expert
 const solved = [
     [1, 2, 3, 4, 5, 6, 7, 8, 9],
     [4, 5, 6, 7, 8, 9, 1, 2, 3],
@@ -15,10 +16,9 @@ function isSolved(grid) {
     for (let y = 0; y < 9; y++) {
         for (let x = 0; x < 9; x++) {
             const pos = possibleMoves(grid, y, x, new Set([1, 2, 3, 4, 5, 6, 7, 8, 9])).size
-            if (!grid[y][x][0]) {
+            if (!grid[y][x][0] || !pos) {
                 return false
             }
-            if (!pos) { throw "Error Sudoku Is Invalid"}
         }
     }
     return true
@@ -85,16 +85,26 @@ function isEqual(arr1, arr2) {
     return true
 }
 
+function show(arr) { 
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            grid[i][j].value = arr[i][j]
+        }
+    }
+    updateTable()
+}
+
 function notAnyPossibleMove(grid) {
     for (let y = 0; y < grid.length; y++) {
         for (let x = 0; x < grid[y].length; x++) {
-            if (!grid[y][x][0] && !possibleMoves(grid, y, x, grid[y][x][1]).size) { // No Value and no possible value
+            if (!grid[y][x][0] && !grid[y][x][1].size) { // No Value and no possible value
                 return false
             }
         }
     }
     return true
 }
+async function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms))}
 
 function getAll(y, x) {
     let t = new Set()
@@ -113,26 +123,21 @@ function getAll(y, x) {
 }
 
 async function solve2(grid) {
+    let s = performance.now()
     let memory = []
+    let max_depth = 1
     let iteration = depth = prevX = prevY = 0 // Depth For Difficulty
 
     while (!isSolved(grid)) {
-        let temp = structuredClone(grid)
+        iteration++
+        
 
-        // Is There Any Tile With No Possible Values
-        if (!notAnyPossibleMove(grid)) {
-            if (memory.length === 0) { throw new Error("Fuck You This Shit Impossible")}
-            let temp, value, a
-            [temp, [prevY, prevX], value] = memory.pop()
-            depth--
-            grid = structuredClone(temp)
-            grid[prevY][prevX][1].delete(value)
-        }
 
         // All Cells With Only 1 Possible Value
         for (let y = 0; y < 9; y++) {
             for (let x = 0; x < 9; x++) {
                 if (grid[y][x][0]) { continue }
+                
                 grid[y][x][1] = possibleMoves(grid, y, x, grid[y][x][1])
 
                 if (grid[y][x][1].size === 1) {
@@ -141,7 +146,22 @@ async function solve2(grid) {
                 }
             }
         }
+        //console.log(iteration)
+        //if (true) { show(grid.map(e => e.map(c => c[0]))) }
+        //await sleep(0)
 
+        // Is There Any Tile With No Possible Values
+        
+        if (!notAnyPossibleMove(grid)) {
+            if (memory.length === 0) { throw new Error("Fuck You This Shit Impossible")}
+            let t, value
+            [t, [prevY, prevX], value] = memory.pop()
+            depth--
+            grid = structuredClone(t)
+            grid[prevY][prevX][1].delete(value)
+        }
+        let temp = structuredClone(grid)
+        
         for (let y = 0; y < 3; y++) {
             for (let x = 0; x < 3; x++) {
                 let posUsed = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: []}
@@ -157,9 +177,9 @@ async function solve2(grid) {
                         }
                     }
                 }
-                let keys = Object.keys(posUsed)
+                
                 // Check Length Of One
-                keys.forEach(key => {
+                Object.keys(posUsed).forEach(key => {
                     key = parseInt(key)
                     let positions = posUsed[key]
 
@@ -191,22 +211,22 @@ async function solve2(grid) {
             }
         }
 
-        if (!isEqual(temp, grid)) { iteration++; continue}
+        if (!isEqual(temp, grid)) { continue }
 
         n = 2
         
         outerloop: while(n <= 9) {
             for (let y = 0; y < grid.length; y++) {
                 for (let x = 0; x < grid[y].length; x++) {
-                    if (y < prevY || (y === prevY && x <= prevX)) { continue }
+
                     if (grid[y][x][1].size === n) {
+                        
                         let value = grid[y][x][1].values().next().value
 
                         memory.push([structuredClone(grid), [y, x], value]) // Store Old Grid
-                            
                         grid[y][x][0] = value // Value To First Possible Value
                         grid[y][x][1].clear()
-                        
+
                         depth++
 
                         break outerloop
@@ -215,14 +235,14 @@ async function solve2(grid) {
             }
             n++
         }
-        iteration++
     }
     console.log(`It Took ${iteration} Iterations To Solve The Sudoku`)
     console.log(`It Recuired A Depth Of ${depth} To Solve The Sudoku`)
+    console.log(`Average Iteration Speed: ${(performance.now() - s) / iteration} Milliseconds Per Iteration`)
     return grid
 }
 
-async function generateSudoku(difficulty) {
+function generateSudoku(difficulty) {
     let grid = Array.from(Array(9), () => Array.from(Array(9)).fill(0))
     
 
