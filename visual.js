@@ -40,6 +40,18 @@ var buttons = [
         onClick:"setTestValues(3)"
     },
     {
+        name:"Rensa",
+        onClick:"clearThisShit()"
+    },
+    {
+        name:"Ångra",
+        onClick:"undo()"
+    },
+    {
+        name:"Gör om",
+        onClick:"redo()"
+    },
+    {
         name:"Anteckningar",
         onClick:"changeNote(this)",
         id:"changeNote",
@@ -56,32 +68,9 @@ var buttons = [
         onClick:"switchSettings()",
         variable:"settingOn"
     },
-    {
-        name:"Rensa",
-        onClick:"clearThisShit()"
-    },
-    {
-        name:"Ångra",
-        onClick:"undo()"
-    },
-    {
-        name:"Gör om",
-        onClick:"redo()"
-    }
 ]
 
 var settingsButtons = [
-        {
-            name:"Tillbaka",
-            onClick:"switchSettings()",
-            variable:"settingOn"
-        },
-        {
-            name:"",
-        },
-        {
-            name:"",
-        },
         {
             name:"Markera siffror",
             onClick:"switchClick(this);fixVisualizer();",
@@ -97,6 +86,29 @@ var settingsButtons = [
             changeOff:"(Av)",
             changeOn:"(På)",
             variable:"noteRemover"
+        },
+        {
+            name:"",
+        },
+        {
+            name:"",
+        },
+        {
+            name:"",
+        },
+        {
+            name:"",
+        },
+        {
+            name:"",
+        },
+        {
+            name:"",
+        },
+        {
+            name:"Tillbaka",
+            onClick:"switchSettings()",
+            variable:"settingOn"
         }
     ]
 
@@ -132,7 +144,7 @@ function switchSettings()
             if(buttons[i] !== undefined){
                 buttons[i].button.setAttribute("onclick",buttons[i].onClick);
                 buttons[i].button.innerText = buttons[i].name;
-                if(buttons[i].changeOff !== undefined && buttons[i].changeOn !== undefined && settingsButtons[i].variable !== undefined){
+                if(buttons[i].changeOff !== undefined && buttons[i].changeOn !== undefined && buttons[i].variable !== undefined){
                     setTimeout(() => {
                         if(eval(buttons[i].variable) === true){
                             buttons[i].button.innerText += buttons[i].changeOn;
