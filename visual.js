@@ -192,12 +192,13 @@ function piltangentGrej(x,y,changeX,changeY){
             if(grid[selectedInput.y][selectedInput.x].td.style.backgroundColor !== colors.notCorrect && grid[selectedInput.y][selectedInput.x].td.style.backgroundColor !== colors.notCorrectMarked){
                 grid[selectedInput.y][selectedInput.x].td.style.backgroundColor = colors.marked;
             }
-            if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor === colors.notCorrectMarked){
-                grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.notCorrect
+            if(grid[selectedInput.y][selectedInput.x].td.style.backgroundColor === colors.notCorrect){
+                grid[selectedInput.y][selectedInput.x].td.style.backgroundColor = colors.notCorrectMarked;
             }
-            if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor !== colors.notCorrect){
+            if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor !== colors.notCorrect && grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor !== colors.notCorrectMarked){
                 grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.background;
             }
+            
         }else{
             if(grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor === colors.notCorrectMarked){
                 grid[selectedInput.y-changeY][selectedInput.x-changeX].td.style.backgroundColor = colors.notCorrect
@@ -229,6 +230,9 @@ function switchClick(elm){
         shower = true;
         elm.innerText += buttons[buttonNumber].changeOn
     }
+    if(noteMode ===false){
+        grid[selectedInput.y][selectedInput.x].select.focus();
+    }
     save();
 }
 
@@ -246,6 +250,9 @@ function switchAnteckning(elm){
     }else{
         noteRemover = true;
         elm.innerText += buttons[buttonNumber].changeOn
+    }
+    if(noteMode ===false){
+        grid[selectedInput.y][selectedInput.x].select.focus();
     }
     save();
 }
