@@ -26,22 +26,28 @@ var colors = {
     background:'white'
 }
 
+var confirmMessages = {
+    generateNew:"Vill du verkligen generera en ny? Detta går inte att ångra!",
+    clearEverything:"Vill du verkligen rensa allt? Detta går inte att ångra!",
+    clue:"Vill du verkligen ha en ledtråd?"
+}
+
 var buttons = [
     {
         name:"Lätt",
-        onClick:"setTestValues(1)"
+        onClick:"if(checkEmpty()){setTestValues(1)}else{if(confirm(confirmMessages.generateNew)){setTestValues(1)}}"
     },
     {
         name:"Medel",
-        onClick:"setTestValues(2)"
+        onClick:"if(checkEmpty()){setTestValues(2)}else{if(confirm(confirmMessages.generateNew)){setTestValues(2)}}"
     },
     {
         name:"Svår",
-        onClick:"setTestValues(3)"
+        onClick:"if(checkEmpty()){setTestValues(3)}else{if(confirm(confirmMessages.generateNew)){setTestValues(3)}}"
     },
     {
         name:"Rensa",
-        onClick:"clearThisShit()"
+        onClick:"if(checkEmpty()){clearThisShit()}else{if(confirm(confirmMessages.clearEverything)){clearThisShit()}}"
     },
     {
         name:"Ångra",
@@ -61,7 +67,7 @@ var buttons = [
     },
     {
         name:"Ledtråd",
-        onClick:"hint()",
+        onClick:"if(confirm(confirmMessages.clue)){hint()}",
     },
     {
         name:"Inställningar",
@@ -112,6 +118,9 @@ var settingsButtons = [
         }
     ]
 
+function checkEmpty(){
+    return grid.every(row => row.every(cell => !cell.value))
+}
 
 function switchSettings()
 {   
