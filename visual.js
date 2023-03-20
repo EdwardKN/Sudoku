@@ -331,7 +331,6 @@ function switchAnteckning(elm){
             buttonNumber = i;
         }
     }
-    console.log(elm)
     elm.innerText = settingsButtons[buttonNumber].name
     if(noteRemover === true){
         noteRemover = false;
