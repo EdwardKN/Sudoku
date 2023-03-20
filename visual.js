@@ -257,7 +257,6 @@ function switchAnteckning(elm){
     save();
 }
 function noteBytGrejPil(x,y,changeX,changeY){
-    console.log(x,y,changeX,changeY)
     if(x+ changeX < 9 && x + changeX > -1 && y+ changeY < 9 && y + changeY > -1 ){
         if(grid[y][x].noteSelect === true){
             grid[y][x].noteSelect = false;
