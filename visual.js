@@ -257,6 +257,7 @@ function switchAnteckning(elm){
     save();
 }
 function noteBytGrejPil(x,y,changeX,changeY){
+    console.log(x,y,changeX,changeY)
     if(x+ changeX < 9 && x + changeX > -1 && y+ changeY < 9 && y + changeY > -1 ){
         if(grid[y][x].noteSelect === true){
             grid[y][x].noteSelect = false;
@@ -447,13 +448,14 @@ function changeNote(elm){
         noteMode = true;
         elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOn
 
+        grid[selectedInput.y][selectedInput.x].noteSelect = true;
+        noteBytGrejPil(selectedInput.x,selectedInput.y,0,0)
+        document.activeElement.blur();
+
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
-                if(grid[y][x].select === document.activeElement){
-                    grid[y][x].noteSelect = true;
-                    noteBytGrejPil(x,y,0,0)
-                    document.activeElement.blur();
-                }
+
+                
                 if(grid[y][x].value === 0){
                     
                     grid[y][x].select.style.zIndex = "0";   
