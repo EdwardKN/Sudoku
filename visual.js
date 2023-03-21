@@ -548,8 +548,9 @@ function changeNote(elm){
         if(settingOn === false){
             elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOn
         }
-
-        grid[selectedInput.y][selectedInput.x].noteSelect = true;
+        if(selectedInput.x !== undefined && selectedInput.y !== undefined){
+            grid[selectedInput.y][selectedInput.x].noteSelect = true;
+        }
         noteBytGrejPil(selectedInput.x,selectedInput.y,0,0)
         document.activeElement.blur();
 
