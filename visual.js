@@ -177,6 +177,16 @@ readTextFile("testpussel.json", function(text){
 });
 
 var grid = [];
+
+document.body.addEventListener("mousedown",function(e){
+    if(e.toElement === document.body){
+        selectedInput = {
+            x:undefined,
+            y:undefined
+        }
+        fixVisualizer()
+    }
+});
 window.addEventListener("keydown",function(e){
     if(e.keyCode === 8){
         for(let y = 0; y < 9; y++){
@@ -504,6 +514,7 @@ function init(){
                 if(buttons.length>y){
                     let tmpButton = document.createElement("button");
                     tmpButton.setAttribute("onclick",buttons[y].onClick);
+                    tmpButton.setAttribute("onmousedown","selectedInput = {x:undefined,y:undefined};fixVisualizer()")
                     tmpButton.innerText = buttons[y].name;
                     if(buttons[y].changeOff !== undefined && buttons[y].changeOn !== undefined && buttons[y].variable !== undefined){
                         setTimeout(() => {
@@ -610,6 +621,7 @@ function changeNote(elm){
                         grid[y][x].select.disabled = true;
                     }
                 }
+                fixVisualizer();
             }
         }
 
