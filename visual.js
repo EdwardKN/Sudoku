@@ -8,9 +8,9 @@ var noteMode = false;
 
 var grids;
 
-var shower = false;
+var shower = true;
 
-var noteRemover = false;
+var noteRemover = true;
 
 var settingOn = false;
 
