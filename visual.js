@@ -35,15 +35,15 @@ var confirmMessages = {
 var buttons = [
     {
         name:"Lätt",
-        onClick:"if(checkEmpty()){setTestValues(1)}else{if(confirm(confirmMessages.generateNew)){setTestValues(1)}}"
+        onClick:"if(checkEmpty()){getSudoku(1)}else{if(confirm(confirmMessages.generateNew)){getSudoku(1)}}"
     },
     {
         name:"Medel",
-        onClick:"if(checkEmpty()){setTestValues(2)}else{if(confirm(confirmMessages.generateNew)){setTestValues(2)}}"
+        onClick:"if(checkEmpty()){getSudoku(2)}else{if(confirm(confirmMessages.generateNew)){getSudoku(2)}}"
     },
     {
         name:"Svår",
-        onClick:"if(checkEmpty()){setTestValues(3)}else{if(confirm(confirmMessages.generateNew)){setTestValues(3)}}"
+        onClick:"if(checkEmpty()){getSudoku(3)}else{if(confirm(confirmMessages.generateNew)){getSudoku(3)}}"
     },
     {
         name:"Rensa",
