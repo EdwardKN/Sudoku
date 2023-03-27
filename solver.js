@@ -33,9 +33,9 @@ function getValPos(grid) {
 
 async function solve(grid){
     const temp = getValPos(grid)
-
+    
     grid = await solve2(temp).then(e =>{
-        e.forEach((row, i) => row.forEach((cell, j) => grid[i][j].value = cell[0]))
+        e[0][0].forEach((row, i) => row.forEach((cell, j) => grid[i][j].value = cell[0]))
     });
     return grid
 }
@@ -89,6 +89,8 @@ function show(arr) {
     for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {
             grid[i][j].value = arr[i][j]
+            grid[i][j].locked = false
+            if (arr[i][j]) { grid[i][j].locked = true }
         }
     }
     updateTable()
@@ -112,43 +114,25 @@ function getAll(y, x) {
         if (i !== y) { t.add(`${i},${x}`) }
         if (i !== x) { t.add(`${y},${i}`)}
     }
+    let y2 = Math.floor(y / 3) * 3
+    let x2 = Math.floor(x / 3) * 3
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
-            let row = Math.floor(y / 3) * 3 + i
-            let col = Math.floor(x / 3) * 3 + j
-            if (!(row === y && col === x)) { t.add(`${row},${col}`) }
+            if (!(y2 + i === y && x2 + j === x)) { t.add(`${y2 + i},${x2 + j}`) }
         }
     }
     return Array.from(t).map(e => e.split(',').map(a => parseInt(a))) // Return Array [[y, x]...]
 }
 
-async function solve2(grid) {
+async function solve2(grid, print = true) {
     let s = performance.now()
     let memory = []
+    let difficulty = 0
     let max_depth = 1
     let iteration = depth = prevX = prevY = 0 // Depth For Difficulty
 
     while (!isSolved(grid)) {
         iteration++
-        
-
-
-        // All Cells With Only 1 Possible Value
-        for (let y = 0; y < 9; y++) {
-            for (let x = 0; x < 9; x++) {
-                if (grid[y][x][0]) { continue }
-                
-                grid[y][x][1] = possibleMoves(grid, y, x, grid[y][x][1])
-
-                if (grid[y][x][1].size === 1) {
-                    grid[y][x][0] = grid[y][x][1].values().next().value
-                    grid[y][x][1].delete(grid[y][x][0])
-                }
-            }
-        }
-        //console.log(iteration)
-        //if (true) { show(grid.map(e => e.map(c => c[0]))) }
-        //await sleep(0)
 
         // Is There Any Tile With No Possible Values
         
@@ -161,6 +145,25 @@ async function solve2(grid) {
             grid[prevY][prevX][1].delete(value)
         }
         let temp = structuredClone(grid)
+
+        // All Cells With Only 1 Possible Value
+        for (let y = 0; y < 9; y++) {
+            for (let x = 0; x < 9; x++) {
+                if (grid[y][x][0]) { continue }
+                
+                grid[y][x][1] = possibleMoves(grid, y, x, grid[y][x][1])
+
+                if (grid[y][x][1].size === 1) {
+                    if (difficulty < 1) { difficulty = 1 }
+                    grid[y][x][0] = grid[y][x][1].values().next().value
+                    grid[y][x][1].delete(grid[y][x][0])
+                }
+            }
+        }
+                
+        //console.log(iteration)
+        //if (true) { show(grid.map(e => e.map(c => c[0]))) }
+        //await sleep(0)
         
         for (let y = 0; y < 3; y++) {
             for (let x = 0; x < 3; x++) {
@@ -192,6 +195,7 @@ async function solve2(grid) {
                     }
                     // Check Horizontal
                     if (positions.every(e => e[0] === positions[0][0])) { // Same Y Value
+                        if (difficulty < 2) { difficulty = 2 }
                         let y = positions[0][0]
                         let used = new Set(positions.map(e => e[1])) // Get X Values
                         for (let i = 0; i < 9; i++) {
@@ -201,6 +205,7 @@ async function solve2(grid) {
                     }
                     // Check Vertical
                     if (positions.every(e => e[1] === positions[0][1])) { // Same X Value
+                        if (difficulty < 2) { difficulty = 2 }
                         let x = positions[0][1]
                         let used = new Set(positions.map(e => e[0])) // Get Y Values
                         for (let i = 0; i < 9; i++) {
@@ -220,6 +225,7 @@ async function solve2(grid) {
                 for (let x = 0; x < grid[y].length; x++) {
 
                     if (grid[y][x][1].size === n) {
+                        if (difficulty < 3) { difficulty = 3 }
                         
                         let value = grid[y][x][1].values().next().value
 
@@ -236,19 +242,27 @@ async function solve2(grid) {
             n++
         }
     }
-    console.log(`It Took ${iteration} Iterations To Solve The Sudoku`)
-    console.log(`It Recuired A Depth Of ${depth} To Solve The Sudoku`)
-    console.log(`Average Iteration Speed: ${(performance.now() - s) / iteration} Milliseconds Per Iteration`)
-    return grid
+    if (print) {
+        console.log(`It Took ${iteration} Iterations To Solve The Sudoku`)
+        console.log(`It Recuired A Depth Of ${depth} To Solve The Sudoku`)
+        console.log(`Average Iteration Speed: ${(performance.now() - s) / iteration} Milliseconds Per Iteration`)
+    }
+    return [[grid], difficulty]
 }
 
-function generateSudoku(difficulty) {
-    let grid = Array.from(Array(9), () => Array.from(Array(9)).fill(0))
-    
 
+function hint(solution) {
+    let notUsed = []
+    grid.forEach((row, i) => row.forEach((cell, j) => { if (!cell.value) { notUsed.push([i, j]) }}))
+    if (notUsed.length === 0) { return }
+    let [y, x] = notUsed[Math.floor(Math.random() * notUsed.length)]
 
-
-    return grid
+    grid[y][x].value = solution[y][x][0]
+    updateTable()
 }
 
-console.log(generateSudoku())
+
+async function hintHint() {
+    let solve = await solve2(getValPos(grid))
+    hint(solve[0][0])
+}

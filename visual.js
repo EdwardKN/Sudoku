@@ -29,15 +29,15 @@ var colors = {
 var buttons = [
     {
         name:"Lätt",
-        onClick:"setTestValues(1)"
+        onClick:"generateSudoku(1)"
     },
     {
         name:"Medel",
-        onClick:"setTestValues(2)"
+        onClick:"generateSudoku(2)"
     },
     {
         name:"Svår",
-        onClick:"setTestValues(3)"
+        onClick:"generateSudoku(3)"
     },
     {
         name:"Anteckningar",
@@ -49,7 +49,7 @@ var buttons = [
     },
     {
         name:"Ledtråd",
-        onClick:"hint()",
+        onClick:"hintHint()",
     },
     {
         name:"Inställningar",
