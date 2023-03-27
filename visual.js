@@ -29,15 +29,15 @@ var colors = {
 var buttons = [
     {
         name:"Lätt",
-        onClick:"generateSudoku(1)"
+        onClick:"getSudoku(1)"
     },
     {
         name:"Medel",
-        onClick:"generateSudoku(2)"
+        onClick:"getSudoku(2)"
     },
     {
         name:"Svår",
-        onClick:"generateSudoku(3)"
+        onClick:"getSudoku(3)"
     },
     {
         name:"Anteckningar",
@@ -760,6 +760,14 @@ async function solveSolve(grid){
         updateTable()
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
         historyIndex = gridHistory.length-1
+        save()
+    });
+}
+
+async function getSudoku(difficulty){
+    await generateSudoku(difficulty).then(e => {
+        gridHistory = []
+        gridHistory.push(JSON.parse(JSON.stringify(grid)));
         save()
     });
 }
