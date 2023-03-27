@@ -8,9 +8,9 @@ var noteMode = false;
 
 var grids;
 
-var shower = false;
+var shower = true;
 
-var noteRemover = false;
+var noteRemover = true;
 
 var settingOn = false;
 
@@ -26,18 +26,36 @@ var colors = {
     background:'white'
 }
 
+var confirmMessages = {
+    generateNew:"Vill du verkligen generera en ny? Detta går inte att ångra!",
+    clearEverything:"Vill du verkligen rensa allt? Detta går inte att ångra!",
+    clue:"Vill du verkligen ha en ledtråd?"
+}
+
 var buttons = [
     {
         name:"Lätt",
-        onClick:"getSudoku(1)"
+        onClick:"if(checkEmpty()){setTestValues(1)}else{if(confirm(confirmMessages.generateNew)){setTestValues(1)}}"
     },
     {
         name:"Medel",
-        onClick:"getSudoku(2)"
+        onClick:"if(checkEmpty()){setTestValues(2)}else{if(confirm(confirmMessages.generateNew)){setTestValues(2)}}"
     },
     {
         name:"Svår",
-        onClick:"getSudoku(3)"
+        onClick:"if(checkEmpty()){setTestValues(3)}else{if(confirm(confirmMessages.generateNew)){setTestValues(3)}}"
+    },
+    {
+        name:"Rensa",
+        onClick:"if(checkEmpty()){clearThisShit()}else{if(confirm(confirmMessages.clearEverything)){clearThisShit()}}"
+    },
+    {
+        name:"Ångra",
+        onClick:"undo()"
+    },
+    {
+        name:"Gör om",
+        onClick:"redo()"
     },
     {
         name:"Anteckningar",
@@ -49,39 +67,16 @@ var buttons = [
     },
     {
         name:"Ledtråd",
-        onClick:"hintHint()",
+        onClick:"if(confirm(confirmMessages.clue)){hint()}",
     },
     {
         name:"Inställningar",
         onClick:"switchSettings()",
         variable:"settingOn"
     },
-    {
-        name:"Rensa",
-        onClick:"clearThisShit()"
-    },
-    {
-        name:"Ångra",
-        onClick:"undo()"
-    },
-    {
-        name:"Gör om",
-        onClick:"redo()"
-    }
 ]
 
 var settingsButtons = [
-        {
-            name:"Tillbaka",
-            onClick:"switchSettings()",
-            variable:"settingOn"
-        },
-        {
-            name:"",
-        },
-        {
-            name:"",
-        },
         {
             name:"Markera siffror",
             onClick:"switchClick(this);fixVisualizer();",
@@ -97,9 +92,35 @@ var settingsButtons = [
             changeOff:"(Av)",
             changeOn:"(På)",
             variable:"noteRemover"
+        },
+        {
+            name:"",
+        },
+        {
+            name:"",
+        },
+        {
+            name:"",
+        },
+        {
+            name:"",
+        },
+        {
+            name:"",
+        },
+        {
+            name:"",
+        },
+        {
+            name:"Tillbaka",
+            onClick:"switchSettings()",
+            variable:"settingOn"
         }
     ]
 
+function checkEmpty(){
+    return grid.every(row => row.every(cell => !cell.value))
+}
 
 function switchSettings()
 {   
@@ -132,7 +153,7 @@ function switchSettings()
             if(buttons[i] !== undefined){
                 buttons[i].button.setAttribute("onclick",buttons[i].onClick);
                 buttons[i].button.innerText = buttons[i].name;
-                if(buttons[i].changeOff !== undefined && buttons[i].changeOn !== undefined && settingsButtons[i].variable !== undefined){
+                if(buttons[i].changeOff !== undefined && buttons[i].changeOn !== undefined && buttons[i].variable !== undefined){
                     setTimeout(() => {
                         if(eval(buttons[i].variable) === true){
                             buttons[i].button.innerText += buttons[i].changeOn;
@@ -156,6 +177,16 @@ readTextFile("testpussel.json", function(text){
 });
 
 var grid = [];
+
+document.body.addEventListener("mousedown",function(e){
+    if(e.toElement === document.body){
+        selectedInput = {
+            x:undefined,
+            y:undefined
+        }
+        fixVisualizer()
+    }
+});
 window.addEventListener("keydown",function(e){
     if(e.keyCode === 8){
         for(let y = 0; y < 9; y++){
@@ -319,7 +350,6 @@ function switchAnteckning(elm){
             buttonNumber = i;
         }
     }
-    console.log(elm)
     elm.innerText = settingsButtons[buttonNumber].name
     if(noteRemover === true){
         noteRemover = false;
@@ -484,6 +514,7 @@ function init(){
                 if(buttons.length>y){
                     let tmpButton = document.createElement("button");
                     tmpButton.setAttribute("onclick",buttons[y].onClick);
+                    tmpButton.setAttribute("onmousedown","selectedInput = {x:undefined,y:undefined};fixVisualizer()")
                     tmpButton.innerText = buttons[y].name;
                     if(buttons[y].changeOff !== undefined && buttons[y].changeOn !== undefined && buttons[y].variable !== undefined){
                         setTimeout(() => {
@@ -528,8 +559,9 @@ function changeNote(elm){
         if(settingOn === false){
             elm.innerText = buttons[buttonNumber].name + buttons[buttonNumber].changeOn
         }
-
-        grid[selectedInput.y][selectedInput.x].noteSelect = true;
+        if(selectedInput.x !== undefined && selectedInput.y !== undefined){
+            grid[selectedInput.y][selectedInput.x].noteSelect = true;
+        }
         noteBytGrejPil(selectedInput.x,selectedInput.y,0,0)
         document.activeElement.blur();
 
@@ -589,6 +621,7 @@ function changeNote(elm){
                         grid[y][x].select.disabled = true;
                     }
                 }
+                fixVisualizer();
             }
         }
 

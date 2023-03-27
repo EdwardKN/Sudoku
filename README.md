@@ -1,3 +1,3 @@
-# Sodoku
+# Sudoku
 
-https://edwardkn.github.io/Sodoku/
+https://edwardkn.github.io/Sudoku/
