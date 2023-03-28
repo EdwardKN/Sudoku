@@ -67,7 +67,7 @@ var buttons = [
     },
     {
         name:"Ledtråd",
-        onClick:"if(confirm(confirmMessages.clue)){hint()}",
+        onClick:"if(confirm(confirmMessages.clue)){hintHint()}",
     },
     {
         name:"Inställningar",
