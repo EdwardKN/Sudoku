@@ -259,6 +259,8 @@ function hint(solution) {
 
     grid[y][x].value = solution[y][x][0]
     updateTable()
+    gridHistory.push(JSON.parse(JSON.stringify(grid)));
+    save();
 }
 
 
