@@ -67,7 +67,7 @@ var buttons = [
     },
     {
         name:"Ledtråd",
-        onClick:"if(confirm(confirmMessages.clue)){hint()}",
+        onClick:"if(confirm(confirmMessages.clue)){hintHint()}",
     },
     {
         name:"Inställningar",
@@ -796,13 +796,37 @@ async function solveSolve(grid){
         save()
     });
 }
+let loading = false;
 
 async function getSudoku(difficulty){
-    await generateSudoku(difficulty).then(e => {
-        gridHistory = []
-        gridHistory.push(JSON.parse(JSON.stringify(grid)));
-        save()
-    });
+    if(loading === false){
+        loading = true;
+        let tmp = document.createElement("img");
+        tmp.id = "loading";
+        tmp.src = "../loading.gif";
+        document.body.appendChild(tmp)
+        document.getElementById("loading").style.width = "100vh"
+        for(let y = 0; y < 9; y++){
+            for(let x = 0; x < 9; x++){
+                grid[y][x].td.className = "loading"
+            }
+        }
+        clearThisShit();
+        await sleep(100);
+        generateSudoku(difficulty).then(e => {
+            loading = false;
+            document.getElementById("loading").remove();
+            gridHistory = []
+            gridHistory.push(JSON.parse(JSON.stringify(grid)));
+            save()
+            for(let y = 0; y < 9; y++){
+                for(let x = 0; x < 9; x++){
+                    grid[y][x].td.className = "board"
+                }
+            }
+        });
+    }
+
 }
 
 
@@ -831,7 +855,7 @@ function setTestValues(difficulty){
     save()
 };
 
-function clearThisShit(){
+async function clearThisShit(){
     if( noteMode == true){
         changeNote(document.getElementById("changeNote"))
     }

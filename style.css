@@ -106,7 +106,6 @@ input{
    
 
 
-
 table.board tr.board:not(:last-child):nth-of-type(3n) td.board {
     border-bottom: 1vh solid black;
 }
@@ -114,3 +113,12 @@ table.board tr.board:not(:last-child):nth-of-type(3n) td.board {
 table.board tr.board td.board:not(:last-child):nth-of-type(3n) {
     border-right: 1vh solid black;
 }
+
+
+#loading{
+    z-index: 200;
+    position: absolute;
+    top: 50%;
+    left: calc(50% - 17.5vh);
+    transform: translate(-50%, -50%);    
+  }
