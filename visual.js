@@ -800,7 +800,7 @@ async function getSudoku(difficulty){
         loading = true;
         let tmp = document.createElement("img");
         tmp.id = "loading";
-        tmp.src = "../loading.gif";
+        tmp.src = "./loading.gif";
         document.body.appendChild(tmp)
         document.getElementById("loading").style.width = "100vh"
         for(let y = 0; y < 9; y++){
