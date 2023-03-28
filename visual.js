@@ -172,9 +172,6 @@ function switchSettings()
         return;    
     }
 }
-readTextFile("testpussel.json", function(text){
-    grids = JSON.parse(text);
-});
 
 var grid = [];
 
@@ -830,31 +827,6 @@ async function getSudoku(difficulty){
 }
 
 
-function setTestValues(difficulty){
-    clearThisShit();
-
-
-    if( noteMode == true){
-        changeNote(document.getElementById("changeNote"))
-    }
-    for(let y = 0; y < 9; y++){
-        for(let x = 0; x < 9; x++){
-            
-            grid[y][x].value = grids[difficulty][y][x].value;
-            if(grids[difficulty][y][x].value === 0){
-                grid[y][x].locked = false
-            }else{
-                grid[y][x].locked = true
-            }
-
-        };
-    };
-    updateTable();
-    gridHistory = []
-    gridHistory.push(JSON.parse(JSON.stringify(grid)));
-    save()
-};
-
 async function clearThisShit(){
     if( noteMode == true){
         changeNote(document.getElementById("changeNote"))
@@ -889,15 +861,4 @@ function moveCursorToEnd(el) {
     }
 }
 
-function readTextFile(file, callback) {
-    var rawFile = new XMLHttpRequest();
-    rawFile.overrideMimeType("application/json");
-    rawFile.open("GET", file, true);
-    rawFile.onreadystatechange = function() {
-        if (rawFile.readyState === 4 && rawFile.status == "200") {
-            callback(rawFile.responseText);
-        }
-    }
-    rawFile.send(null);
-}
 
