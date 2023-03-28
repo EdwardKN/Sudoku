@@ -1,5 +1,29 @@
 // 305 Milliseconds For Empty And 100 Milliseconds For Expert
 // 120 Milliseconds For Empty And 24 Milliseconds For Expert
+let f_base = [
+    [9, 2, 7, 8, 1, 3, 4, 6, 5],
+    [6, 8, 5, 7, 2, 4, 1, 3, 9],
+    [1, 4, 3, 6, 5, 9, 7, 8, 2],
+    [5, 7, 1, 9, 6, 8, 2, 4, 3],
+    [4, 9, 6, 3, 7, 2, 5, 1, 8],
+    [8, 3, 2, 1, 4, 5, 6, 9, 7],
+    [3, 6, 4, 5, 9, 7, 8, 2, 1],
+    [2, 5, 8, 4, 3, 1, 9, 7, 6],
+    [7, 1, 9, 2, 8, 6, 3, 5, 4]
+]
+
+let f_solve = [
+    [9, 2, 0, 8, 0, 3, 0, 6, 5],
+    [6, 8, 5, 7, 0, 0, 1, 3, 0],
+    [1, 4, 0, 6, 5, 0, 7, 8, 2],
+    [5, 0, 1, 0, 6, 0, 0, 4, 3],
+    [0, 9, 0, 3, 0, 0, 5, 1, 8],
+    [8, 3, 0, 0, 4, 0, 6, 9, 0],
+    [0, 0, 4, 5, 9, 0, 8, 0, 0],
+    [0, 0, 0, 0, 3, 1, 0, 0, 0],
+    [0, 0, 9, 0, 8, 0, 0, 5, 0]
+]
+
 const solved = [
     [1, 2, 3, 4, 5, 6, 7, 8, 9],
     [4, 5, 6, 7, 8, 9, 1, 2, 3],
@@ -106,7 +130,8 @@ function notAnyPossibleMove(grid) {
     }
     return true
 }
-async function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms))}
+
+async function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)) }
 
 function getAll(y, x) {
     let t = new Set()
@@ -124,7 +149,7 @@ function getAll(y, x) {
     return Array.from(t).map(e => e.split(',').map(a => parseInt(a))) // Return Array [[y, x]...]
 }
 
-async function solve2(grid, print = true) {
+async function solve2(grid, print = true, showy = false) {
     let s = performance.now()
     let memory = []
     let difficulty = 0
@@ -160,10 +185,10 @@ async function solve2(grid, print = true) {
                 }
             }
         }
-                
-        //console.log(iteration)
-        //if (true) { show(grid.map(e => e.map(c => c[0]))) }
-        //await sleep(0)
+          
+        
+        if (showy) { show(grid.map(e => e.map(c => c[0]))); await sleep(100) }
+        
         
         for (let y = 0; y < 3; y++) {
             for (let x = 0; x < 3; x++) {
@@ -189,6 +214,8 @@ async function solve2(grid, print = true) {
                     if (positions.length === 0) { return }
                     if (positions.length === 1) {
                         let [y, x] = positions[0]
+                        grid[y][x][1] = possibleMoves(grid, y, x, grid[y][x][1])
+                        if (!grid[y][x][1].size) { return }
                         grid[y][x][0] = key
                         grid[y][x][1].clear()
                         return
@@ -217,7 +244,6 @@ async function solve2(grid, print = true) {
         }
 
         if (!isEqual(temp, grid)) { continue }
-
         n = 2
         
         outerloop: while(n <= 9) {
