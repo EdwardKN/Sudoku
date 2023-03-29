@@ -283,6 +283,6 @@ function hint(solution) {
 
 
 async function hintHint() {
-    let solve = await solve2(getValPos(grid))
+    let solve = await solve(getValPos(grid))
     hint(solve[0][0])
 }
