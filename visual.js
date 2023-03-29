@@ -908,7 +908,6 @@ async function restart(){
     }
 
     historyIndex = 1;
-    timerTime = 0;
     undo();
 
     updateTable();
