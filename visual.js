@@ -18,8 +18,12 @@ var timerMode = true;
 
 var timerTime = 0;
 
+var timerStop = false;
+
 setInterval(() => {
-    timerTime++;
+    if(timerStop === false){
+        timerTime++;
+    }
 }, 10);
 
 var timerTimer = undefined;
@@ -184,8 +188,8 @@ function switchTimer(elm){
         if(elm !== undefined){
             elm.innerText += settingsButtons[buttonNumber].changeOff
         }
-        timerText.remove();
         clearInterval(timerTimer)
+        timerText.remove();
         save();
     }
 
@@ -520,6 +524,7 @@ function save(){
 };
 
 function load(){
+    
     timerTime = JSON.parse(localStorage.getItem("timerTime"))
     noteRemover = JSON.parse(localStorage.getItem("noteRemover"))
     shower = JSON.parse(localStorage.getItem("shower"))
@@ -528,6 +533,11 @@ function load(){
     historyIndex = gridHistory.length;
     switchTimer()
     undo();
+    if(isSolved(getValPos(grid))){
+        timerStop = true;
+    }else{
+        timerStop = false;
+    }
 };
 
 function init(){
@@ -761,7 +771,7 @@ function updateTable(){
             }
         };
     };
-
+    
     
 };
 
@@ -783,6 +793,11 @@ function updateChanged(x,y){
         historyIndex++;
         save()
     }
+    if(isSolved(getValPos(grid))){
+        timerStop = true;
+    }else{
+        timerStop = false;
+    }
 
 };
 
@@ -791,6 +806,8 @@ let lastTemp = {x:0,y:0}
 init();
 
 function undo(){
+    if(timerStop === false){
+
     if( noteMode == true){
         changeNote(document.getElementById("changeNote"))
     }
@@ -816,8 +833,15 @@ function undo(){
         updateTable();
     }
     save();
+    }
+    if(isSolved(getValPos(grid))){
+        timerStop = true;
+    }else{
+        timerStop = false;
+    }
 }
 function redo(){
+    if(timerStop === false){
     if( noteMode == true){
         changeNote(document.getElementById("changeNote"))
     }
@@ -843,6 +867,12 @@ function redo(){
         updateTable();
     }
     save();
+}
+if(isSolved(getValPos(grid))){
+    timerStop = true;
+}else{
+    timerStop = false;
+}
 }
 
 async function solveSolve(grid){
@@ -906,17 +936,21 @@ async function getSudoku(difficulty){
 
 }
 async function restart(){
-    if( noteMode == true){
-        changeNote(document.getElementById("changeNote"))
+    if(timerStop === false){
+        if( noteMode == true){
+            changeNote(document.getElementById("changeNote"))
+        }
+        
+        timerStop = false;
+
+        historyIndex = 1;
+        undo();
+
+        updateTable();
+        
+        gridHistory.push(JSON.parse(JSON.stringify(grid)));
+        save()
     }
-
-    historyIndex = 1;
-    undo();
-
-    updateTable();
-    
-    gridHistory.push(JSON.parse(JSON.stringify(grid)));
-    save()
 }
 
 async function clearThisShit(){
