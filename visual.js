@@ -14,6 +14,18 @@ var noteRemover = true;
 
 var settingOn = false;
 
+var timerMode = true;
+
+var timerTime = 0;
+
+setInterval(() => {
+    timerTime++;
+}, 10);
+
+var timerTimer = undefined;
+
+var timerText = undefined;
+
 var selectedInput = {
     x:undefined,
     y:undefined
@@ -28,7 +40,7 @@ var colors = {
 
 var confirmMessages = {
     generateNew:"Vill du verkligen generera en ny? Detta går inte att ångra!",
-    clearEverything:"Vill du verkligen rensa allt? Detta går inte att ångra!",
+    clearEverything:"Vill du verkligen starta om? Detta går inte att ångra!",
     clue:"Vill du verkligen ha en ledtråd?"
 }
 
@@ -46,8 +58,8 @@ var buttons = [
         onClick:"if(checkEmpty()){getSudoku(3)}else{if(confirm(confirmMessages.generateNew)){getSudoku(3)}}"
     },
     {
-        name:"Rensa",
-        onClick:"if(checkEmpty()){clearThisShit()}else{if(confirm(confirmMessages.clearEverything)){clearThisShit()}}"
+        name:"Starta om",
+        onClick:"if(checkEmpty()){restart()}else{if(confirm(confirmMessages.clearEverything)){restart()}}"
     },
     {
         name:"Ångra",
@@ -94,7 +106,12 @@ var settingsButtons = [
             variable:"noteRemover"
         },
         {
-            name:"",
+            name:"Timer",
+            id:"timerbutton",
+            variable:"timerMode",
+            changeOff:"(Av)",
+            changeOn:"(På)",
+            onClick:"switchTimer(this);"
         },
         {
             name:"",
@@ -118,6 +135,61 @@ var settingsButtons = [
         }
     ]
 
+function switchTimer(elm){
+    if(elm !== undefined){
+        for (let i = 0; i < settingsButtons.length; i++) {
+            if(elm.id == settingsButtons[i].id){
+                buttonNumber = i;
+            }
+        }
+        elm.innerText = settingsButtons[buttonNumber].name;
+    }
+    
+    if(timerMode === false){
+        timerText = document.createElement("a");
+        document.body.appendChild(timerText);
+        timerMode = true;
+        if(elm !== undefined){
+            elm.innerText += settingsButtons[buttonNumber].changeOn
+        }
+        timerTimer = setInterval(function(){
+            timerText.innerText = ""
+            if(Math.floor(timerTime/6000) > 9){
+                timerText.innerText += Math.floor(timerTime/6000) + ":" 
+            }else if(Math.floor(timerTime/6000) > 0){
+                timerText.innerText += "0"+Math.floor(timerTime/6000) + ":" 
+            }else{
+                timerText.innerText += "00:" 
+            }
+            if(Math.floor(timerTime/100)%60 > 9){
+                timerText.innerText += Math.floor(timerTime/100)%60 + "." 
+            }else if(Math.floor(timerTime/100)%60 > 0){
+                timerText.innerText += "0"+Math.floor(timerTime/100)%60 + "." 
+            }else{
+                timerText.innerText += "00." 
+            }
+            if(Math.floor(timerTime)%100 > 9){
+                timerText.innerText += Math.floor(timerTime%100)
+            }else if(Math.floor(timerTime)%100 > 0){
+                timerText.innerText += "0"+Math.floor(timerTime%100)
+            }else{
+                timerText.innerText += "00" 
+            }
+            
+            localStorage.setItem("timerTime",JSON.stringify(timerTime));
+        },10)
+        save();
+    }else{
+        timerMode = false
+        if(elm !== undefined){
+            elm.innerText += settingsButtons[buttonNumber].changeOff
+        }
+        timerText.remove();
+        clearInterval(timerTimer)
+        save();
+    }
+
+}
 function checkEmpty(){
     return grid.every(row => row.every(cell => !cell.value))
 }
@@ -443,14 +515,18 @@ window.addEventListener("load",function(e){
 function save(){
     localStorage.setItem("noteRemover",JSON.stringify(noteRemover));
     localStorage.setItem("shower",JSON.stringify(shower));
+    localStorage.setItem("timerMode",JSON.stringify(timerMode));
     localStorage.setItem("gridHistory", JSON.stringify(gridHistory));
 };
 
 function load(){
+    timerTime = JSON.parse(localStorage.getItem("timerTime"))
     noteRemover = JSON.parse(localStorage.getItem("noteRemover"))
     shower = JSON.parse(localStorage.getItem("shower"))
+    timerMode = !JSON.parse(localStorage.getItem("timerMode"))
     gridHistory = JSON.parse(localStorage.getItem("gridHistory"))
     historyIndex = gridHistory.length;
+    switchTimer()
     undo();
 };
 
@@ -815,6 +891,7 @@ async function getSudoku(difficulty){
             document.getElementById("loading").remove();
             gridHistory = []
             gridHistory.push(JSON.parse(JSON.stringify(grid)));
+            timerTime = 0;
             save()
             for(let y = 0; y < 9; y++){
                 for(let x = 0; x < 9; x++){
@@ -825,7 +902,19 @@ async function getSudoku(difficulty){
     }
 
 }
+async function restart(){
+    if( noteMode == true){
+        changeNote(document.getElementById("changeNote"))
+    }
 
+    historyIndex = 1;
+    undo();
+
+    updateTable();
+    
+    gridHistory.push(JSON.parse(JSON.stringify(grid)));
+    save()
+}
 
 async function clearThisShit(){
     if( noteMode == true){
@@ -860,5 +949,4 @@ function moveCursorToEnd(el) {
         range.select();
     }
 }
-
 
