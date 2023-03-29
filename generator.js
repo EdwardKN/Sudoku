@@ -98,6 +98,7 @@ async function generateSudoku(difficulty) {
 
         if (equal(history[history.length - 1], board)) {
             show(board)
+            save();
             return history.pop()
         }
     }
