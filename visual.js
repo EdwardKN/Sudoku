@@ -788,12 +788,15 @@ async function solveSolve(grid){
         }
     }
     let s = performance.now()
-    grid = await solve(grid).then(e =>{
+    const temp = getValPos(grid)
+    await solve(temp).then(e =>{
+        e[0][0].forEach((row, i) => row.forEach((cell, j) => grid[i][j].value = cell[0]))
         console.log(`It Took ${performance.now() - s} Milliseconds To Solve The Sudoku`)
         updateTable()
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
         historyIndex = gridHistory.length-1
         save()
+        
     });
 }
 let loading = false;
