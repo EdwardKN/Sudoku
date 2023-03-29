@@ -1,10 +1,19 @@
 html, body {margin: 0; height: 100%; overflow: hidden}
 
+a{
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 100vw;
+    font-size: 5vh;
+    margin-left: auto;
+    margin-right: auto;
 
+}
 
 button{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
-    font-size: 4vh;
+    font-size: 3.5vh;
     width: 100%;
     height: 100%;
     border: 0px solid black;
@@ -16,13 +25,14 @@ button{
 }   
 
 table.board {
-    left: calc((100vw - calc(100vh + 100vh/9*3)) / 2);
+    left: calc((100vw - calc(100vh + 100vh/12.82*3)) / 2);
     cursor:text;
     table-layout: fixed;
-    width: calc(100vh + 100vh/9*3);
+    width: calc(100vh + 100vh/12.82*3);
     border-collapse: collapse;
     border: 1vh solid black;
     position:relative;
+    top:5vh
 }
 
 button:hover{
@@ -33,8 +43,8 @@ button:hover{
 table.note{
     z-index: 1;
     position:relative;
-    margin-top: calc(calc(-100vh/9) + calc(100vh/135));
-    height: calc(calc(100vh/9) - calc(100vh/135));
+    margin-top: calc(calc(-100vh/10) + calc(100vh/135));
+    height: calc(calc(100vh/10) - calc(100vh/135));
     width: 100%;
     align-items: center;
     justify-content: center;
@@ -44,16 +54,16 @@ table.note{
 }
 td.note{
     cursor:text;
-    width: 3.5vh;
+    width: 3vh;
     text-align: center;
     font-size: 2vh;
     padding: 0;
-    height: calc(calc(calc(100vh/9) - calc(100vh/135))/3);
+    height: calc(calc(calc(100vh/10) - calc(100vh/135))/3);
 }
 table.selected{
     cursor:text;
     background-color: lightgray;
-    height: calc(calc(calc(100vh/9) - calc(100vh/135))/3);
+    height: calc(calc(calc(100vh/10) - calc(100vh/135))/3);
     padding: 0;
 }
 
@@ -68,7 +78,7 @@ td.board{
 
 }
 td{
-    height: calc(calc(100vh/9) - calc(100vh/135));
+    height: calc(calc(100vh/10) - calc(100vh/135));
     display:table-cell;
     column-fill:auto;
     padding: 0 ;
