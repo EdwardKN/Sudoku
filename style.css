@@ -4,11 +4,12 @@ a{
     position: absolute;
     text-align: center;
     top: 0;
-    width: 100vw;
+    left:5vh;
+    width: calc(93vh);
     font-size: 5vh;
     margin-left: auto;
     margin-right: auto;
-
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
 }
 
 button{
@@ -25,7 +26,7 @@ button{
 }   
 
 table.board {
-    left: calc((100vw - calc(100vh + 100vh/12.82*3)) / 2);
+    left: calc(5vh);
     cursor:text;
     table-layout: fixed;
     width: calc(100vh + 100vh/12.82*3);
@@ -33,6 +34,27 @@ table.board {
     border: 1vh solid black;
     position:relative;
     top:5vh
+}
+table.leaderboard {
+    left: calc(calc((calc(100vh + 100vh/12.82*3))) + 10vh);
+    cursor:text;
+    table-layout: fixed;
+    width: calc(50vh);
+    border-collapse: collapse;
+    border: 1vh solid black;
+    position:relative;
+    top:-84.99vh
+}
+
+td.leaderboard{
+    border: 1px solid black;
+    border: 0.5vh solid black;
+    text-align: center;
+    height: calc(calc(100vh/15) + calc(100vh/108));
+    display:table-cell;
+    column-fill:auto;
+    padding: 0 ;
+    font-size: 5vh;
 }
 
 button:hover{
@@ -93,7 +115,6 @@ input{
     border: 0;
     width: 95%;
     height: 100%;
-    font-family: inherit;
     font-size: 8vh;
     text-align: center;
     -moz-user-select: -moz-none;

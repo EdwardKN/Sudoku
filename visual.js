@@ -1,5 +1,7 @@
 var table;
 
+var leaderboard;
+
 var gridHistory = [];
 
 var historyIndex = 0;
@@ -664,6 +666,38 @@ function init(){
     }
     if(gridHistory[historyIndex] != grid){
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
+    }
+    leaderboard = document.createElement("table");
+    leaderboard.className = "leaderboard"
+
+    document.body.appendChild(leaderboard);
+
+    for(let y = 0; y < 11; y++){
+        let tmpTr = document.createElement("tr")
+        if(y > 0){ 
+            for(let x = 0; x < 2; x++){
+                let tmpTd = document.createElement("td")
+                tmpTr.appendChild(tmpTd);
+                tmpTd.className = "leaderboard"
+                if(x === 0){
+                    tmpTd.innerText = y
+                    tmpTd.colSpan = 2;
+                    tmpTd.style.textAlign = "center"
+                }else{
+                    tmpTd.colSpan = 13
+                    tmpTd.innerText = "hej";
+                }
+            }
+        }else{
+            let tmpTd = document.createElement("td")
+            tmpTd.className = "leaderboard"
+            tmpTd.colSpan = 15;
+            tmpTd.style.textAlign = "center"
+            tmpTd.innerText = "Topplista"
+            tmpTr.appendChild(tmpTd);
+        }
+        leaderboard.appendChild(tmpTr)
+
     }
 }
 
