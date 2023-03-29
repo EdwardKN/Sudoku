@@ -26,6 +26,15 @@ setInterval(() => {
     }
 }, 10);
 
+setInterval(() => {
+    buttons.forEach(e => {
+        if(e.cooldown !== undefined){
+            e.cooldownTime--;
+        }
+    })
+    save();
+}, 1000);
+
 var timerTimer = undefined;
 
 var timerText = undefined;
@@ -84,6 +93,9 @@ var buttons = [
     {
         name:"Ledtråd",
         onClick:"if(confirm(confirmMessages.clue)){hintHint()}",
+        cooldown:"60",
+        cooldownTime:0,
+        id:"hint"
     },
     {
         name:"Inställningar",
@@ -227,7 +239,7 @@ function switchSettings()
         settingOn = false;
         for(let i = 0; i < 9; i++){
             if(buttons[i] !== undefined){
-                buttons[i].button.setAttribute("onclick",buttons[i].onClick);
+                buttons[i].button.setAttribute("onclick","if(buttons["+i+"].cooldownTime<0 || buttons["+i+"].cooldownTime === undefined){"+buttons[i].onClick + ";buttons["+i+"].cooldownTime = buttons["+i+"].cooldown;fixCooldown("+i+")}");
                 buttons[i].button.innerText = buttons[i].name;
                 if(buttons[i].changeOff !== undefined && buttons[i].changeOn !== undefined && buttons[i].variable !== undefined){
                     setTimeout(() => {
@@ -239,6 +251,7 @@ function switchSettings()
                     }, 15);
     
                 }
+                
                 buttons[i].button.id = buttons[i].id
             }else{
                 buttons[i].button.innerText = "";
@@ -247,6 +260,25 @@ function switchSettings()
         }
         return;    
     }
+}
+
+function fixCooldown(i){
+    if(settingOn === false){
+        if(buttons[i].cooldown !== undefined && buttons[i].cooldownTime > 0){
+            buttons[i].button.innerText += `(${buttons[i].cooldownTime})`
+            let tmp = setInterval(() => {
+                if(settingOn === false){
+                buttons[i].button.innerText = buttons[i].name;
+                if(buttons[i].cooldownTime > 0){
+                    buttons[i].button.innerText += `(${buttons[i].cooldownTime})`
+                }else{
+                    clearInterval(tmp);
+                }
+            }
+            }, 100);
+        }
+    }
+
 }
 
 var grid = [];
@@ -521,6 +553,7 @@ function save(){
     localStorage.setItem("shower",JSON.stringify(shower));
     localStorage.setItem("timerMode",JSON.stringify(timerMode));
     localStorage.setItem("gridHistory", JSON.stringify(gridHistory));
+    localStorage.setItem("buttons", JSON.stringify(buttons));
 };
 
 function load(){
@@ -530,6 +563,12 @@ function load(){
     shower = JSON.parse(localStorage.getItem("shower"))
     timerMode = !JSON.parse(localStorage.getItem("timerMode"))
     gridHistory = JSON.parse(localStorage.getItem("gridHistory"))
+    let tmpbuttons = JSON.parse(localStorage.getItem("buttons"))
+    
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].cooldownTime = tmpbuttons[i].cooldownTime;
+        fixCooldown(i);
+    }
     historyIndex = gridHistory.length;
     switchTimer()
     undo();
@@ -596,7 +635,7 @@ function init(){
 
                 if(buttons.length>y){
                     let tmpButton = document.createElement("button");
-                    tmpButton.setAttribute("onclick",buttons[y].onClick);
+                    tmpButton.setAttribute("onclick","if(buttons["+y+"].cooldownTime<0 || buttons["+y+"].cooldownTime === undefined){"+buttons[y].onClick + ";buttons["+y+"].cooldownTime = buttons["+y+"].cooldown;fixCooldown("+y+")}");
                     tmpButton.setAttribute("onmousedown","selectedInput = {x:undefined,y:undefined};fixVisualizer()")
                     tmpButton.innerText = buttons[y].name;
                     if(buttons[y].changeOff !== undefined && buttons[y].changeOn !== undefined && buttons[y].variable !== undefined){
