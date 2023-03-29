@@ -86,8 +86,9 @@ async function generateSudoku(difficulty) {
             const [y, x] = used[i]
             let t = board[y][x]
             board[y][x] = 0
+            
+            const solution = await solve(board.map(r => r.map(e => [e, e 
 
-            const solve = await solve(board.map(r => r.map(e => [e, e 
             ? new Set() : new Set([1, 2, 3, 4, 5, 6, 7, 8, 9])])), print = false)
 
             if (solution[0].length > 1 || solution[1] > difficulty) {
