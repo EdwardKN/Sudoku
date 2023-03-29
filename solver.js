@@ -55,15 +55,6 @@ function getValPos(grid) {
     return temp
 }
 
-async function solve(grid){
-    const temp = getValPos(grid)
-    
-    grid = await solve2(temp).then(e =>{
-        e[0][0].forEach((row, i) => row.forEach((cell, j) => grid[i][j].value = cell[0]))
-    });
-    return grid
-}
-
 function equalSets(set1, set2) { return set1.size === set2.size && [...set1].every((e) => set2.has(e)) }
 
 function copyProperty(arr, prop) {
@@ -149,7 +140,7 @@ function getAll(y, x) {
     return Array.from(t).map(e => e.split(',').map(a => parseInt(a))) // Return Array [[y, x]...]
 }
 
-async function solve2(grid, print = true, showy = false) {
+async function solve(grid, print = true, showy = false) {
     let s = performance.now()
     let memory = []
     let difficulty = 0
@@ -244,6 +235,7 @@ async function solve2(grid, print = true, showy = false) {
         }
 
         if (!isEqual(temp, grid)) { continue }
+        if (depth === 1 && difficulty < 4) { difficulty = 4 }
         n = 2
         
         outerloop: while(n <= 9) {
