@@ -6,6 +6,8 @@ var leaderboardData = undefined;
 
 getScore(function(e) {
     leaderboardData = e
+    init();
+    load();
     updateLeaderboard();
 })
 
@@ -567,10 +569,6 @@ function fixVisualizer(){
     }
 }
 
-window.addEventListener("load",function(e){
-    load();
-})
-
 function save(){
     localStorage.setItem("noteRemover",JSON.stringify(noteRemover));
     localStorage.setItem("shower",JSON.stringify(shower));
@@ -692,24 +690,28 @@ async function init(){
     leaderboard.className = "leaderboard"
 
     document.body.appendChild(leaderboard);
-
-    for(let y = 0; y < 11; y++){
+    let tmpBody = document.createElement("tbody");
+    let tmpMax = 11;
+    if(leaderboardData.length > 10){
+        tmpMax = leaderboardData.length+1
+    }
+    for(let y = 0; y < tmpMax; y++){ 
         let tmpTr = document.createElement("tr")
         if(y > 0){ 
             for(let x = 0; x < 3; x++){
                 let tmpTd = document.createElement("td")
+                tmpTd.className = "leaderboard2"
                 tmpTr.appendChild(tmpTd);
-                tmpTd.className = "leaderboard"
                 if(x === 0){
-                    tmpTd.innerText = y
-                    tmpTd.colSpan = 2;
+                    tmpTd.innerText = y 
+                    tmpTd.style.width = "10vh"
                     tmpTd.style.textAlign = "center"
                 }else if(x === 1){
-                    tmpTd.colSpan = 9
-                    tmpTd.innerText = "EdwardKN";
+                    tmpTd.style.width = "100vh"
+                    tmpTd.innerText = "-";
                 }else{
-                    tmpTd.colSpan = 5
-                    tmpTd.innerText = "142:34.01"; 
+                    tmpTd.style.width = "100vh"
+                    tmpTd.innerText = "-"; 
                 }
             }
         }else{
@@ -736,8 +738,16 @@ async function init(){
             tmpTr.appendChild(tmpTd2);
             tmpTr.appendChild(tmpTd);
             tmpTr.appendChild(tmpTd3);
+            tmpTr.className = "fixed"
         }
-        leaderboard.appendChild(tmpTr)
+        if(y === 0){
+            let tmpThead = document.createElement("thead");
+            tmpThead.appendChild(tmpTr)
+            leaderboard.appendChild(tmpThead)
+        }else{
+            tmpBody.appendChild(tmpTr)
+        }
+        leaderboard.appendChild(tmpBody)
 
     }
 }
@@ -917,7 +927,6 @@ function updateChanged(x,y){
 
 let lastTemp = {x:0,y:0}
 
-init();
 
 function undo(){
     if(timerStop === false){
@@ -1118,24 +1127,24 @@ function getScore(callback){
 function updateLeaderboard(){
     for (let y = 1; y < leaderboard.children.length; y++) {
         if(leaderboardData[y-1] !== undefined){
-            leaderboard.children[y].children[1].innerText = leaderboardData[y-1].username;
+            leaderboard.children[1].children[y-1].children[1].innerText = leaderboardData[y-1].username;
             if(currentLeaderboard === 0){
-                leaderboard.children[y].children[2].innerText = timeToText(leaderboardData[y-1].easyScore)
-                leaderboard.children[0].children[1].innerText = "Topplista(Lätt)"
+                leaderboard.children[1].children[y-1].children[2].innerText = timeToText(leaderboardData[y-1].easyScore)
+                leaderboard.children[0].children[0].children[1].innerText = "Topplista(Lätt)"
             }
             if(currentLeaderboard === 1){
-                leaderboard.children[y].children[2].innerText = timeToText(leaderboardData[y-1].mediumScore)
-                leaderboard.children[0].children[1].innerText = "Topplista(Medel)"
+                leaderboard.children[1].children[y-1].children[2].innerText = timeToText(leaderboardData[y-1].mediumScore)
+                leaderboard.children[0].children[0].children[1].innerText = "Topplista(Medel)"
             }
             if(currentLeaderboard === 2){
-                leaderboard.children[y].children[2].innerText = timeToText(leaderboardData[y-1].hardScore)
-                leaderboard.children[0].children[1].innerText = "Topplista(Svår)"
+                leaderboard.children[1].children[y-1].children[2].innerText = timeToText(leaderboardData[y-1].hardScore)
+                leaderboard.children[0].children[0].children[1].innerText = "Topplista(Svår)"
             }
         }else{
-            leaderboard.children[y].children[1].innerText = ""
-            leaderboard.children[y].children[2].innerText = ""  
+            leaderboard.children[y].children[1].innerText = "-"
+            leaderboard.children[y].children[2].innerText = "-"  
         }
     }
 }
 
-//14 max namn
+//12 max namn

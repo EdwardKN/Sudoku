@@ -45,16 +45,39 @@ table.leaderboard {
     position:relative;
     top:-84.99vh;
 }
+tbody {
+    display:block; /* this is what causes the problem */
+    max-height:78.35vh;
+    overflow-y:scroll;
+    width:48.5vh;
+} 
+tr.fixed {
+    top: 0;
+    z-index: 2;
+    position: sticky;
+    background-color: white;
+    border: 0.5vh solid black;
+ }
+
 
 td.leaderboard{
     border: 1px solid black;
     border: 0.5vh solid black;
     text-align: center;
     height: calc(calc(100vh/15) + calc(100vh/132));
-    display:table-cell;
     column-fill:auto;
     padding: 0 ;
     font-size: 3.5vh;
+}
+td.leaderboard2{
+    border: 0.5vh solid black;
+    border-left: 0 solid black;
+    text-align: center;
+    height: calc(calc(100vh/15) + calc(100vh/132));
+    column-fill:auto;
+    padding: 0 ;
+    font-size: 3.5vh;
+    width:100%
 }
 
 button:hover{
