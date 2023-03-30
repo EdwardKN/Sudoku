@@ -39,7 +39,7 @@ setInterval(() => {
           });
         updateLeaderboard();
     })
-}, 30000);
+}, 60000);
 
 var currentLeaderboard = 0;
 
