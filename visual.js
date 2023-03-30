@@ -1299,12 +1299,6 @@ function isNumeric(str) {
            !isNaN(parseFloat(str)) 
   }
 
-  function deep_value(obj, path){
-    for (var i=0, path=path.split('.'), len=path.length; i<len; i++){
-        obj = obj[path[i]];
-    };
-    return obj;
-};
 
 function finished(){
     if(timerStop === false){
