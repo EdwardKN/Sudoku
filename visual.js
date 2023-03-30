@@ -1343,7 +1343,7 @@ function finished(){
 function confirmSendScores(diff){
     if(confirm("Waow! Ett nytt rekord! Vill du skicka ditt nya rekort till topplistan?")){
         let username = "";
-        while(username === ""){
+        while(username === "" || username.length > 12){
             username = prompt("Skriv in ditt namn.",lastUsername)
         }
         tmpScores = localHighscores;
