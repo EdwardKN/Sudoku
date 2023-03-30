@@ -1061,7 +1061,7 @@ async function getSudoku(difficulty){
             }
             buttons.forEach(button => {
                 if(button.cooldownTime !== undefined){
-                    button.cooldownTime = 0;
+                    button.cooldownTime = button.cooldown;
                 }
             });
         });
