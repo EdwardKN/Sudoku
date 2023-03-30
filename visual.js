@@ -6,6 +6,13 @@ var leaderboardData = undefined;
 
 getScore(function(e) {
     leaderboardData = e
+    Object.keys(leaderboardData).forEach(function(key, index) {
+        Object.keys(leaderboardData[key]).forEach(function(key2, index) {
+            if(isNumeric(leaderboardData[key][key2])){
+                leaderboardData[key][key2] = JSON.parse(leaderboardData[key][key2])
+            }
+          });
+      });
     init();
     load();
     updateLeaderboard();
@@ -14,6 +21,13 @@ getScore(function(e) {
 setInterval(() => {
     getScore(function(e) {
         leaderboardData = e
+        Object.keys(leaderboardData).forEach(function(key, index) {
+            Object.keys(leaderboardData[key]).forEach(function(key2, index) {
+                if(isNumeric(leaderboardData[key][key2])){
+                    leaderboardData[key][key2] = JSON.parse(leaderboardData[key][key2])
+                }
+              });
+          });
         updateLeaderboard();
     })
 }, 30000);
@@ -686,70 +700,7 @@ async function init(){
     if(gridHistory[historyIndex] != grid){
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
     }
-    leaderboard = document.createElement("table");
-    leaderboard.className = "leaderboard"
-
-    document.body.appendChild(leaderboard);
-    let tmpBody = document.createElement("tbody");
-    let tmpMax = 11;
-    if(leaderboardData.length > 10){
-        tmpMax = leaderboardData.length+1
-    }
-    for(let y = 0; y < tmpMax; y++){ 
-        let tmpTr = document.createElement("tr")
-        if(y > 0){ 
-            for(let x = 0; x < 3; x++){
-                let tmpTd = document.createElement("td")
-                tmpTd.className = "leaderboard2"
-                tmpTr.appendChild(tmpTd);
-                if(x === 0){
-                    tmpTd.innerText = y 
-                    tmpTd.style.width = "10vh"
-                    tmpTd.style.textAlign = "center"
-                }else if(x === 1){
-                    tmpTd.style.width = "100vh"
-                    tmpTd.innerText = "-";
-                }else{
-                    tmpTd.style.width = "100vh"
-                    tmpTd.innerText = "-"; 
-                }
-            }
-        }else{
-            let tmpTd = document.createElement("td")
-            tmpTd.className = "leaderboard"
-            tmpTd.colSpan = 10;
-            tmpTd.style.textAlign = "center"
-            tmpTd.innerText = "Topplista(Lätt)"
-
-            let tmpButton1 = document.createElement("button");
-            tmpButton1.setAttribute("onclick","if(currentLeaderboard > 0){currentLeaderboard--; }else{currentLeaderboard = 2;}updateLeaderboard();")
-            let tmpButton2 = document.createElement("button");
-            tmpButton2.setAttribute("onclick","if(currentLeaderboard < 2){currentLeaderboard++; }else{currentLeaderboard = 0;}updateLeaderboard();")
-            tmpButton1.innerText = "<"
-            tmpButton2.innerText = ">"
-            tmpButton1.style.textAlign = "center"
-            tmpButton2.style.textAlign = "center"
-            let tmpTd2 = document.createElement("td")
-            let tmpTd3 = document.createElement("td")
-            tmpTd2.colSpan = 3;
-            tmpTd3.colSpan = 3;
-            tmpTd2.appendChild(tmpButton1);
-            tmpTd3.appendChild(tmpButton2);
-            tmpTr.appendChild(tmpTd2);
-            tmpTr.appendChild(tmpTd);
-            tmpTr.appendChild(tmpTd3);
-            tmpTr.className = "fixed"
-        }
-        if(y === 0){
-            let tmpThead = document.createElement("thead");
-            tmpThead.appendChild(tmpTr)
-            leaderboard.appendChild(tmpThead)
-        }else{
-            tmpBody.appendChild(tmpTr)
-        }
-        leaderboard.appendChild(tmpBody)
-
-    }
+    updateLeaderboard();
 }
 
 function changeNote(elm){
@@ -1017,7 +968,6 @@ async function solveSolve(grid){
     const temp = getValPos(grid)
     await solve(temp).then(e =>{
         e[0][0].forEach((row, i) => row.forEach((cell, j) => grid[i][j].value = cell[0]))
-        console.log(`It Took ${performance.now() - s} Milliseconds To Solve The Sudoku`)
         updateTable()
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
         historyIndex = gridHistory.length-1
@@ -1124,8 +1074,113 @@ function getScore(callback){
     };
 };
 
+function sendScore(username,easyScore,mediumScore,hardScore){
+    const http = new XMLHttpRequest();   
+    const url=`https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/updatesodokuscores?username=${username}&easyScore=${easyScore}&mediumScore=${mediumScore}&hardScore=${hardScore}`;
+    http.open("GET", url);
+    http.send();
+    http.onreadystatechange=(e)=>{
+        if(http.readyState === 4){
+            getScore(function(e) {
+                leaderboardData = e
+                Object.keys(leaderboardData).forEach(function(key, index) {
+                    Object.keys(leaderboardData[key]).forEach(function(key2, index) {
+                        if(isNumeric(leaderboardData[key][key2])){
+                            leaderboardData[key][key2] = JSON.parse(leaderboardData[key][key2])
+                        }
+                      });
+                  });
+                updateLeaderboard();
+            })
+        }
+    };
+};
+
 function updateLeaderboard(){
-    for (let y = 1; y < leaderboard.children.length; y++) {
+    if(leaderboard !== undefined){
+        leaderboard.remove();
+    }
+    leaderboard = document.createElement("table");
+    leaderboard.className = "leaderboard"
+
+    document.body.appendChild(leaderboard);
+    let tmpBody = document.createElement("tbody");
+    let tmpMax = 11;
+    if(leaderboardData.length > 10){
+        tmpMax = leaderboardData.length+1
+    }
+    for(let y = 0; y < tmpMax; y++){ 
+        let tmpTr = document.createElement("tr")
+        if(y > 0){ 
+            for(let x = 0; x < 3; x++){
+                let tmpTd = document.createElement("td")
+                tmpTd.className = "leaderboard2"
+                tmpTr.appendChild(tmpTd);
+                if(x === 0){
+                    tmpTd.innerText = y 
+                    tmpTd.style.width = "10vh"
+                    tmpTd.style.textAlign = "center"
+                }else if(x === 1){
+                    tmpTd.style.width = "100vh"
+                    tmpTd.innerText = "-";
+                }else{
+                    tmpTd.style.width = "100vh"
+                    tmpTd.innerText = "-"; 
+                }
+            }
+        }else{
+            let tmpTd = document.createElement("td")
+            tmpTd.className = "leaderboard"
+            tmpTd.colSpan = 10;
+            tmpTd.style.textAlign = "center"
+            tmpTd.innerText = "Topplista(Lätt)"
+
+            let tmpButton1 = document.createElement("button");
+            tmpButton1.setAttribute("onclick","if(currentLeaderboard > 0){currentLeaderboard--; }else{currentLeaderboard = 2;}updateLeaderboard();")
+            let tmpButton2 = document.createElement("button");
+            tmpButton2.setAttribute("onclick","if(currentLeaderboard < 2){currentLeaderboard++; }else{currentLeaderboard = 0;}updateLeaderboard();")
+            tmpButton1.innerText = "<"
+            tmpButton2.innerText = ">"
+            tmpButton1.style.textAlign = "center"
+            tmpButton2.style.textAlign = "center"
+            let tmpTd2 = document.createElement("td")
+            let tmpTd3 = document.createElement("td")
+            tmpTd2.colSpan = 3;
+            tmpTd3.colSpan = 3;
+            tmpTd2.appendChild(tmpButton1);
+            tmpTd3.appendChild(tmpButton2);
+            tmpTr.appendChild(tmpTd2);
+            tmpTr.appendChild(tmpTd);
+            tmpTr.appendChild(tmpTd3);
+            tmpTr.className = "fixed"
+        }
+        if(y === 0){
+            let tmpThead = document.createElement("thead");
+            tmpThead.appendChild(tmpTr)
+            leaderboard.appendChild(tmpThead)
+        }else{
+            tmpBody.appendChild(tmpTr)
+        }
+        leaderboard.appendChild(tmpBody)
+
+    }
+
+    if(currentLeaderboard === 0){
+        leaderboardData.sort((a, b) => {
+            return a.easyScore - b.easyScore;
+        });
+    }
+    if(currentLeaderboard === 1){
+        leaderboardData.sort((a, b) => {
+            return a.mediumScore - b.mediumScore;
+        });
+    }
+    if(currentLeaderboard === 2){
+        leaderboardData.sort((a, b) => {
+            return a.hardScore - b.hardScore;
+        });
+    }
+    for (let y = 1; y < leaderboardData.length+1; y++) {
         if(leaderboardData[y-1] !== undefined){
             leaderboard.children[1].children[y-1].children[1].innerText = leaderboardData[y-1].username;
             if(currentLeaderboard === 0){
@@ -1148,3 +1203,17 @@ function updateLeaderboard(){
 }
 
 //12 max namn
+
+function isNumeric(str) {
+    if (typeof str != "string") return false
+    return !isNaN(str) && 
+           !isNaN(parseFloat(str)) 
+  }
+
+  function deep_value(obj, path){
+    for (var i=0, path=path.split('.'), len=path.length; i<len; i++){
+        obj = obj[path[i]];
+    };
+    return obj;
+};
+
