@@ -2,6 +2,22 @@ var table;
 
 var leaderboard;
 
+var leaderboardData = undefined;
+
+getScore(function(e) {
+    leaderboardData = e
+    updateLeaderboard();
+})
+
+setInterval(() => {
+    getScore(function(e) {
+        leaderboardData = e
+        updateLeaderboard();
+    })
+}, 30000);
+
+var currentLeaderboard = 0;
+
 var gridHistory = [];
 
 var historyIndex = 0;
@@ -171,29 +187,8 @@ function switchTimer(elm){
             elm.innerText += settingsButtons[buttonNumber].changeOn
         }
         timerTimer = setInterval(function(){
-            timerText.innerText = ""
-            if(Math.floor(timerTime/6000) > 9){
-                timerText.innerText += Math.floor(timerTime/6000) + ":" 
-            }else if(Math.floor(timerTime/6000) > 0){
-                timerText.innerText += "0"+Math.floor(timerTime/6000) + ":" 
-            }else{
-                timerText.innerText += "00:" 
-            }
-            if(Math.floor(timerTime/100)%60 > 9){
-                timerText.innerText += Math.floor(timerTime/100)%60 + "." 
-            }else if(Math.floor(timerTime/100)%60 > 0){
-                timerText.innerText += "0"+Math.floor(timerTime/100)%60 + "." 
-            }else{
-                timerText.innerText += "00." 
-            }
-            if(Math.floor(timerTime)%100 > 9){
-                timerText.innerText += Math.floor(timerTime%100)
-            }else if(Math.floor(timerTime)%100 > 0){
-                timerText.innerText += "0"+Math.floor(timerTime%100)
-            }else{
-                timerText.innerText += "00" 
-            }
             
+            timerText.innerText = timeToText(timerTime)
             localStorage.setItem("timerTime",JSON.stringify(timerTime));
         },10)
         save();
@@ -207,6 +202,32 @@ function switchTimer(elm){
         save();
     }
 
+}
+
+function timeToText(value){
+    returnValue = ""
+    if(Math.floor(value/6000) > 9){
+        returnValue += Math.floor(value/6000) + ":" 
+    }else if(Math.floor(value/6000) > 0){
+        returnValue += "0"+Math.floor(value/6000) + ":" 
+    }else{
+        returnValue += "00:" 
+    }
+    if(Math.floor(value/100)%60 > 9){
+        returnValue += Math.floor(value/100)%60 + "." 
+    }else if(Math.floor(value/100)%60 > 0){
+        returnValue += "0"+Math.floor(value/100)%60 + "." 
+    }else{
+        returnValue += "00." 
+    }
+    if(Math.floor(value)%100 > 9){
+        returnValue += Math.floor(value%100)
+    }else if(Math.floor(value)%100 > 0){
+        returnValue += "0"+Math.floor(value%100)
+    }else{
+        returnValue += "00" 
+    }
+    return returnValue;
 }
 function checkEmpty(){
     return grid.every(row => row.every(cell => !cell.value))
@@ -581,7 +602,7 @@ function load(){
     }
 };
 
-function init(){
+async function init(){
     table = document.createElement("table");
     table.className = "board"
 
@@ -675,7 +696,7 @@ function init(){
     for(let y = 0; y < 11; y++){
         let tmpTr = document.createElement("tr")
         if(y > 0){ 
-            for(let x = 0; x < 2; x++){
+            for(let x = 0; x < 3; x++){
                 let tmpTd = document.createElement("td")
                 tmpTr.appendChild(tmpTd);
                 tmpTd.className = "leaderboard"
@@ -683,18 +704,38 @@ function init(){
                     tmpTd.innerText = y
                     tmpTd.colSpan = 2;
                     tmpTd.style.textAlign = "center"
+                }else if(x === 1){
+                    tmpTd.colSpan = 9
+                    tmpTd.innerText = "EdwardKN";
                 }else{
-                    tmpTd.colSpan = 13
-                    tmpTd.innerText = "hej";
+                    tmpTd.colSpan = 5
+                    tmpTd.innerText = "142:34.01"; 
                 }
             }
         }else{
             let tmpTd = document.createElement("td")
             tmpTd.className = "leaderboard"
-            tmpTd.colSpan = 15;
+            tmpTd.colSpan = 10;
             tmpTd.style.textAlign = "center"
-            tmpTd.innerText = "Topplista"
+            tmpTd.innerText = "Topplista(Lätt)"
+
+            let tmpButton1 = document.createElement("button");
+            tmpButton1.setAttribute("onclick","if(currentLeaderboard > 0){currentLeaderboard--; }else{currentLeaderboard = 2;}updateLeaderboard();")
+            let tmpButton2 = document.createElement("button");
+            tmpButton2.setAttribute("onclick","if(currentLeaderboard < 2){currentLeaderboard++; }else{currentLeaderboard = 0;}updateLeaderboard();")
+            tmpButton1.innerText = "<"
+            tmpButton2.innerText = ">"
+            tmpButton1.style.textAlign = "center"
+            tmpButton2.style.textAlign = "center"
+            let tmpTd2 = document.createElement("td")
+            let tmpTd3 = document.createElement("td")
+            tmpTd2.colSpan = 3;
+            tmpTd3.colSpan = 3;
+            tmpTd2.appendChild(tmpButton1);
+            tmpTd3.appendChild(tmpButton2);
+            tmpTr.appendChild(tmpTd2);
             tmpTr.appendChild(tmpTd);
+            tmpTr.appendChild(tmpTd3);
         }
         leaderboard.appendChild(tmpTr)
 
@@ -984,7 +1025,7 @@ async function getSudoku(difficulty){
         tmp.id = "loading";
         tmp.src = "./loading.gif";
         document.body.appendChild(tmp)
-        document.getElementById("loading").style.width = "100vh"
+        document.getElementById("loading").style.width = "75vh"
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
                 grid[y][x].td.className = "loading"
@@ -999,6 +1040,8 @@ async function getSudoku(difficulty){
             gridHistory.push(JSON.parse(JSON.stringify(grid)));
             timerTime = 0;
             save()
+            currentLeaderboard = difficulty-1;
+            updateLeaderboard();
             for(let y = 0; y < 9; y++){
                 for(let x = 0; x < 9; x++){
                     grid[y][x].td.className = "board"
@@ -1006,7 +1049,6 @@ async function getSudoku(difficulty){
             }
         });
     }
-
 }
 async function restart(){
     if(timerStop === false){
@@ -1060,3 +1102,40 @@ function moveCursorToEnd(el) {
     }
 }
 
+function getScore(callback){
+    const http = new XMLHttpRequest();   
+    const url=`https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/getsodokuscore`;
+    http.open("GET", url);
+    http.send();
+
+    http.onreadystatechange=(e)=>{
+        if(http.readyState === 4){
+            callback(JSON.parse(http.responseText));
+        }
+    };
+};
+
+function updateLeaderboard(){
+    for (let y = 1; y < leaderboard.children.length; y++) {
+        if(leaderboardData[y-1] !== undefined){
+            leaderboard.children[y].children[1].innerText = leaderboardData[y-1].username;
+            if(currentLeaderboard === 0){
+                leaderboard.children[y].children[2].innerText = timeToText(leaderboardData[y-1].easyScore)
+                leaderboard.children[0].children[1].innerText = "Topplista(Lätt)"
+            }
+            if(currentLeaderboard === 1){
+                leaderboard.children[y].children[2].innerText = timeToText(leaderboardData[y-1].mediumScore)
+                leaderboard.children[0].children[1].innerText = "Topplista(Medel)"
+            }
+            if(currentLeaderboard === 2){
+                leaderboard.children[y].children[2].innerText = timeToText(leaderboardData[y-1].hardScore)
+                leaderboard.children[0].children[1].innerText = "Topplista(Svår)"
+            }
+        }else{
+            leaderboard.children[y].children[1].innerText = ""
+            leaderboard.children[y].children[2].innerText = ""  
+        }
+    }
+}
+
+//14 max namn
