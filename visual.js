@@ -1036,14 +1036,14 @@ async function getSudoku(difficulty){
         tmp.id = "loading";
         tmp.src = "./loading.gif";
         document.body.appendChild(tmp)
-        document.getElementById("loading").style.width = "75vh"
+        document.getElementById("loading").style.width = "min(75vh, 75vw / 1.875)"
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
                 grid[y][x].td.className = "loading"
             }
         }
         clearThisShit();
-        await sleep(100);
+        await sleep(10);
         currentDifficulty = difficulty-1;
         generateSudoku(difficulty).then(e => {
             loading = false;
@@ -1051,6 +1051,7 @@ async function getSudoku(difficulty){
             gridHistory = []
             gridHistory.push(JSON.parse(JSON.stringify(grid)));
             timerTime = 0;
+            timerStop = false;
             save()
             currentLeaderboard = difficulty-1;
             updateLeaderboard();
@@ -1059,9 +1060,10 @@ async function getSudoku(difficulty){
                     grid[y][x].td.className = "board"
                 }
             }
-            buttons.forEach(button => {
+            buttons.forEach(function(button,i){
                 if(button.cooldownTime !== undefined){
                     button.cooldownTime = button.cooldown;
+                    fixCooldown(i);
                 }
             });
         });

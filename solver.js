@@ -286,7 +286,7 @@ async function hintHint() {
     let solution = await solve(getValPos(grid))
     hint(solution[0][0])
     if(isSolved(getValPos(grid))){
-        timerStop = true;
+        finished();
     }else{
         timerStop = false;
     }
