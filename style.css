@@ -175,7 +175,7 @@ table.board tr.board td.board:not(:last-child):nth-of-type(3n) {
     
     z-index: 200;
     position: absolute;
-    top: 48.5vh;
-    left: calc(50.5vh);
+    top: min(48.5vh, 48.5vw / 1.875);
+    left: min(calc(50.5vh),calc(50.5vw / 1.875));
     transform: translate(-50%, -50%);    
   }
