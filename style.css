@@ -4,9 +4,9 @@ a{
     position: absolute;
     text-align: center;
     top: 0;
-    left:5vh;
-    width: calc(93vh);
-    font-size: 5vh;
+    left:min(5vh,15vw);
+    width: min(calc(93vh),calc(93vw) / 1.875);
+    font-size: min(5vh,5vw / 1.875);;
     margin-left: auto;
     margin-right: auto;
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
@@ -14,7 +14,7 @@ a{
 
 button{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
-    font-size: 3.5vh;
+    font-size: min(3.5vh,3.5vw / 1.875);
     width: 100%;
     height: 100%;
     border: 0px solid black;
@@ -26,57 +26,59 @@ button{
 }   
 
 table.board {
-    left: calc(5vh);
+    left: min(calc(5vh),5vw / 1.875);
     cursor:text;
     table-layout: fixed;
-    width: calc(100vh + 100vh/12.82*3);
+    width: min(calc(100vh + 100vh/12.82*3),calc(calc(100vw + 100vw/12.82*3) / 1.875));
     border-collapse: collapse;
-    border: 1vh solid black;
+    border: min(1vh,1vw / 1.875) solid black;
     position:relative;
-    top:5vh
+    top:min(calc(5vh),5vw / 1.875);
 }
 table.leaderboard {
-    left: calc(calc((calc(100vh + 100vh/12.82*3))) + 10vh);
+    left: min(calc(calc((calc(100vh + 100vh/12.82*3))) + 10vh), calc(calc((calc(100vw + 100vw/12.82*3))) + 10vw) / 1.875);
     cursor:text;
     table-layout: fixed;
-    width: calc(50vh);
+    width: min(50vh,50vw / 1.875);
     border-collapse: collapse;
-    border: 1vh solid black;
-    position:relative;
-    top:-84.99vh;
+    border: min(1vh,1vw / 1.875) solid black;
+    position:absolute;
+    top:min(calc(5vh),5vw / 1.875);
 }
 tbody {
+    border-top: 0px solid black;
     display:block; /* this is what causes the problem */
-    max-height:78.35vh;
+    max-height:min(78.1vh,78.1vw / 1.875);
     overflow-y:scroll;
-    width:48.5vh;
+    width:min(48.5vh,48.5vw / 1.875);
 } 
 tr.fixed {
     top: 0;
     z-index: 2;
     position: sticky;
     background-color: white;
-    border: 0.5vh solid black;
+    border: min(0.5vh,0.5vw / 1.875) solid black;
  }
 
 
+
 td.leaderboard{
-    border: 1px solid black;
-    border: 0.5vh solid black;
+    border: 0px solid black;
+    border: min(0.5vh,0.5vw / 1.875) solid black;
     text-align: center;
-    height: calc(calc(100vh/15) + calc(100vh/132));
+    height: min(calc(calc(100vh/15) + calc(100vh/132)),calc(calc(100vw/15) + calc(100vw/132)) / 1.875);
     column-fill:auto;
     padding: 0 ;
-    font-size: 3.5vh;
+    font-size: min(3.5vh,3.5vw / 1.875);
 }
 td.leaderboard2{
-    border: 0.5vh solid black;
+    border: min(0.5vh,0.5vw / 1.875) solid black;
     border-left: 0 solid black;
     text-align: center;
-    height: calc(calc(100vh/15) + calc(100vh/132));
+    height: min(calc(calc(100vh/15) + calc(100vh/132)),calc(calc(100vw/15) + calc(100vw/132)) / 1.875);
     column-fill:auto;
     padding: 0 ;
-    font-size: 3.5vh;
+    font-size: min(3.5vh,3.5vw / 1.875);
     width:100%
 }
 
@@ -101,7 +103,7 @@ td.note{
     cursor:text;
     width: 3vh;
     text-align: center;
-    font-size: 2vh;
+    font-size: min(2vh,2vw / 1.875);
     padding: 0;
     height: calc(calc(calc(100vh/10) - calc(100vh/135))/3);
 }
@@ -118,12 +120,12 @@ tr
 }
 
 td.board{
-    border: 0.5vh solid black;
+    border: min(0.5vh,0.5vw / 1.875) solid black;
     text-align: center;
 
 }
 td{
-    height: calc(calc(100vh/10) - calc(100vh/135));
+    height: min(calc(calc(100vh/10) - calc(100vh/135)),calc(calc(calc(100vw/10) - calc(100vw/135)) / 1.875));
     display:table-cell;
     column-fill:auto;
     padding: 0 ;
@@ -138,7 +140,7 @@ input{
     border: 0;
     width: 95%;
     height: 100%;
-    font-size: 8vh;
+    font-size: min(8vh,8vw / 1.875);
     text-align: center;
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
@@ -161,15 +163,16 @@ input{
 
 
 table.board tr.board:not(:last-child):nth-of-type(3n) td.board {
-    border-bottom: 1vh solid black;
+    border-bottom: min(1vh,1vw / 1.875) solid black;
 }
 
 table.board tr.board td.board:not(:last-child):nth-of-type(3n) {
-    border-right: 1vh solid black;
+    border-right: min(1vh,1vw / 1.875) solid black;
 }
 
 
 #loading{
+    
     z-index: 200;
     position: absolute;
     top: 48.5vh;
