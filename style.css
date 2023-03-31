@@ -4,16 +4,17 @@ a{
     position: absolute;
     text-align: center;
     top: 0;
-    width: 100vw;
-    font-size: 5vh;
+    left:min(5vh,15vw);
+    width: min(calc(93vh),calc(93vw) / 1.875);
+    font-size: min(5vh,5vw / 1.875);;
     margin-left: auto;
     margin-right: auto;
-
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
 }
 
 button{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
-    font-size: 3.5vh;
+    font-size: min(3.5vh,3.5vw / 1.875);
     width: 100%;
     height: 100%;
     border: 0px solid black;
@@ -25,14 +26,60 @@ button{
 }   
 
 table.board {
-    left: calc((100vw - calc(100vh + 100vh/12.82*3)) / 2);
+    left: min(calc(5vh),5vw / 1.875);
     cursor:text;
     table-layout: fixed;
-    width: calc(100vh + 100vh/12.82*3);
+    width: min(calc(100vh + 100vh/12.82*3),calc(calc(100vw + 100vw/12.82*3) / 1.875));
     border-collapse: collapse;
-    border: 1vh solid black;
+    border: min(1vh,1vw / 1.875) solid black;
     position:relative;
-    top:5vh
+    top:min(calc(5vh),5vw / 1.875);
+}
+table.leaderboard {
+    left: min(calc(calc((calc(100vh + 100vh/12.82*3))) + 10vh), calc(calc((calc(100vw + 100vw/12.82*3))) + 10vw) / 1.875);
+    cursor:text;
+    table-layout: fixed;
+    width: min(50vh,50vw / 1.875);
+    border-collapse: collapse;
+    border: min(1vh,1vw / 1.875) solid black;
+    position:absolute;
+    top:min(calc(5vh),5vw / 1.875);
+}
+tbody {
+    border-top: 0px solid black;
+    display:block; /* this is what causes the problem */
+    max-height:min(78.1vh,78.1vw / 1.875);
+    overflow-y:scroll;
+    width:min(48.5vh,48.5vw / 1.875);
+} 
+tr.fixed {
+    top: 0;
+    z-index: 2;
+    position: sticky;
+    background-color: white;
+    border: min(0.5vh,0.5vw / 1.875) solid black;
+ }
+
+
+
+td.leaderboard{
+    border: 0px solid black;
+    border: min(0.5vh,0.5vw / 1.875) solid black;
+    text-align: center;
+    height: min(calc(calc(100vh/15) + calc(100vh/132)),calc(calc(100vw/15) + calc(100vw/132)) / 1.875);
+    column-fill:auto;
+    padding: 0 ;
+    font-size: min(3.5vh,3.5vw / 1.875);
+}
+td.leaderboard2{
+    border: min(0.5vh,0.5vw / 1.875) solid black;
+    border-left: 0 solid black;
+    text-align: center;
+    height: min(calc(calc(100vh/15) + calc(100vh/132)),calc(calc(100vw/15) + calc(100vw/132)) / 1.875);
+    column-fill:auto;
+    padding: 0 ;
+    font-size: min(3.5vh,3.5vw / 1.875);
+    width:100%
 }
 
 button:hover{
@@ -56,7 +103,7 @@ td.note{
     cursor:text;
     width: 3vh;
     text-align: center;
-    font-size: 2vh;
+    font-size: min(2vh,2vw / 1.875);
     padding: 0;
     height: calc(calc(calc(100vh/10) - calc(100vh/135))/3);
 }
@@ -73,12 +120,12 @@ tr
 }
 
 td.board{
-    border: 0.5vh solid black;
+    border: min(0.5vh,0.5vw / 1.875) solid black;
     text-align: center;
 
 }
 td{
-    height: calc(calc(100vh/10) - calc(100vh/135));
+    height: min(calc(calc(100vh/10) - calc(100vh/135)),calc(calc(calc(100vw/10) - calc(100vw/135)) / 1.875));
     display:table-cell;
     column-fill:auto;
     padding: 0 ;
@@ -93,8 +140,7 @@ input{
     border: 0;
     width: 95%;
     height: 100%;
-    font-family: inherit;
-    font-size: 8vh;
+    font-size: min(8vh,8vw / 1.875);
     text-align: center;
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
@@ -117,18 +163,19 @@ input{
 
 
 table.board tr.board:not(:last-child):nth-of-type(3n) td.board {
-    border-bottom: 1vh solid black;
+    border-bottom: min(1vh,1vw / 1.875) solid black;
 }
 
 table.board tr.board td.board:not(:last-child):nth-of-type(3n) {
-    border-right: 1vh solid black;
+    border-right: min(1vh,1vw / 1.875) solid black;
 }
 
 
 #loading{
+    
     z-index: 200;
     position: absolute;
-    top: 50%;
-    left: calc(50% - 17.5vh);
+    top: 48.5vh;
+    left: calc(50.5vh);
     transform: translate(-50%, -50%);    
   }

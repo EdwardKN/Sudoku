@@ -1,5 +1,48 @@
 var table;
 
+var leaderboard;
+
+var leaderboardData = undefined;
+
+var lastUsername = "";
+
+var localHighscores = {
+    easyScore:undefined,
+    mediumScore:undefined,
+    hardScore:undefined
+}
+var currentDifficulty = 0;
+
+getScore(function(e) {
+    leaderboardData = e
+    Object.keys(leaderboardData).forEach(function(key, index) {
+        Object.keys(leaderboardData[key]).forEach(function(key2, index) {
+            if(isNumeric(leaderboardData[key][key2])){
+                leaderboardData[key][key2] = JSON.parse(leaderboardData[key][key2])
+            }
+          });
+      });
+    init();
+    load();
+    updateLeaderboard();
+})
+
+setInterval(() => {
+    getScore(function(e) {
+        leaderboardData = e
+        Object.keys(leaderboardData).forEach(function(key, index) {
+            Object.keys(leaderboardData[key]).forEach(function(key2, index) {
+                if(isNumeric(leaderboardData[key][key2])){
+                    leaderboardData[key][key2] = JSON.parse(leaderboardData[key][key2])
+                }
+              });
+          });
+        updateLeaderboard();
+    })
+}, 60000);
+
+var currentLeaderboard = 0;
+
 var gridHistory = [];
 
 var historyIndex = 0;
@@ -14,7 +57,7 @@ var noteRemover = true;
 
 var settingOn = false;
 
-var timerMode = true;
+var timerMode = false;
 
 var timerTime = 0;
 
@@ -25,6 +68,15 @@ setInterval(() => {
         timerTime++;
     }
 }, 10);
+
+setInterval(() => {
+    buttons.forEach(e => {
+        if(e.cooldown !== undefined){
+            e.cooldownTime--;
+        }
+    })
+    save();
+}, 1000);
 
 var timerTimer = undefined;
 
@@ -84,6 +136,9 @@ var buttons = [
     {
         name:"Ledtråd",
         onClick:"if(confirm(confirmMessages.clue)){hintHint()}",
+        cooldown:"60",
+        cooldownTime:0,
+        id:"hint"
     },
     {
         name:"Inställningar",
@@ -157,29 +212,8 @@ function switchTimer(elm){
             elm.innerText += settingsButtons[buttonNumber].changeOn
         }
         timerTimer = setInterval(function(){
-            timerText.innerText = ""
-            if(Math.floor(timerTime/6000) > 9){
-                timerText.innerText += Math.floor(timerTime/6000) + ":" 
-            }else if(Math.floor(timerTime/6000) > 0){
-                timerText.innerText += "0"+Math.floor(timerTime/6000) + ":" 
-            }else{
-                timerText.innerText += "00:" 
-            }
-            if(Math.floor(timerTime/100)%60 > 9){
-                timerText.innerText += Math.floor(timerTime/100)%60 + "." 
-            }else if(Math.floor(timerTime/100)%60 > 0){
-                timerText.innerText += "0"+Math.floor(timerTime/100)%60 + "." 
-            }else{
-                timerText.innerText += "00." 
-            }
-            if(Math.floor(timerTime)%100 > 9){
-                timerText.innerText += Math.floor(timerTime%100)
-            }else if(Math.floor(timerTime)%100 > 0){
-                timerText.innerText += "0"+Math.floor(timerTime%100)
-            }else{
-                timerText.innerText += "00" 
-            }
             
+            timerText.innerText = timeToText(timerTime)
             localStorage.setItem("timerTime",JSON.stringify(timerTime));
         },10)
         save();
@@ -189,10 +223,38 @@ function switchTimer(elm){
             elm.innerText += settingsButtons[buttonNumber].changeOff
         }
         clearInterval(timerTimer)
-        timerText.remove();
+        if(timerText !== undefined){
+            timerText.remove();
+        }
         save();
     }
 
+}
+
+function timeToText(value){
+    returnValue = ""
+    if(Math.floor(value/6000) > 9){
+        returnValue += Math.floor(value/6000) + ":" 
+    }else if(Math.floor(value/6000) > 0){
+        returnValue += "0"+Math.floor(value/6000) + ":" 
+    }else{
+        returnValue += "00:" 
+    }
+    if(Math.floor(value/100)%60 > 9){
+        returnValue += Math.floor(value/100)%60 + "." 
+    }else if(Math.floor(value/100)%60 > 0){
+        returnValue += "0"+Math.floor(value/100)%60 + "." 
+    }else{
+        returnValue += "00." 
+    }
+    if(Math.floor(value)%100 > 9){
+        returnValue += Math.floor(value%100)
+    }else if(Math.floor(value)%100 > 0){
+        returnValue += "0"+Math.floor(value%100)
+    }else{
+        returnValue += "00" 
+    }
+    return returnValue;
 }
 function checkEmpty(){
     return grid.every(row => row.every(cell => !cell.value))
@@ -227,7 +289,7 @@ function switchSettings()
         settingOn = false;
         for(let i = 0; i < 9; i++){
             if(buttons[i] !== undefined){
-                buttons[i].button.setAttribute("onclick",buttons[i].onClick);
+                buttons[i].button.setAttribute("onclick","if(buttons["+i+"].cooldownTime<0 || buttons["+i+"].cooldownTime === undefined){"+buttons[i].onClick + ";buttons["+i+"].cooldownTime = buttons["+i+"].cooldown;fixCooldown("+i+")}");
                 buttons[i].button.innerText = buttons[i].name;
                 if(buttons[i].changeOff !== undefined && buttons[i].changeOn !== undefined && buttons[i].variable !== undefined){
                     setTimeout(() => {
@@ -239,6 +301,7 @@ function switchSettings()
                     }, 15);
     
                 }
+                
                 buttons[i].button.id = buttons[i].id
             }else{
                 buttons[i].button.innerText = "";
@@ -247,6 +310,25 @@ function switchSettings()
         }
         return;    
     }
+}
+
+function fixCooldown(i){
+    if(settingOn === false){
+        if(buttons[i].cooldown !== undefined && buttons[i].cooldownTime > 0){
+            buttons[i].button.innerText += `(${buttons[i].cooldownTime})`
+            let tmp = setInterval(() => {
+                if(settingOn === false){
+                buttons[i].button.innerText = buttons[i].name;
+                if(buttons[i].cooldownTime > 0){
+                    buttons[i].button.innerText += `(${buttons[i].cooldownTime})`
+                }else{
+                    clearInterval(tmp);
+                }
+            }
+            }, 100);
+        }
+    }
+
 }
 
 var grid = [];
@@ -512,15 +594,14 @@ function fixVisualizer(){
     }
 }
 
-window.addEventListener("load",function(e){
-    load();
-})
-
 function save(){
     localStorage.setItem("noteRemover",JSON.stringify(noteRemover));
     localStorage.setItem("shower",JSON.stringify(shower));
     localStorage.setItem("timerMode",JSON.stringify(timerMode));
     localStorage.setItem("gridHistory", JSON.stringify(gridHistory));
+    localStorage.setItem("buttons", JSON.stringify(buttons));
+    localStorage.setItem("currentDifficulty", JSON.stringify(currentDifficulty));
+    
 };
 
 function load(){
@@ -530,17 +611,62 @@ function load(){
     shower = JSON.parse(localStorage.getItem("shower"))
     timerMode = !JSON.parse(localStorage.getItem("timerMode"))
     gridHistory = JSON.parse(localStorage.getItem("gridHistory"))
-    historyIndex = gridHistory.length;
+    localHighscores = JSON.parse(localStorage.getItem("localHighscores"))
+    lastUsername = JSON.parse(localStorage.getItem("lastUsername"))
+    currentDifficulty = JSON.parse(localStorage.getItem("currentDifficulty"))
+    let tmpbuttons = JSON.parse(localStorage.getItem("buttons"))
+
+    if(lastUsername === null){
+        lastUsername = ""
+    }
+    if(noteRemover === null){
+        noteRemover = true;
+    }
+    if(shower === null){
+        shower = true
+    }
+    if(gridHistory === undefined){
+        gridHistory = [];
+    }
+    for (let i = 0; i < buttons.length; i++) {
+        if(tmpbuttons !== null){
+            buttons[i].cooldownTime = tmpbuttons[i].cooldownTime;
+            fixCooldown(i);
+        }
+    }
+    if(localHighscores === null){
+        localHighscores = {
+            easyScore:undefined,
+            mediumScore:undefined,
+            hardScore:undefined
+        }
+    }
+    
+    if(gridHistory !== null){
+        historyIndex = gridHistory.length;
+    }else{
+        historyIndex = 0;
+    }
     switchTimer()
     undo();
     if(isSolved(getValPos(grid))){
-        timerStop = true;
+        finished();
     }else{
         timerStop = false;
     }
+    if(currentDifficulty === null){
+        timerStop = true
+        for(let y = 0; y < 9; y++){
+            for(let x = 0; x < 9; x++){
+                grid[y][x].locked = true;
+            }
+        }
+    }
+    updateTable();
+
 };
 
-function init(){
+async function init(){
     table = document.createElement("table");
     table.className = "board"
 
@@ -596,7 +722,7 @@ function init(){
 
                 if(buttons.length>y){
                     let tmpButton = document.createElement("button");
-                    tmpButton.setAttribute("onclick",buttons[y].onClick);
+                    tmpButton.setAttribute("onclick","if(buttons["+y+"].cooldownTime<0 || buttons["+y+"].cooldownTime === undefined){"+buttons[y].onClick + ";buttons["+y+"].cooldownTime = buttons["+y+"].cooldown;fixCooldown("+y+")}");
                     tmpButton.setAttribute("onmousedown","selectedInput = {x:undefined,y:undefined};fixVisualizer()")
                     tmpButton.innerText = buttons[y].name;
                     if(buttons[y].changeOff !== undefined && buttons[y].changeOn !== undefined && buttons[y].variable !== undefined){
@@ -626,6 +752,7 @@ function init(){
     if(gridHistory[historyIndex] != grid){
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
     }
+    updateLeaderboard();
 }
 
 function changeNote(elm){
@@ -794,7 +921,7 @@ function updateChanged(x,y){
         save()
     }
     if(isSolved(getValPos(grid))){
-        timerStop = true;
+        finished();
     }else{
         timerStop = false;
     }
@@ -803,7 +930,6 @@ function updateChanged(x,y){
 
 let lastTemp = {x:0,y:0}
 
-init();
 
 function undo(){
     if(timerStop === false){
@@ -835,7 +961,7 @@ function undo(){
     save();
     }
     if(isSolved(getValPos(grid))){
-        timerStop = true;
+        finished();
     }else{
         timerStop = false;
     }
@@ -869,7 +995,7 @@ function redo(){
     save();
 }
 if(isSolved(getValPos(grid))){
-    timerStop = true;
+    finished();
 }else{
     timerStop = false;
 }
@@ -894,7 +1020,6 @@ async function solveSolve(grid){
     const temp = getValPos(grid)
     await solve(temp).then(e =>{
         e[0][0].forEach((row, i) => row.forEach((cell, j) => grid[i][j].value = cell[0]))
-        console.log(`It Took ${performance.now() - s} Milliseconds To Solve The Sudoku`)
         updateTable()
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
         historyIndex = gridHistory.length-1
@@ -911,7 +1036,7 @@ async function getSudoku(difficulty){
         tmp.id = "loading";
         tmp.src = "./loading.gif";
         document.body.appendChild(tmp)
-        document.getElementById("loading").style.width = "100vh"
+        document.getElementById("loading").style.width = "75vh"
         for(let y = 0; y < 9; y++){
             for(let x = 0; x < 9; x++){
                 grid[y][x].td.className = "loading"
@@ -919,6 +1044,7 @@ async function getSudoku(difficulty){
         }
         clearThisShit();
         await sleep(100);
+        currentDifficulty = difficulty-1;
         generateSudoku(difficulty).then(e => {
             loading = false;
             document.getElementById("loading").remove();
@@ -926,14 +1052,20 @@ async function getSudoku(difficulty){
             gridHistory.push(JSON.parse(JSON.stringify(grid)));
             timerTime = 0;
             save()
+            currentLeaderboard = difficulty-1;
+            updateLeaderboard();
             for(let y = 0; y < 9; y++){
                 for(let x = 0; x < 9; x++){
                     grid[y][x].td.className = "board"
                 }
             }
+            buttons.forEach(button => {
+                if(button.cooldownTime !== undefined){
+                    button.cooldownTime = button.cooldown;
+                }
+            });
         });
     }
-
 }
 async function restart(){
     if(timerStop === false){
@@ -987,3 +1119,248 @@ function moveCursorToEnd(el) {
     }
 }
 
+function getScore(callback){
+    const http = new XMLHttpRequest();   
+    const url=`https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/getsodokuscore`;
+    http.open("GET", url);
+    http.send();
+
+    http.onreadystatechange=(e)=>{
+        if(http.readyState === 4){
+            callback(JSON.parse(http.responseText));
+        }
+    };
+};
+
+function sendScore(username,easyScore,mediumScore,hardScore){
+    const http = new XMLHttpRequest();   
+    const url=`https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/updatesodokuscores?username=${username}&easyScore=${easyScore}&mediumScore=${mediumScore}&hardScore=${hardScore}`;
+    http.open("GET", url);
+    http.send();
+    http.onreadystatechange=(e)=>{
+        if(http.readyState === 4){
+            getScore(function(e) {
+                leaderboardData = e
+                Object.keys(leaderboardData).forEach(function(key, index) {
+                    Object.keys(leaderboardData[key]).forEach(function(key2, index) {
+                        if(isNumeric(leaderboardData[key][key2])){
+                            leaderboardData[key][key2] = JSON.parse(leaderboardData[key][key2])
+                        }
+                      });
+                  });
+                updateLeaderboard();
+            })
+        }
+    };
+};
+
+function updateLeaderboard(){
+    if(leaderboard !== undefined){
+        leaderboard.remove();
+    }
+    leaderboard = document.createElement("table");
+    leaderboard.className = "leaderboard"
+
+    document.body.appendChild(leaderboard);
+    let tmpBody = document.createElement("tbody");
+    let tmpMax = 11;
+    if(leaderboardData.length > 10){
+        tmpMax = leaderboardData.length+1
+    }
+    for(let y = 0; y < tmpMax; y++){ 
+        let tmpTr = document.createElement("tr")
+        if(y > 0){ 
+            for(let x = 0; x < 3; x++){
+                let tmpTd = document.createElement("td")
+                tmpTd.className = "leaderboard2"
+                tmpTr.appendChild(tmpTd);
+                if(x === 0){
+                    tmpTd.innerText = y 
+                    tmpTd.style.width = "10vh"
+                    tmpTd.style.textAlign = "center"
+                }else if(x === 1){
+                    tmpTd.style.width = "100vh"
+                    tmpTd.innerText = "-";
+                }else{
+                    tmpTd.style.width = "100vh"
+                    tmpTd.innerText = "-"; 
+                }
+            }
+        }else{
+            let tmpTd = document.createElement("td")
+            tmpTd.className = "leaderboard"
+            tmpTd.colSpan = 10;
+            tmpTd.style.textAlign = "center"
+            tmpTd.innerText = "Topplista(Lätt)"
+
+            let tmpButton1 = document.createElement("button");
+            tmpButton1.setAttribute("onclick","if(currentLeaderboard > 0){currentLeaderboard--; }else{currentLeaderboard = 2;}updateLeaderboard();")
+            let tmpButton2 = document.createElement("button");
+            tmpButton2.setAttribute("onclick","if(currentLeaderboard < 2){currentLeaderboard++; }else{currentLeaderboard = 0;}updateLeaderboard();")
+            tmpButton1.innerText = "<"
+            tmpButton2.innerText = ">"
+            tmpButton1.style.textAlign = "center"
+            tmpButton2.style.textAlign = "center"
+            let tmpTd2 = document.createElement("td")
+            let tmpTd3 = document.createElement("td")
+            tmpTd2.colSpan = 3;
+            tmpTd3.colSpan = 3;
+            tmpTd2.appendChild(tmpButton1);
+            tmpTd3.appendChild(tmpButton2);
+            tmpTr.appendChild(tmpTd2);
+            tmpTr.appendChild(tmpTd);
+            tmpTr.appendChild(tmpTd3);
+            tmpTr.className = "fixed"
+        }
+        if(y === 0){
+            let tmpThead = document.createElement("thead");
+            tmpThead.appendChild(tmpTr)
+            leaderboard.appendChild(tmpThead)
+        }else{
+            tmpBody.appendChild(tmpTr)
+        }
+        leaderboard.appendChild(tmpBody)
+
+    }
+
+    if(currentLeaderboard === 0){
+        leaderboardData.sort((a, b) => {
+            if(a.easyScore === "undefined"){
+                return 1
+            }
+            if(b.easyScore === "undefined"){
+                return -1
+            }
+            return a.easyScore - b.easyScore;
+        });
+    }
+    if(currentLeaderboard === 1){
+        leaderboardData.sort((a, b) => {
+            if(a.mediumScore === "undefined"){
+                return 1
+            }
+            if(b.mediumScore === "undefined"){
+                return -1
+            }
+            return a.mediumScore - b.mediumScore;
+        });
+    }
+    if(currentLeaderboard === 2){
+        leaderboardData.sort((a, b) => {
+            if(a.hardScore === "undefined"){
+                return 1
+            }
+            if(b.hardScore === "undefined"){
+                return -1
+            }
+            return a.hardScore - b.hardScore;
+        });
+    }
+    for (let y = 1; y < leaderboardData.length+1; y++) {
+        if(leaderboardData[y-1] !== undefined){
+            leaderboard.children[1].children[y-1].children[1].innerText = leaderboardData[y-1].username;
+            if(currentLeaderboard === 0){
+                if(leaderboardData[y-1].easyScore !== "undefined"){
+                    leaderboard.children[1].children[y-1].children[2].innerText = timeToText(leaderboardData[y-1].easyScore)
+                }else{
+                    leaderboard.children[1].children[y-1].children[1].innerText = "-"
+                    leaderboard.children[1].children[y-1].children[2].innerText = "-"
+                }
+                leaderboard.children[0].children[0].children[1].innerText = "Topplista(Lätt)"
+            }
+            if(currentLeaderboard === 1){
+                if(leaderboardData[y-1].mediumScore !== "undefined"){
+                    leaderboard.children[1].children[y-1].children[2].innerText = timeToText(leaderboardData[y-1].mediumScore)
+                }else{
+                    leaderboard.children[1].children[y-1].children[1].innerText = "-"
+                    leaderboard.children[1].children[y-1].children[2].innerText = "-"
+                }                leaderboard.children[0].children[0].children[1].innerText = "Topplista(Medel)"
+            }
+            if(currentLeaderboard === 2){
+                if(leaderboardData[y-1].hardScore !== "undefined"){
+                    leaderboard.children[1].children[y-1].children[2].innerText = timeToText(leaderboardData[y-1].hardScore)
+                }else{
+                    leaderboard.children[1].children[y-1].children[1].innerText = "-"
+                    leaderboard.children[1].children[y-1].children[2].innerText = "-"
+                }                leaderboard.children[0].children[0].children[1].innerText = "Topplista(Svår)"
+            }
+        }else{
+            leaderboard.children[1].children[y-1].children[1].innerText = "-"
+            leaderboard.children[1].children[y-1].children[2].innerText = "-"  
+        }
+    }
+}
+
+//12 max namn
+
+function isNumeric(str) {
+    if (typeof str != "string") return false
+    return !isNaN(str) && 
+           !isNaN(parseFloat(str)) 
+  }
+
+
+function finished(){
+    if(timerStop === false){
+        timerStop = true;
+        for(let y = 0; y < 9; y++){
+            for(let x = 0; x < 9; x++){
+                grid[y][x].locked = true;
+            }
+        }
+        updateTable();
+        gridHistory = []
+        
+        gridHistory.push(JSON.parse(JSON.stringify(grid)));
+        save();
+        if(currentDifficulty === 0){
+            if(localHighscores.easyScore === undefined || localHighscores.easyScore > timerTime){
+                localHighscores.easyScore = timerTime;
+                confirmSendScores(0);
+            }
+        }
+        if(currentDifficulty === 1){
+            if(localHighscores.mediumScore === undefined || localHighscores.mediumScore > timerTime){
+                localHighscores.mediumScore = timerTime;
+                confirmSendScores(1);
+            }
+        }
+        if(currentDifficulty === 2){
+            if(localHighscores.hardScore === undefined || localHighscores.hardScore > timerTime){
+                localHighscores.hardScore = timerTime;
+                confirmSendScores(2);
+            }
+        }
+        localStorage.setItem("localHighscores", JSON.stringify(localHighscores));
+    }
+}
+function confirmSendScores(diff){
+    if(confirm("Waow! Ett nytt rekord! Vill du skicka ditt nya rekord till topplistan?")){
+        let username = "";
+        while(username === "" || username.length > 12){
+            username = prompt("Skriv in ditt namn.",lastUsername)
+        }
+        tmpScores = localHighscores;
+        leaderboardData.forEach(e => {
+            if(e["username"] === username){
+                if(diff === 0){
+                    tmpScores.mediumScore = e["mediumScore"]
+                    tmpScores.hardScore = e["hardScore"]
+                }
+                if(diff === 1){
+                    tmpScores.easyScore = e["easyScore"]
+                    tmpScores.hardScore = e["hardScore"]
+                }
+                if(diff === 2){
+                    tmpScores.easyScore = e["easyScore"]
+                    tmpScores.mediumScore = e["mediumScore"]
+                }
+            }
+        })
+        if(username !== "null"){
+            sendScore(username,tmpScores.easyScore,tmpScores.mediumScore,tmpScores.hardScore)
+        }
+        lastUsername = username;
+        localStorage.setItem("lastUsername", JSON.stringify(lastUsername));
+    }
+}
