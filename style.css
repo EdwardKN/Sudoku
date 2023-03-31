@@ -101,7 +101,7 @@ table.note{
 }
 td.note{
     cursor:text;
-    width: 3vh;
+    width: min(3vh,3vw / 1.875);
     text-align: center;
     font-size: min(2vh,2vw / 1.875);
     padding: 0;

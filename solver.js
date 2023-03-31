@@ -276,6 +276,14 @@ function hint(solution) {
     let [y, x] = notUsed[Math.floor(Math.random() * notUsed.length)]
 
     grid[y][x].value = solution[y][x][0]
+    grid[y][x].possibleNotes = [];
+    for(let y = 0; y < 3; y++){
+        for(let x = 0; x < 3; x++){
+            grid[y][x].noteElm.children[x].children[y].innerText = ' '
+        }
+    };
+    updateChanged(y,x)
+    checkRemoveNote(x,y)
     updateTable()
     gridHistory.push(JSON.parse(JSON.stringify(grid)));
     save();
@@ -285,6 +293,7 @@ function hint(solution) {
 async function hintHint() {
     let solution = await solve(getValPos(grid))
     hint(solution[0][0])
+    hintUsed = true;
     if(isSolved(getValPos(grid))){
         finished();
     }else{

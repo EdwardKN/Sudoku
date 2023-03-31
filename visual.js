@@ -6,12 +6,15 @@ var leaderboardData = undefined;
 
 var lastUsername = "";
 
+
 var localHighscores = {
     easyScore:undefined,
     mediumScore:undefined,
     hardScore:undefined
 }
 var currentDifficulty = 0;
+
+var hintUsed = false;
 
 getScore(function(e) {
     leaderboardData = e
@@ -601,12 +604,13 @@ function save(){
     localStorage.setItem("gridHistory", JSON.stringify(gridHistory));
     localStorage.setItem("buttons", JSON.stringify(buttons));
     localStorage.setItem("currentDifficulty", JSON.stringify(currentDifficulty));
-    
+    localStorage.setItem("hintUsed", JSON.stringify(hintUsed));    
 };
 
 function load(){
     
     timerTime = JSON.parse(localStorage.getItem("timerTime"))
+    hintUsed = JSON.parse(localStorage.getItem("hintUsed"))
     noteRemover = JSON.parse(localStorage.getItem("noteRemover"))
     shower = JSON.parse(localStorage.getItem("shower"))
     timerMode = !JSON.parse(localStorage.getItem("timerMode"))
@@ -1046,6 +1050,7 @@ async function getSudoku(difficulty){
         await sleep(10);
         currentDifficulty = difficulty-1;
         generateSudoku(difficulty).then(e => {
+            hintUsed = false;
             loading = false;
             document.getElementById("loading").remove();
             gridHistory = []
@@ -1315,24 +1320,27 @@ function finished(){
         
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
         save();
-        if(currentDifficulty === 0){
-            if(localHighscores.easyScore === undefined || localHighscores.easyScore > timerTime){
-                localHighscores.easyScore = timerTime;
-                confirmSendScores(0);
+        if(hintUsed === false){
+            if(currentDifficulty === 0){
+                if(localHighscores.easyScore === undefined || localHighscores.easyScore > timerTime){
+                    localHighscores.easyScore = timerTime;
+                    confirmSendScores(0);
+                }
+            }
+            if(currentDifficulty === 1){
+                if(localHighscores.mediumScore === undefined || localHighscores.mediumScore > timerTime){
+                    localHighscores.mediumScore = timerTime;
+                    confirmSendScores(1);
+                }
+            }
+            if(currentDifficulty === 2){
+                if(localHighscores.hardScore === undefined || localHighscores.hardScore > timerTime){
+                    localHighscores.hardScore = timerTime;
+                    confirmSendScores(2);
+                }
             }
         }
-        if(currentDifficulty === 1){
-            if(localHighscores.mediumScore === undefined || localHighscores.mediumScore > timerTime){
-                localHighscores.mediumScore = timerTime;
-                confirmSendScores(1);
-            }
-        }
-        if(currentDifficulty === 2){
-            if(localHighscores.hardScore === undefined || localHighscores.hardScore > timerTime){
-                localHighscores.hardScore = timerTime;
-                confirmSendScores(2);
-            }
-        }
+        
         localStorage.setItem("localHighscores", JSON.stringify(localHighscores));
     }
 }
