@@ -6,12 +6,15 @@ var leaderboardData = undefined;
 
 var lastUsername = "";
 
+
 var localHighscores = {
     easyScore:undefined,
     mediumScore:undefined,
     hardScore:undefined
 }
 var currentDifficulty = 0;
+
+var hintUsed = false;
 
 getScore(function(e) {
     leaderboardData = e
@@ -601,12 +604,13 @@ function save(){
     localStorage.setItem("gridHistory", JSON.stringify(gridHistory));
     localStorage.setItem("buttons", JSON.stringify(buttons));
     localStorage.setItem("currentDifficulty", JSON.stringify(currentDifficulty));
-    
+    localStorage.setItem("hintUsed", JSON.stringify(hintUsed));    
 };
 
 function load(){
     
     timerTime = JSON.parse(localStorage.getItem("timerTime"))
+    hintUsed = JSON.parse(localStorage.getItem("hintUsed"))
     noteRemover = JSON.parse(localStorage.getItem("noteRemover"))
     shower = JSON.parse(localStorage.getItem("shower"))
     timerMode = !JSON.parse(localStorage.getItem("timerMode"))
@@ -615,7 +619,6 @@ function load(){
     lastUsername = JSON.parse(localStorage.getItem("lastUsername"))
     currentDifficulty = JSON.parse(localStorage.getItem("currentDifficulty"))
     let tmpbuttons = JSON.parse(localStorage.getItem("buttons"))
-
     if(lastUsername === null){
         lastUsername = ""
     }
@@ -647,7 +650,6 @@ function load(){
     }else{
         historyIndex = 0;
     }
-    switchTimer()
     undo();
     if(isSolved(getValPos(grid))){
         finished();
@@ -664,6 +666,7 @@ function load(){
     }
     updateTable();
 
+    switchTimer();
 };
 
 async function init(){
@@ -702,6 +705,7 @@ async function init(){
                         let tmpNoteTd = document.createElement("td");
                         tmpNoteTd.innerText = " "
                         tmpNoteTd.className = "note"
+                        tmpNoteTr.className = "note"
                         tmpNoteTr.appendChild(tmpNoteTd)
                     }
                     tmpNote.appendChild(tmpNoteTr)
@@ -1046,6 +1050,7 @@ async function getSudoku(difficulty){
         await sleep(10);
         currentDifficulty = difficulty-1;
         generateSudoku(difficulty).then(e => {
+            hintUsed = false;
             loading = false;
             document.getElementById("loading").remove();
             gridHistory = []
@@ -1261,6 +1266,9 @@ function updateLeaderboard(){
     for (let y = 1; y < leaderboardData.length+1; y++) {
         if(leaderboardData[y-1] !== undefined){
             leaderboard.children[1].children[y-1].children[1].innerText = leaderboardData[y-1].username;
+            if(leaderboardData[y-1].username === lastUsername){
+                leaderboard.children[1].children[y-1].children[1].innerText += "(Du)"
+            }
             if(currentLeaderboard === 0){
                 if(leaderboardData[y-1].easyScore !== "undefined"){
                     leaderboard.children[1].children[y-1].children[2].innerText = timeToText(leaderboardData[y-1].easyScore)
@@ -1293,8 +1301,6 @@ function updateLeaderboard(){
     }
 }
 
-//12 max namn
-
 function isNumeric(str) {
     if (typeof str != "string") return false
     return !isNaN(str) && 
@@ -1315,24 +1321,27 @@ function finished(){
         
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
         save();
-        if(currentDifficulty === 0){
-            if(localHighscores.easyScore === undefined || localHighscores.easyScore > timerTime){
-                localHighscores.easyScore = timerTime;
-                confirmSendScores(0);
+        if(hintUsed === false){
+            if(currentDifficulty === 0){
+                if(localHighscores.easyScore === undefined || localHighscores.easyScore > timerTime){
+                    localHighscores.easyScore = timerTime;
+                    confirmSendScores(0);
+                }
+            }
+            if(currentDifficulty === 1){
+                if(localHighscores.mediumScore === undefined || localHighscores.mediumScore > timerTime){
+                    localHighscores.mediumScore = timerTime;
+                    confirmSendScores(1);
+                }
+            }
+            if(currentDifficulty === 2){
+                if(localHighscores.hardScore === undefined || localHighscores.hardScore > timerTime){
+                    localHighscores.hardScore = timerTime;
+                    confirmSendScores(2);
+                }
             }
         }
-        if(currentDifficulty === 1){
-            if(localHighscores.mediumScore === undefined || localHighscores.mediumScore > timerTime){
-                localHighscores.mediumScore = timerTime;
-                confirmSendScores(1);
-            }
-        }
-        if(currentDifficulty === 2){
-            if(localHighscores.hardScore === undefined || localHighscores.hardScore > timerTime){
-                localHighscores.hardScore = timerTime;
-                confirmSendScores(2);
-            }
-        }
+        
         localStorage.setItem("localHighscores", JSON.stringify(localHighscores));
     }
 }

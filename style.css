@@ -90,8 +90,8 @@ button:hover{
 table.note{
     z-index: 1;
     position:relative;
-    margin-top: calc(calc(-100vh/10) + calc(100vh/135));
-    height: calc(calc(100vh/10) - calc(100vh/135));
+    margin-top:  calc( 0px - min(10vh,10vw / 1.875));
+    height: 0px;
     width: 100%;
     align-items: center;
     justify-content: center;
@@ -101,17 +101,21 @@ table.note{
 }
 td.note{
     cursor:text;
-    width: 3vh;
+    width: min(3vh,3vw / 1.875);
     text-align: center;
     font-size: min(2vh,2vw / 1.875);
     padding: 0;
-    height: calc(calc(calc(100vh/10) - calc(100vh/135))/3);
+    height: min(2vh,2vw / 1.875);
 }
 table.selected{
     cursor:text;
     background-color: lightgray;
     height: calc(calc(calc(100vh/10) - calc(100vh/135))/3);
     padding: 0;
+}
+
+tr.note{
+    height: 0px;
 }
 
 tr
@@ -138,6 +142,7 @@ input{
     font-weight: 700;
     all:unset;
     border: 0;
+    top:calc( 0px - min(2vh,2vw / 1.875));
     width: 95%;
     height: 100%;
     font-size: min(8vh,8vw / 1.875);
