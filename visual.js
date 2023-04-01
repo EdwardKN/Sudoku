@@ -619,7 +619,6 @@ function load(){
     lastUsername = JSON.parse(localStorage.getItem("lastUsername"))
     currentDifficulty = JSON.parse(localStorage.getItem("currentDifficulty"))
     let tmpbuttons = JSON.parse(localStorage.getItem("buttons"))
-
     if(lastUsername === null){
         lastUsername = ""
     }
@@ -651,7 +650,6 @@ function load(){
     }else{
         historyIndex = 0;
     }
-    switchTimer()
     undo();
     if(isSolved(getValPos(grid))){
         finished();
@@ -668,6 +666,7 @@ function load(){
     }
     updateTable();
 
+    switchTimer();
 };
 
 async function init(){
@@ -1267,6 +1266,9 @@ function updateLeaderboard(){
     for (let y = 1; y < leaderboardData.length+1; y++) {
         if(leaderboardData[y-1] !== undefined){
             leaderboard.children[1].children[y-1].children[1].innerText = leaderboardData[y-1].username;
+            if(leaderboardData[y-1].username === lastUsername){
+                leaderboard.children[1].children[y-1].children[1].innerText += "(Du)"
+            }
             if(currentLeaderboard === 0){
                 if(leaderboardData[y-1].easyScore !== "undefined"){
                     leaderboard.children[1].children[y-1].children[2].innerText = timeToText(leaderboardData[y-1].easyScore)
@@ -1298,8 +1300,6 @@ function updateLeaderboard(){
         }
     }
 }
-
-//12 max namn
 
 function isNumeric(str) {
     if (typeof str != "string") return false
