@@ -66,6 +66,8 @@ var timerTime = 0;
 
 var timerStop = false;
 
+var timeSent = false;
+
 setInterval(() => {
     if(timerStop === false){
         timerTime++;
@@ -608,7 +610,7 @@ function save(){
 };
 
 function load(){
-    
+    timeSent = JSON.parse(localStorage.getItem("timeSent"))
     timerTime = JSON.parse(localStorage.getItem("timerTime"))
     hintUsed = JSON.parse(localStorage.getItem("hintUsed"))
     noteRemover = JSON.parse(localStorage.getItem("noteRemover"))
@@ -619,6 +621,9 @@ function load(){
     lastUsername = JSON.parse(localStorage.getItem("lastUsername"))
     currentDifficulty = JSON.parse(localStorage.getItem("currentDifficulty"))
     let tmpbuttons = JSON.parse(localStorage.getItem("buttons"))
+    if(timeSent === null){
+        timeSent = false;
+    }
     if(lastUsername === null){
         lastUsername = ""
     }
@@ -1060,6 +1065,7 @@ async function getSudoku(difficulty){
             save()
             currentLeaderboard = difficulty-1;
             updateLeaderboard();
+            timeSent = false;
             for(let y = 0; y < 9; y++){
                 for(let x = 0; x < 9; x++){
                     grid[y][x].td.className = "board"
@@ -1144,6 +1150,9 @@ function sendScore(username,easyScore,mediumScore,hardScore){
     const url=`https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/updatesodokuscores?username=${username}&easyScore=${easyScore}&mediumScore=${mediumScore}&hardScore=${hardScore}`;
     http.open("GET", url);
     http.send();
+    timeSent = true;
+    localStorage.setItem("timeSent", JSON.stringify(timeSent));    
+
     http.onreadystatechange=(e)=>{
         if(http.readyState === 4){
             getScore(function(e) {
@@ -1321,32 +1330,32 @@ function finished(){
         
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
         save();
-        if(hintUsed === false){
+        if(hintUsed === false && timeSent === false){
             if(currentDifficulty === 0){
-                if(localHighscores.easyScore === undefined || localHighscores.easyScore > timerTime){
                     localHighscores.easyScore = timerTime;
                     confirmSendScores(0);
-                }
+                
             }
             if(currentDifficulty === 1){
-                if(localHighscores.mediumScore === undefined || localHighscores.mediumScore > timerTime){
                     localHighscores.mediumScore = timerTime;
                     confirmSendScores(1);
-                }
+                
             }
             if(currentDifficulty === 2){
-                if(localHighscores.hardScore === undefined || localHighscores.hardScore > timerTime){
                     localHighscores.hardScore = timerTime;
                     confirmSendScores(2);
-                }
+                
             }
         }
         
         localStorage.setItem("localHighscores", JSON.stringify(localHighscores));
     }
 }
+function getUsername(){
+
+}
 function confirmSendScores(diff){
-    if(confirm("Waow! Ett nytt rekord! Vill du skicka ditt nya rekord till topplistan?")){
+    if(confirm("Waow! Du löste sudokut på bara "+Math.round((timerTime/100)/60)+" minuter! Vill du skicka ditt resultat till topplistan?")){
         let username = "";
         while(username === "" || username.length > 12){
             username = prompt("Skriv in ditt namn.",lastUsername)
@@ -1369,7 +1378,46 @@ function confirmSendScores(diff){
             }
         })
         if(username !== "null"){
-            sendScore(username,tmpScores.easyScore,tmpScores.mediumScore,tmpScores.hardScore)
+            let tmp = true;
+            while(tmp){
+                leaderboardData.forEach(function(data,i){
+                    if(data.username === username){
+                        if(diff === 0){
+                            if(data.easyScore <= timerTime){
+                                username = "";
+                                while(username === "" || username.length > 12){
+                                    username = prompt("Det finns redan ett bättre rekord registrerat till namnet "+ username+".",lastUsername)
+                                }
+                            }else{
+                                sendScore(username,tmpScores.easyScore,tmpScores.mediumScore,tmpScores.hardScore)
+                                tmp = false
+                            }
+                        }
+                        if(diff === 1){
+                            if(data.mediumScore <= timerTime){
+                                username = "";
+                                while(username === "" || username.length > 12){
+                                    username = prompt("Det finns redan ett bättre rekord registrerat till namnet "+ username+".",lastUsername)
+                                }
+                            }else{
+                                sendScore(username,tmpScores.easyScore,tmpScores.mediumScore,tmpScores.hardScore)
+                                tmp = false
+                            }
+                        }
+                        if(diff === 2){
+                            if(data.hardScore <= timerTime){
+                                username = "";
+                                while(username === "" || username.length > 12){
+                                    username = prompt("Det finns redan ett bättre rekord registrerat till namnet "+ username+".",lastUsername)
+                                }
+                            }else{
+                                sendScore(username,tmpScores.easyScore,tmpScores.mediumScore,tmpScores.hardScore)
+                                tmp = false
+                            }
+                        }
+                    }
+                })
+            }
         }
         lastUsername = username;
         localStorage.setItem("lastUsername", JSON.stringify(lastUsername));
