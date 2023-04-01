@@ -6,7 +6,6 @@ var leaderboardData = undefined;
 
 var lastUsername = "";
 
-
 var localHighscores = {
     easyScore:undefined,
     mediumScore:undefined,
@@ -71,6 +70,7 @@ var timeSent = false;
 setInterval(() => {
     if(timerStop === false){
         timerTime++;
+        localStorage.setItem("timerTime",JSON.stringify(timerTime));
     }
 }, 10);
 
@@ -102,7 +102,7 @@ var colors = {
 var confirmMessages = {
     generateNew:"Vill du verkligen generera en ny? Detta går inte att ångra!",
     clearEverything:"Vill du verkligen starta om? Detta går inte att ångra!",
-    clue:"Vill du verkligen ha en ledtråd?"
+    clue:"Vill du verkligen ha en ledtråd? Detta gör att du inte längre får ladda upp ditt resultat till topplistan!"
 }
 
 var buttons = [
@@ -219,7 +219,6 @@ function switchTimer(elm){
         timerTimer = setInterval(function(){
             
             timerText.innerText = timeToText(timerTime)
-            localStorage.setItem("timerTime",JSON.stringify(timerTime));
         },10)
         save();
     }else{
@@ -907,7 +906,7 @@ function updateTable(){
             }
         };
     };
-    
+    save();
     
 };
 
@@ -934,6 +933,7 @@ function updateChanged(x,y){
     }else{
         timerStop = false;
     }
+    save();
 
 };
 
@@ -1150,10 +1150,11 @@ function sendScore(username,easyScore,mediumScore,hardScore){
     const url=`https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/updatesodokuscores?username=${username}&easyScore=${easyScore}&mediumScore=${mediumScore}&hardScore=${hardScore}`;
     http.open("GET", url);
     http.send();
-    timeSent = true;
-    localStorage.setItem("timeSent", JSON.stringify(timeSent));    
+     
 
     http.onreadystatechange=(e)=>{
+        timeSent = true;
+        localStorage.setItem("timeSent", JSON.stringify(timeSent));   
         if(http.readyState === 4){
             getScore(function(e) {
                 leaderboardData = e
@@ -1379,7 +1380,7 @@ function confirmSendScores(diff){
         })
         if(username !== "null"){
             let tmp = true;
-            while(tmp){
+            while(tmp === true){
                 leaderboardData.forEach(function(data,i){
                     if(data.username === username){
                         if(diff === 0){
@@ -1421,5 +1422,6 @@ function confirmSendScores(diff){
         }
         lastUsername = username;
         localStorage.setItem("lastUsername", JSON.stringify(lastUsername));
+        save();
     }
 }
