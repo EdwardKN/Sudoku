@@ -6,7 +6,6 @@ var leaderboardData = undefined;
 
 var lastUsername = "";
 
-
 var localHighscores = {
     easyScore:undefined,
     mediumScore:undefined,
@@ -71,6 +70,7 @@ var timeSent = false;
 setInterval(() => {
     if(timerStop === false){
         timerTime++;
+        localStorage.setItem("timerTime",JSON.stringify(timerTime));
     }
 }, 10);
 
@@ -219,7 +219,6 @@ function switchTimer(elm){
         timerTimer = setInterval(function(){
             
             timerText.innerText = timeToText(timerTime)
-            localStorage.setItem("timerTime",JSON.stringify(timerTime));
         },10)
         save();
     }else{
