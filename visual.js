@@ -102,7 +102,7 @@ var colors = {
 var confirmMessages = {
     generateNew:"Vill du verkligen generera en ny? Detta går inte att ångra!",
     clearEverything:"Vill du verkligen starta om? Detta går inte att ångra!",
-    clue:"Vill du verkligen ha en ledtråd?"
+    clue:"Vill du verkligen ha en ledtråd? Detta gör att du inte längre får ladda upp ditt resultat till topplistan!"
 }
 
 var buttons = [
