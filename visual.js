@@ -706,6 +706,7 @@ async function init(){
                         let tmpNoteTd = document.createElement("td");
                         tmpNoteTd.innerText = " "
                         tmpNoteTd.className = "note"
+                        tmpNoteTr.className = "note"
                         tmpNoteTr.appendChild(tmpNoteTd)
                     }
                     tmpNote.appendChild(tmpNoteTr)
