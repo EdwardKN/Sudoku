@@ -1,5 +1,3 @@
-let SOLVED
-
 function isSolved(grid) {
     for (let y = 0; y < 9; y++) {
         for (let x = 0; x < 9; x++) {
@@ -104,31 +102,26 @@ function getAll(y, x) {
     return Array.from(t).map(e => e.split(',').map(a => parseInt(a))) // Return Array [[y, x]...]
 }
 
-
-
-
-
-async function solve(grid) {
-    let s = performance.now()
+async function solve(grid, hintMode = false) {
     let memory = []
     let difficulty = 0
     let max_depth = 1
     let iteration = depth = prevX = prevY = 0 // Depth For Difficulty
-
+    let temp
     while (!isSolved(grid)) {
         iteration++
 
         // Is There Any Tile With No Possible Values
-        
-        if (!notAnyPossibleMove(grid)) {
-            if (memory.length === 0) { show(grid.map(r=>r.map(e=>e[0]))); throw new Error("Fuck You This Shit Impossible")}
+
+        if (!notAnyPossibleMove(grid) && isEqual(temp, grid)) {
+            if (memory.length === 0) { return [[grid], Number.POSITIVE_INFINITY]}
             let t, value
             [t, [prevY, prevX], value] = memory.pop()
             depth--
             grid = structuredClone(t)
             grid[prevY][prevX][1].delete(value)
         }
-        let temp = structuredClone(grid)
+        temp = structuredClone(grid)
 
         // All Cells With Only 1 Possible Value
         for (let y = 0; y < 9; y++) {
@@ -227,14 +220,47 @@ async function solve(grid) {
     return [[grid], difficulty]
 }
 
+async function hint2(grid) {
+    let curSolve = await solve(getValPos(grid))
 
-async function hint() {
-    let notUsed = []
+    let overlaps = findOverlaps()
+
+    let notUsed = grid.map(r => r.filter(cell => !cell.value))
     grid.forEach((row, i) => row.forEach((cell, j) => { if (!cell.value) { notUsed.push([i, j]) }}))
+
     if (notUsed.length === 0) { return }
     let [y, x] = notUsed[Math.floor(Math.random() * notUsed.length)]
-    console.log(y, x, SOLVED)
-    grid[y][x].value = SOLVED[y][x]
+    
+    updateTable()
+    gridHistory.push(JSON.parse(JSON.stringify(grid)))
+
+    hintUsed = true
+    if (isSolved(getValPos(grid))) {
+        finished()
+    } else {
+        timerStop = false
+    }
+    save()
+}
+
+async function hint(grid) {
+    let curSolve = await solve(getValPos(grid), true)
+    curSolve = curSolve[0][0]
+    let overlaps = []
+
+    for (let y = 0; y < 9; y++) {
+        for (let x = 0; x < 9; x++) {
+            if (curSolve[y][x][0] && !grid[y][x].value) {
+                overlaps.push([y, x])
+            }
+        }
+    }
+    if (overlaps.length === 0) { alert("Någonting är fel börja om!"); return }
+    let i = Math.floor(Math.random() * overlaps.length)
+    let [y, x] = overlaps[i]
+    grid[y][x].value = curSolve[y][x][0]
+
+    // Idk
     updateTable()
     gridHistory.push(JSON.parse(JSON.stringify(grid)))
 
