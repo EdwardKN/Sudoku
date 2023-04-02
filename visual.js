@@ -590,7 +590,22 @@ function fixVisualizer(){
                         }else{
                             grid[y][x].td.style.backgroundColor = colors.marked;
                         }
+                        
                     }
+                    for(let x2 = 0; x2 < 3; x2++){
+                        for(let y2 = 0; y2 < 3; y2++){
+                            grid[y][x].noteElm.children[x2].children[y2].style.fontWeight = "normal"
+                        }
+                    }
+                    if(grid[selectedInput.y][selectedInput.x].select.value !== undefined && grid[selectedInput.y][selectedInput.x].select.value !== ""){
+                        if(grid[y][x].noteElm.children[Math.floor((grid[selectedInput.y][selectedInput.x].select.value-1)/3)].children[(grid[selectedInput.y][selectedInput.x].select.value-1)%3].innerText == grid[selectedInput.y][selectedInput.x].select.value){
+                            grid[y][x].noteElm.children[Math.floor((grid[selectedInput.y][selectedInput.x].select.value-1)/3)].children[(grid[selectedInput.y][selectedInput.x].select.value-1)%3].style.fontWeight = "bolder"
+                        }
+                    }
+                    
+                    
+                    
+                   
                 }
             }
         }

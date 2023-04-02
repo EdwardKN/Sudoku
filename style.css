@@ -7,6 +7,7 @@ a{
     left:min(5vh,15vw);
     width: min(calc(93vh),calc(93vw) / 1.875);
     font-size: min(5vh,5vw / 1.875);;
+    font-weight: 100;
     margin-left: auto;
     margin-right: auto;
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
@@ -15,6 +16,7 @@ a{
 button{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
     font-size: min(3.5vh,3.5vw / 1.875);
+    font-weight: 100;
     width: 100%;
     height: 100%;
     border: 0px solid black;
@@ -70,6 +72,9 @@ td.leaderboard{
     column-fill:auto;
     padding: 0 ;
     font-size: min(3.5vh,3.5vw / 1.875);
+    font-weight: 100;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+
 }
 td.leaderboard2{
     border: min(0.5vh,0.5vw / 1.875) solid black;
@@ -79,7 +84,10 @@ td.leaderboard2{
     column-fill:auto;
     padding: 0 ;
     font-size: min(3.5vh,3.5vw / 1.875);
-    width:100%
+    font-weight: 100;
+    width:100%;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+
 }
 
 button:hover{
@@ -104,8 +112,11 @@ td.note{
     width: min(3vh,3vw / 1.875);
     text-align: center;
     font-size: min(2vh,2vw / 1.875);
+    font-weight: 100;
     padding: 0;
     height: min(2vh,2vw / 1.875);
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+
 }
 table.selected{
     cursor:text;
@@ -146,6 +157,7 @@ input{
     width: 95%;
     height: 100%;
     font-size: min(8vh,8vw / 1.875);
+    font-weight: 100;
     text-align: center;
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
@@ -155,6 +167,7 @@ input{
     z-index: 100;
     text-align: center;
     
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
 
 }
 
