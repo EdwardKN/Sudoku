@@ -41,18 +41,18 @@ table.leaderboard {
     left: min(calc(calc((calc(100vh + 100vh/12.82*3))) + 10vh), calc(calc((calc(100vw + 100vw/12.82*3))) + 10vw) / 1.875);
     cursor:text;
     table-layout: fixed;
-    width: min(50vh,50vw / 1.875);
     border-collapse: collapse;
+    width: calc(100vw - min(calc(calc((calc(100vh + 100vh/12.82*3))) + 10vh), calc(calc((calc(100vw + 100vw/12.82*3))) + 10vw) / 1.875) - min(calc(5vh),5vw / 1.875));
     border: min(1vh,1vw / 1.875) solid black;
     position:absolute;
     top:min(calc(5vh),5vw / 1.875);
 }
 tbody {
     border-top: 0px solid black;
-    display:block; /* this is what causes the problem */
+    display:block;
     max-height:min(78.1vh,78.1vw / 1.875);
     overflow-y:scroll;
-    width:min(48.5vh,48.5vw / 1.875);
+    width:calc(calc(100vw - min(calc(calc((calc(100vh + 100vh/12.82*3))) + 10vh), calc(calc((calc(100vw + 100vw/12.82*3))) + 10vw) / 1.875) - min(calc(5vh),5vw / 1.875)) - calc(min(1vh,1vw / 1.875) * 2));
 } 
 tr.fixed {
     top: 0;
@@ -87,7 +87,6 @@ td.leaderboard2{
     font-weight: 100;
     width:100%;
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
-
 }
 
 button:hover{
@@ -132,6 +131,7 @@ tr.note{
 tr
 {
  overflow:hidden;
+ width: 100%;
 }
 
 td.board{

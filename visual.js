@@ -1198,13 +1198,13 @@ function updateLeaderboard(){
                 tmpTr.appendChild(tmpTd);
                 if(x === 0){
                     tmpTd.innerText = y 
-                    tmpTd.style.width = "10vh"
+                    tmpTd.style.width = "1000vh"
                     tmpTd.style.textAlign = "center"
                 }else if(x === 1){
-                    tmpTd.style.width = "100vh"
+                    tmpTd.style.width = "10000vh"
                     tmpTd.innerText = "-";
                 }else{
-                    tmpTd.style.width = "100vh"
+                    tmpTd.style.width = "10000vh"
                     tmpTd.innerText = "-"; 
                 }
             }
@@ -1281,6 +1281,7 @@ function updateLeaderboard(){
     for (let y = 1; y < leaderboardData.length+1; y++) {
         if(leaderboardData[y-1] !== undefined){
             leaderboard.children[1].children[y-1].children[1].innerText = leaderboardData[y-1].username;
+            leaderboard.children[0].children[0].children[1].innerText = "Topplista"
             if(leaderboardData[y-1].username === lastUsername){
                 leaderboard.children[1].children[y-1].children[1].innerText += "(Du)"
             }
@@ -1291,7 +1292,7 @@ function updateLeaderboard(){
                     leaderboard.children[1].children[y-1].children[1].innerText = "-"
                     leaderboard.children[1].children[y-1].children[2].innerText = "-"
                 }
-                leaderboard.children[0].children[0].children[1].innerText = "Topplista(Lätt)"
+                leaderboard.children[0].children[0].children[1].innerText += "(Lätt)"
             }
             if(currentLeaderboard === 1){
                 if(leaderboardData[y-1].mediumScore !== "undefined"){
@@ -1299,7 +1300,7 @@ function updateLeaderboard(){
                 }else{
                     leaderboard.children[1].children[y-1].children[1].innerText = "-"
                     leaderboard.children[1].children[y-1].children[2].innerText = "-"
-                }                leaderboard.children[0].children[0].children[1].innerText = "Topplista(Medel)"
+                }                leaderboard.children[0].children[0].children[1].innerText += "(Medel)"
             }
             if(currentLeaderboard === 2){
                 if(leaderboardData[y-1].hardScore !== "undefined"){
@@ -1307,7 +1308,7 @@ function updateLeaderboard(){
                 }else{
                     leaderboard.children[1].children[y-1].children[1].innerText = "-"
                     leaderboard.children[1].children[y-1].children[2].innerText = "-"
-                }                leaderboard.children[0].children[0].children[1].innerText = "Topplista(Svår)"
+                }                leaderboard.children[0].children[0].children[1].innerText += "(Svår)"
             }
         }else{
             leaderboard.children[1].children[y-1].children[1].innerText = "-"
