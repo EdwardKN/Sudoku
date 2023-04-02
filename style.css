@@ -113,7 +113,8 @@ td.note{
     font-size: min(2vh,2vw / 1.875);
     font-weight: 100;
     padding: 0;
-    height: min(2vh,2vw / 1.875);
+    top:min(0.2vh,0.2vw / 1.875);
+    height: min(3vh,3vw / 1.875);
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
 
 }
@@ -153,8 +154,8 @@ input{
     font-weight: 700;
     all:unset;
     border: 0;
-    top:calc( 0px - min(2vh,2vw / 1.875));
     width: 95%;
+    top:min(-0.35vh,-0.35vw / 1.875);
     height: 100%;
     font-size: min(8vh,8vw / 1.875);
     font-weight: 100;
