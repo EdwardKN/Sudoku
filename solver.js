@@ -1,46 +1,8 @@
-// 305 Milliseconds For Empty And 100 Milliseconds For Expert
-// 120 Milliseconds For Empty And 24 Milliseconds For Expert
-let f_base = [
-    [9, 2, 7, 8, 1, 3, 4, 6, 5],
-    [6, 8, 5, 7, 2, 4, 1, 3, 9],
-    [1, 4, 3, 6, 5, 9, 7, 8, 2],
-    [5, 7, 1, 9, 6, 8, 2, 4, 3],
-    [4, 9, 6, 3, 7, 2, 5, 1, 8],
-    [8, 3, 2, 1, 4, 5, 6, 9, 7],
-    [3, 6, 4, 5, 9, 7, 8, 2, 1],
-    [2, 5, 8, 4, 3, 1, 9, 7, 6],
-    [7, 1, 9, 2, 8, 6, 3, 5, 4]
-]
-
-let f_solve = [
-    [9, 2, 0, 8, 0, 3, 0, 6, 5],
-    [6, 8, 5, 7, 0, 0, 1, 3, 0],
-    [1, 4, 0, 6, 5, 0, 7, 8, 2],
-    [5, 0, 1, 0, 6, 0, 0, 4, 3],
-    [0, 9, 0, 3, 0, 0, 5, 1, 8],
-    [8, 3, 0, 0, 4, 0, 6, 9, 0],
-    [0, 0, 4, 5, 9, 0, 8, 0, 0],
-    [0, 0, 0, 0, 3, 1, 0, 0, 0],
-    [0, 0, 9, 0, 8, 0, 0, 5, 0]
-]
-
-const solved = [
-    [1, 2, 3, 4, 5, 6, 7, 8, 9],
-    [4, 5, 6, 7, 8, 9, 1, 2, 3],
-    [7, 8, 9, 1, 2, 3, 4, 5, 6],
-    [2, 3, 1, 5, 6, 4, 8, 9, 7],
-    [5, 6, 4, 8, 9, 7, 2, 3, 1],
-    [8, 9, 7, 2, 3, 1, 5, 6, 4],
-    [3, 1, 2, 6, 4, 5, 9, 7, 8],
-    [6, 4, 5, 9, 7, 8, 3, 1, 2],
-    [9, 7, 8, 3, 1, 2, 6, 4, 5]
-]
-
 function isSolved(grid) {
     for (let y = 0; y < 9; y++) {
         for (let x = 0; x < 9; x++) {
-            const pos = possibleMoves(grid, y, x, new Set([1, 2, 3, 4, 5, 6, 7, 8, 9])).size
-            if (!grid[y][x][0] || !pos) {
+            const POSSIBLE = possibleMoves(grid, y, x, new Set([1, 2, 3, 4, 5, 6, 7, 8, 9])).size
+            if (!grid[y][x][0] || !POSSIBLE) {
                 return false
             }
         }
@@ -140,27 +102,26 @@ function getAll(y, x) {
     return Array.from(t).map(e => e.split(',').map(a => parseInt(a))) // Return Array [[y, x]...]
 }
 
-async function solve(grid, print = true, showy = false) {
-    let s = performance.now()
+async function solve(grid, hintMode = false) {
     let memory = []
     let difficulty = 0
     let max_depth = 1
     let iteration = depth = prevX = prevY = 0 // Depth For Difficulty
-
+    let temp
     while (!isSolved(grid)) {
         iteration++
 
         // Is There Any Tile With No Possible Values
-        
-        if (!notAnyPossibleMove(grid)) {
-            if (memory.length === 0) { throw new Error("Fuck You This Shit Impossible")}
+
+        if (!notAnyPossibleMove(grid) && isEqual(temp, grid)) {
+            if (memory.length === 0) { return [[grid], Number.POSITIVE_INFINITY]}
             let t, value
             [t, [prevY, prevX], value] = memory.pop()
             depth--
             grid = structuredClone(t)
             grid[prevY][prevX][1].delete(value)
         }
-        let temp = structuredClone(grid)
+        temp = structuredClone(grid)
 
         // All Cells With Only 1 Possible Value
         for (let y = 0; y < 9; y++) {
@@ -175,11 +136,7 @@ async function solve(grid, print = true, showy = false) {
                     grid[y][x][1].delete(grid[y][x][0])
                 }
             }
-        }
-          
-        
-        if (showy) { show(grid.map(e => e.map(c => c[0]))); await sleep(100) }
-        
+        }        
         
         for (let y = 0; y < 3; y++) {
             for (let x = 0; x < 3; x++) {
@@ -260,43 +217,58 @@ async function solve(grid, print = true, showy = false) {
             n++
         }
     }
-    if (print) {
-        console.log(`It Took ${iteration} Iterations To Solve The Sudoku`)
-        console.log(`It Recuired A Depth Of ${depth} To Solve The Sudoku`)
-        console.log(`Average Iteration Speed: ${(performance.now() - s) / iteration} Milliseconds Per Iteration`)
-    }
     return [[grid], difficulty]
 }
 
+async function hint2(grid) {
+    let curSolve = await solve(getValPos(grid))
 
-function hint(solution) {
-    let notUsed = []
+    let overlaps = findOverlaps()
+
+    let notUsed = grid.map(r => r.filter(cell => !cell.value))
     grid.forEach((row, i) => row.forEach((cell, j) => { if (!cell.value) { notUsed.push([i, j]) }}))
+
     if (notUsed.length === 0) { return }
     let [y, x] = notUsed[Math.floor(Math.random() * notUsed.length)]
-
-    grid[y][x].value = solution[y][x][0]
-    grid[y][x].possibleNotes = [];
-    for(let y = 0; y < 3; y++){
-        for(let x = 0; x < 3; x++){
-            grid[y][x].noteElm.children[x].children[y].innerText = ' '
-        }
-    };
-    updateChanged(y,x)
-    checkRemoveNote(x,y)
+    
     updateTable()
-    gridHistory.push(JSON.parse(JSON.stringify(grid)));
-    save();
+    gridHistory.push(JSON.parse(JSON.stringify(grid)))
+
+    hintUsed = true
+    if (isSolved(getValPos(grid))) {
+        finished()
+    } else {
+        timerStop = false
+    }
+    save()
 }
 
+async function hint(grid) {
+    let curSolve = await solve(getValPos(grid), true)
+    curSolve = curSolve[0][0]
+    let overlaps = []
 
-async function hintHint() {
-    let solution = await solve(getValPos(grid))
-    hint(solution[0][0])
-    hintUsed = true;
-    if(isSolved(getValPos(grid))){
-        finished();
-    }else{
-        timerStop = false;
+    for (let y = 0; y < 9; y++) {
+        for (let x = 0; x < 9; x++) {
+            if (curSolve[y][x][0] && !grid[y][x].value) {
+                overlaps.push([y, x])
+            }
+        }
     }
+    if (overlaps.length === 0) { alert("Någonting är fel börja om!"); return }
+    let i = Math.floor(Math.random() * overlaps.length)
+    let [y, x] = overlaps[i]
+    grid[y][x].value = curSolve[y][x][0]
+
+    // Idk
+    updateTable()
+    gridHistory.push(JSON.parse(JSON.stringify(grid)))
+
+    hintUsed = true
+    if (isSolved(getValPos(grid))) {
+        finished()
+    } else {
+        timerStop = false
+    }
+    save()
 }

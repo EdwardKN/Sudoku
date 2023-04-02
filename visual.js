@@ -140,7 +140,7 @@ var buttons = [
     },
     {
         name:"Ledtråd",
-        onClick:"if(confirm(confirmMessages.clue)){hintHint()}",
+        onClick:"if(confirm(confirmMessages.clue)){hint(grid)}",
         cooldown:"60",
         cooldownTime:0,
         id:"hint"
