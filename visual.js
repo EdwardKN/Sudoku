@@ -1308,7 +1308,7 @@ function updateLeaderboard() {
                     leaderboard.children[1].children[y - 1].children[2].innerText = "-"
                 }
                 leaderboard.children[0].children[0].children[1].innerText += "(Lätt)"
-            }
+            };
             if (currentLeaderboard === 1) {
                 if (leaderboardData[y - 1].mediumScore !== "undefined") {
                     leaderboard.children[1].children[y - 1].children[2].innerText = timeToText(leaderboardData[y - 1].mediumScore)
