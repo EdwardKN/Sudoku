@@ -77,7 +77,7 @@ async function generateSudoku(difficulty) {
             
             solution = await solve(finalBoard, 'GENERATE', difficulty)
 
-            if (solution[0].length > 1 || solution[1] > difficulty) {
+            if (solution[1] > difficulty || solution[0].length > 1) {
                 board[y][x] = t
                 used.pop(i)
             } else { isDifferent = true; break }
