@@ -1049,14 +1049,15 @@ async function solveSolve(grid) {
     }
     let s = performance.now()
     const temp = getValPos(grid)
-    await solve(temp).then(e => {
-        e[0][0].forEach((row, i) => row.forEach((cell, j) => grid[i][j].value = cell[0]))
+    await solve(temp, 'SOLVE').then(res => {
+        let solution = res[0][0]
+        solution.forEach((row, i) => row.forEach((cell, j) => grid[i][j].value = cell[0]))
+        console.log(`It Took ${performance.now() - s} Milliseconds To Solve The Sudoku`)
         updateTable()
         gridHistory.push(JSON.parse(JSON.stringify(grid)));
         historyIndex = gridHistory.length - 1
         save()
-
-    });
+    })
 }
 let loading = false;
 
@@ -1074,7 +1075,9 @@ async function getSudoku(difficulty) {
         clearThisShit();
         await sleep(10);
         currentDifficulty = difficulty - 1;
+        let s = performance.now()
         generateSudoku(difficulty).then(e => {
+            console.log(performance.now() - s)
             hintUsed = false;
             loading = false;
             document.getElementById("loading").style.visibility = 'hidden';
