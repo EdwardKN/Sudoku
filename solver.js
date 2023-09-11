@@ -92,9 +92,12 @@ function isPossibleMove(grid, y, x, number) {
     return true
 }
 
+
 function possibleMoves(grid, y, x, numbers) {
     for (const [y2, x2] of getAll(y, x)) {
-        numbers.delete(grid[y2][x2][0])
+        if (numbers.has(grid[y2][x2][0])) {
+            numbers.delete(grid[y2][x2][0])
+        }
     }
  
     return numbers
@@ -164,7 +167,14 @@ async function solve(grid, type, depth = 0) {
     let difficulty = 0
     while (!isSolved(grid)) {
         if (!notAnyPossibleMove(grid)) { return [[], difficulty] }
-        let temp = structuredClone(grid)
+        let temp = []
+
+        for (let i = 0; i < grid.length; i++) {
+            temp.push([])
+            for (let j = 0; j < grid[i].length; j++) {
+                temp[i].push([grid[i][j][0], grid[i][j][1]])
+            }
+        }
 
         // All Cells With Only 1 Possible Value
         for (let y = 0; y < 9; y++) {
@@ -183,16 +193,17 @@ async function solve(grid, type, depth = 0) {
         
         for (let y = 0; y < 3; y++) {
             for (let x = 0; x < 3; x++) {
-                let posUsed = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: []}
+                let removed = new Set()
+                let posUsed = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [] }
                 for (let i = 0; i < 3; i++) {
                     for (let j = 0; j < 3; j++) {
                         let row = 3 * y + i
                         let col = 3 * x + j
 
-                        if (grid[row][col][0]) { delete posUsed[grid[row][col][0]]; continue }
+                        if (grid[row][col][0]) { removed.add(grid[row][col][0]); continue }
                         
                         for (let n of grid[row][col][1]) {
-                            if (posUsed.hasOwnProperty(n)) { posUsed[n].push([row, col]) }
+                           posUsed[n].push([row, col])
                         }
                     }
                 }
@@ -200,6 +211,8 @@ async function solve(grid, type, depth = 0) {
                 // Check Length Of One
                 Object.keys(posUsed).forEach(key => {
                     key = parseInt(key)
+                    if (removed.has(key)) { return }
+
                     let positions = posUsed[key]
 
                     if (positions.length === 0) { return }
