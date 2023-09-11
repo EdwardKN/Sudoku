@@ -1075,7 +1075,9 @@ async function getSudoku(difficulty) {
         clearThisShit();
         await sleep(10);
         currentDifficulty = difficulty - 1;
+        let s = performance.now()
         generateSudoku(difficulty).then(e => {
+            console.log(performance.now() - s)
             hintUsed = false;
             loading = false;
             document.getElementById("loading").style.visibility = 'hidden';

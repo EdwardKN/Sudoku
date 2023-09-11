@@ -137,7 +137,7 @@ function notAnyPossibleMove(grid) {
 
 async function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)) }
 
-function getAll2(y, x) {
+function getAll(y, x) {
     let positions = []
     // 0, 3, 6
     let y2 = Math.floor(y / 3) * 3
@@ -145,34 +145,19 @@ function getAll2(y, x) {
 
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
-            if (y != x2 + i || x != x2 + j) {
+            if (y != y2 + i || x != x2 + j) {
                 positions.push([y2 + i, x2 + j])
             }
         }
     }
 
     for (let i = 0; i < 9; i++) {
-        if (i !== y && (i < y2 || i > y2 + 3)) { positions.push([i, x]) }
-        if (i !== x && (i < x2 || i > x2 + 3)) { positions.push([y, i]) }
+        let boxI = Math.floor(i / 3) * 3
+        if (i !== y && boxI !== y2) { positions.push([i, x]) }
+        if (i !== x && boxI !== x2) { positions.push([y, i]) }
     }
 
     return positions
-}
-
-function getAll(y, x) {
-    let t = new Set()
-    for (let i = 0; i < 9; i++) { 
-        if (i !== y) { t.add(`${i},${x}`) }
-        if (i !== x) { t.add(`${y},${i}`)}
-    }
-    let y2 = Math.floor(y / 3) * 3
-    let x2 = Math.floor(x / 3) * 3
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-            if (!(y2 + i === y && x2 + j === x)) { t.add(`${y2 + i},${x2 + j}`) }
-        }
-    }
-    return Array.from(t).map(e => e.split(',').map(a => parseInt(a))) // Return Array [[y, x]...]
 }
 
 async function solve(grid, type, depth = 0) {
