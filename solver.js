@@ -199,5 +199,5 @@ async function solve(grid, type, maxDifficulty) {
         grid[y][x][0] = val
         deleteFromAdjacent(grid, x, y, val)
     }
-    return [[grid], difficulty]
+    return [grid, difficulty]
 }

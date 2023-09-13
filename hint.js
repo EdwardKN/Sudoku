@@ -1,52 +1,19 @@
-async function hint2(grid) {
-    let curSolve = await solve(getValPos(grid))
-
-    let overlaps = findOverlaps()
-
-    let notUsed = grid.map(r => r.filter(cell => !cell.value))
-    grid.forEach((row, i) => row.forEach((cell, j) => { if (!cell.value) { notUsed.push([i, j]) }}))
-
-    if (notUsed.length === 0) { return }
-    let [y, x] = notUsed[Math.floor(Math.random() * notUsed.length)]
-    
-    updateTable()
-    gridHistory.push(JSON.parse(JSON.stringify(grid)))
-
-    hintUsed = true
-    if (isSolved(getValPos(grid))) {
-        finished()
-    } else {
-        timerStop = false
-    }
-    save()
-}
-
 async function hint(grid) {
-    let curSolve = await solve(getValPos(grid), true)
-    curSolve = curSolve[0][0]
-    let overlaps = []
+    let solution = (await solve(getValPos(grid), 'SOLVE', Infinity))[0]
+    let notUsed = []
 
-    for (let y = 0; y < 9; y++) {
-        for (let x = 0; x < 9; x++) {
-            if (curSolve[y][x][0] && !grid[y][x].value) {
-                overlaps.push([y, x])
-            }
+    for (let y = 0; y < solution.length; y++) {
+        for (let x = 0; x < solution[y].length; x++) {
+            if (!grid.value) { notUsed.push([x, y]) }
         }
     }
-    if (overlaps.length === 0) { alert("Någonting är fel börja om!"); return }
-    let i = Math.floor(Math.random() * overlaps.length)
-    let [y, x] = overlaps[i]
-    grid[y][x].value = curSolve[y][x][0]
 
-    // Idk
+    if (notUsed.length === 0) { return false }
+    let i = Math.floor(Math.random() * notUsed.length)
+    let [x, y] = notUsed[i]
+    grid[y][x].value = solution[y][x][0]
     updateTable()
     gridHistory.push(JSON.parse(JSON.stringify(grid)))
-
     hintUsed = true
-    if (isSolved(getValPos(grid))) {
-        finished()
-    } else {
-        timerStop = false
-    }
     save()
 }

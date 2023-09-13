@@ -1050,7 +1050,7 @@ async function solveSolve(grid) {
     let s = performance.now()
     const temp = getValPos(grid)
     await solve(temp, 'SOLVE', Infinity).then(res => {
-        let solution = res[0][0]
+        let solution = res[0]
         solution.forEach((row, i) => row.forEach((cell, j) => grid[i][j].value = cell[0]))
         console.log(`It Took ${performance.now() - s} Milliseconds To Solve The Sudoku`)
         updateTable()
