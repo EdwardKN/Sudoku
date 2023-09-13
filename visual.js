@@ -1049,7 +1049,7 @@ async function solveSolve(grid) {
     }
     let s = performance.now()
     const temp = getValPos(grid)
-    await solve(temp, 'SOLVE').then(res => {
+    await solve(temp, 'SOLVE', Infinity).then(res => {
         let solution = res[0][0]
         solution.forEach((row, i) => row.forEach((cell, j) => grid[i][j].value = cell[0]))
         console.log(`It Took ${performance.now() - s} Milliseconds To Solve The Sudoku`)
@@ -1073,11 +1073,11 @@ async function getSudoku(difficulty) {
             }
         }
         clearThisShit();
-        await sleep(10);
         currentDifficulty = difficulty - 1;
+
         let s = performance.now()
         generateSudoku(difficulty).then(e => {
-            console.log(performance.now() - s)
+            show(e)
             hintUsed = false;
             loading = false;
             document.getElementById("loading").style.visibility = 'hidden';
@@ -1448,4 +1448,52 @@ function confirmSendScores(diff) {
         localStorage.setItem("lastUsername", JSON.stringify(lastUsername));
         save();
     }
+}
+
+async function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)) }
+
+function isPossibleMove(grid, y, x, number) {
+    for (const [x2, y2] of getAll(x, y)) {
+        if (grid[y2][x2].value == number) {
+            return { x: x2, y: y2 }
+        }
+    }
+    return true
+}
+
+function getValPos(grid) {
+    const values = copyProperty(grid, "value")
+    const temp = values.map(row => row.map(val => [val, val ? new Set() : 
+        new Set([1, 2, 3, 4, 5, 6, 7, 8, 9])]))
+    return temp
+}
+
+function copyProperty(arr, prop) {
+    const temp = []
+    for (let i = 0; i < arr.length; i++) {
+        temp.push([])
+        for (let j = 0; j < arr[i].length; j++) {
+            if (Array.isArray(arr[i][j][prop])) {
+                temp[i].push([])
+                for (let e of arr[i][j][prop]) { temp[i][j].push(e) }
+            } else { temp[i].push(arr[i][j][prop]) }
+        }
+    }
+    return temp
+}
+
+function show(arr) {
+    if (arr[0][0].length > 0) {
+        arr = arr.map(row => row.map(cell => cell[0]))
+    }
+
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            grid[i][j].value = arr[i][j]
+            grid[i][j].locked = false
+            if (arr[i][j]) { grid[i][j].locked = true }
+        }
+    }
+    updateTable()
+    
 }
