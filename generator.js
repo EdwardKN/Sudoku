@@ -29,6 +29,20 @@ function getUsed(arr) {
     return vals
 }
 
+function possibleMoves(grid, y, x) {
+    let arr = getAll(x, y)
+    let sat = grid[y][x][1]
+
+    for (const [x2, y2] of arr) {
+        let val = grid[y2][x2][0]
+
+        if (sat.has(val)) {
+            sat.delete(val)
+        }
+    }
+    return sat
+}
+
 async function createRandomSudoku() {
     let sudoku = resetSudoku()
 
@@ -74,32 +88,16 @@ async function generateSudoku(difficulty) {
 
             let finalBoard = board.map(row => row.map(cell => [cell, cell ? new Set() : new Set([1, 2, 3, 4, 5, 6, 7, 8, 9])] ))
             finalBoard.forEach((row, y) => row.forEach((cell, x) => cell[1] = possibleMoves(finalBoard, y, x, cell[1])))
-            
-            solution = await solve(finalBoard, 'GENERATE', difficulty)
 
-            if (solution[1] > difficulty || solution[0].length > 1) {
+            solution = await solve(finalBoard, 'GENERATE', difficulty)
+            used.pop(i)
+
+            if (solution === false || solution[1] > difficulty) {
                 board[y][x] = t
-                used.pop(i)
-            } else { isDifferent = true; break }
+            } else { isDifferent = true }
         }
     }
     show(board)
     save()
     return board
-}
-
-async function test(iterations, difficulty) {
-    let totalTime = 0
-    for (let i = 0; i < iterations; i++) {
-        let s = performance.now()
-        let g = await generateSudoku(difficulty)
-        totalTime += performance.now() - s
-        show(g)
-        await sleep(0)
-    }
-    return totalTime / iterations
-}
-
-async function testTest(iterations, difficulty) {
-    test(iterations, difficulty).then(e => console.log(`${e}`.split(".")[0] + " milliseconds"))
 }
